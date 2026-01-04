@@ -1,0 +1,27 @@
+\documentclass{article}
+\usepackage[margin=2cm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[italian]{babel}
+\usepackage{amsmath,amssymb}
+\usepackage{amsthm}
+\usepackage{hyperref}
+\usepackage{empheq}
+\usepackage{booktabs}
+\usepackage{amsthm}
+\usepackage{imakeidx}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning, shapes.geometric, calc}
+
+\theoremstyle{remark}
+\newtheorem{example}{Esempio}
+\theoremstyle{remark}
+\newtheorem{theorem}{Teorema}[section]
+\newtheorem{lemma}{Lemma}[subsection]
+
+\begin{document}
+    \input{titolo.tex}
+    \tableofcontents
+    \newpage
+    \section{Fare uso di algoritmi probabilistici}
+    \input{sec1.tex}
+\end{document}

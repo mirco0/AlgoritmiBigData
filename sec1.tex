@@ -1,0 +1,217 @@
+È naturale domandarsi riguardo la scelta di utilizzare algoritmi \emph{probabilistici} per cui c'è una possibilità di ottienere un risultato errato, rispetto agli algoritmi \emph{deterministici} in cui si ha la certezza di ottenere sempre un risultato corretto. In questa sezione si vedono degli algoritmi di esempio che giustificano questa scelta.
+    \subsection{Verifica Identità polinomiali}
+    \subsubsection{Algoritmo deterministico}
+        Iniziamo descrivendo brevemente il problema, siano $f(x)$ e $g(x)$ due polinomi per cui $d = \deg(f) = \deg(g)$ per cui
+        \[
+            f(x) = \prod^d_{i=0}{(x-a_i)}
+        \]
+        mentre $g(x)$ è descritto nel modo seguente
+        \[
+            g(x) = \sum^{d}_{i=0}{(c_i \cdot x^i)}
+        \]
+        verificare l'identità $\forall x \ f(x) = g(x) $.
+        
+        Un'opzione è quella di convertire $f(x)$ nella forma canonica moltiplicando i fattori tra di loro, così facendo è sufficiente verificare che i coefficienti di ciascuna variabile siano uguali per i due polinomi ovvero per $a_i$ coefficienti di $f(x)$ e $c_i$ i coefficienti di $g(x)$ associati allo stesso $x^i$.
+        $$ f(x) = g(x) \iff \forall i = 0,\dots,d \ a_i = c_i$$
+        Questa soluzione è \textit{deterministica} e richiede $O(d^2)$ operazioni
+        
+    \subsubsection{Algoritmo probabilistico}
+    Sia $d$ il grado dei due polinomi, come in precedenza. l'algoritmo sceglie u.a.r. un intero $r \in_u \{0,\dots,100d\}$ e calcola i valori di $f(r)$ e $g(r)$
+    \begin{equation*}
+        Output = 
+        \begin{cases*}
+            Vero \text{ se } f(r) = g(r)\\
+            Falso \text{ altrimenti}
+        \end{cases*}
+    \end{equation*}
+    Assumendo che la scelta di $r \in_u \{1,  \dots, 100d$ sia $O(1)$ e il calcolo di $f(r)$ e $g(r)$ sia $O(d)$, la complessità dell'algoritmo è $O(d)$.
+
+    L'algoritmo probabilistico è molto migliore rispetto alla sua controparte deterministica, ma questo miglioramento comporta un costo non indifferente, l'algoritmo probabilistico in qualche caso potrebbe sbagliare.
+
+    \vspace{2em}
+    \emph{In quali casi l'algoritmo sbaglia?}
+    \begin{example}
+        \[
+            F(x) = (x+2)(x+2)
+            \quad
+            G(x) = x^2+7x+1
+        \]
+        I due polinomi sono ovviamente diversi,
+        per $r = 2$ si ha $F(2) = 19$ e $G(2) = 16$, mentre per $r=1$ $F(1) = 9 = G(1)$ 
+        ne segue che se l'algoritmo secgliesse $r = 2$ si arriverebbe a una risposta errata.
+    \end{example}
+    Sia $f(x) \neq g(x)$, e la somma dei gradi di $x$ in $f$ e $g$ è limitato da $d$. Definiamo $h(x)$ come segue:
+    \[
+        h(x):= f(x) - g(x)
+    \]
+    naturalmente anche $h(x)$ è limitato nel grado da $d$, e l'equazione $h(x) = 0$ ha al massimo $d$ soluzioni. È banale convincersi che il caso $h(x) = 0$ descrive esattamente i casi in cui l'algoritmo probabilistico sbaglia.
+
+    \subsubsection*{Analisi dell'algoritmo}
+    \begin{enumerate}
+        \item Se l'identità $f(x) \equiv g(x)$ è vera, l'algoritmo da \emph{sempre} in output la risposta corretta
+        \item Se l'identità $f(x) \equiv g(x)$ non è vera, l'algoritmo sbaglia in \emph{alcuni} casi
+    \end{enumerate}
+    Si ha che scegliendo $r \in_u [1,100d]$ allora \fbox{$\Pr[f(r) = g(r)] < \frac{1}{100}$} \label{ris:1}(la probabilità che l'algoritmo sbagli è bassa).
+    
+    \vspace{1em}
+    Si generalizza l'algoritmo per $k$ prove indipendenti
+    \begin{itemize}
+        \item Evento semplice $E_s$: fissata una sequenza specifica $r_1,\dots,r_k \in_u [1,100d]$, l'evento semplice rappresenta la scelta dell'algoritmo di quella specifica sequenza
+        \item  Evento negativo $E_n$: la sequenza scelta contiene tutte radici di $h(x)$
+        \item Se in qualsiasi delle $k$ prove l'output è $Falso$ restituisci $Falso$
+    \end{itemize}
+    Si calcolano la probabilità di $E_s$ ed $E_n$
+    \[
+        \Pr{[E_s]} = \left({\frac{1}{100d}}\right)^k
+        \quad
+        \Pr{[E_n]} \leq d^k \cdot \left( \frac{1}{100d} \right)^k = { \left( \frac{1}{100} \right) }^k
+    \]
+    Ci sono al massimo $d^k$ sequenze in cui tutte le $r_i$ scelte sono radici di $h(x)$, inoltre da un risultato precedente (\ref{ris:1}), la probabilità che una sequenza contenga una radice è $\leq \frac{1}{100}$. Poiché le scelte sono indipendenti, la probabilità di $k$ scelte successive errate è proprio ${ \left( \frac{1}{100} \right) }^k$.
+    
+    \vspace{1em}
+    \noindent
+    L'evento $E_n$ rappresenta quindi l'evento in cui l'algoritmo da un risultato errato, questo avviene con probabilità $\leq { \left( \frac{1}{100} \right) }^k$.
+
+    \subsection{Verifica Moltiplicazione matriciale}
+    Siano $A,B,C \in \{0,1\}^{n\times n}$ tre matrici binarie, verificare 
+    \[
+        A\cdot B = C
+    \]
+    \subsubsection{Algoritmo deterministico}
+    L'algoritmo \emph{deterministico} richiede l'uso della moltiplicazione tra matrici,si ricorda la moltiplicazione tra matrici, sia $AB = A \cdot B$
+    \[
+        AB = 
+        \begin{bmatrix}
+            c_{11} & \cdots & c_{1n} \\ 
+            \vdots & \ddots & \vdots \\
+            c_{n1} & \cdots & c_{nn}
+        \end{bmatrix}
+    \]
+    In cui ogni termine $c_{ij} = \sum_{k=1}^{n}a_{ik}b_{kj}$. Un algoritmo banale impiega $\Theta(n^3)$ tempo con un metodo standard, o $\Theta(n^{2.37})$ con un metodo più efficiente. 
+    
+    \subsubsection{Algoritmo probabilistico}
+    Iniziamo subito definendo il comportamento di un algoritmo randomizzato, nettamente più efficiente dell'algoritmo deterministico visto in precedenza
+    \begin{enumerate}
+        \item Scelta di un vettore $\bar{r} = (r_1,\dots,r_n) \in_u \{0,1\}^n$
+        \item Calcolo di $B\cdot\bar{r}$
+        \item Calcolo $A(B\cdot \bar{r})$
+        \item Calcolo $C\cdot\bar{r}$
+    \end{enumerate}
+    \[
+    Output = 
+    \begin{cases*}
+        Vero \text{ se } A(B\cdot \bar{r}) = C\cdot\bar{r}\\
+        Falso \text{ altrimenti }    
+    \end{cases*}
+    \]
+    L'algorimo esegue moltiplicazioni tra le matrici e il vettore scelto $\bar{r}$, più efficienti rispetto alla moltiplicazione tra matrici, di seguito un analisi per determinare l'efficacia in termini probabilistici dell'algoritmo.
+
+    \subsubsection*{Analisi}
+    Il seguente risultato fornisce una base utile per determinare la probabilità di successo dell'algoritmo
+    \begin{theorem}
+        Se $AB \neq C$ e $r$ è scelto uniformemente da $\{0,1\}$ allora 
+        \[
+            \Pr{[AB\cdot\bar{r} = C\cdot\bar{r}]} \leq \frac{1}{2}
+        \]
+    \end{theorem}
+    Si ricorda che scegliere $\bar{r} \in_u \{0,1\}^n$ è equivalente a scegliere $n$ valori indipendenti $r_1,\dots,r_n \in_u \{0,1\}$  
+    \begin{proof}
+        Sia $D=AB - C \neq 0$ una matrice in $\{0,1\}^{n\times n}$ diversa da 0, ovvero $\exists d_{ij} \neq 0$
+        \[
+            AB\cdot\bar{r} = C\cdot\bar{r} \implies D\cdot\bar{r} = 0
+        \]
+        Per semplicità assumiamo che $d_{ij} \neq 0$ sia proprio $d_{11}$. Poiché $D\cdot\bar{r} = 0$ 
+        \[
+            \sum_{j=1}^nd_{1j}r_j = 0 \quad \text{ ovvero } \quad r_1 = -\frac{\sum_{j=2}^n{d_{1j}r_j}}{d_{11}}
+        \]
+        Assumiamo di aver fissato una sequenza $r_2,\dots,r_n$ allora è possibile determinare facilmente $r_1$. La probabilità che $r_1$ rispetti l'uguaglianza è $\leq \frac{1}{2}$
+
+        \vspace{1em}
+
+        Sia $X = (x_2,\dots,x_n) \in \{0,1\}^{n-1} = B^{n-1}$
+        \begin{align*}
+            \Pr{[AB\cdot\bar{r} = C\cdot\bar{r}]} &= \sum_{ x \in B^{n-1}}\Pr{[AB\cdot\bar{r} = C\cdot\bar{r} \mid(r_2,\dots,r_n) = (x_2,\dots,x_n)]} \cdot \Pr{[(r_2,\dots,r_n) = (x_2,\dots,x_n)]} =\\
+            &= \sum_{x \in B^{n-1}}\Pr{[ (AB\cdot\bar{r} = C\cdot\bar{r}) \cap (r_2,\dots,r_n) = (x_2,\dots,x_n)]}\\
+            &\leq \sum_{x \in B^{n-1}}\Pr{\left[\left(r_1 = -\frac{\sum_{j=2}^n{d_{1j}r_j}}{d_{11}}\right) \cap (r_2,\dots,r_n) = (x_2,\dots,x_n)\right]} =\\
+            &= \sum_{x \in B^{n-1}}\Pr{\left[r_1 = -\frac{\sum_{j=2}^n{d_{1j}r_j}}{d_{11}}\right]} \cdot \Pr{[(r_2,\dots,r_n) = (x_2,\dots,x_n)]}\\
+            &\leq \sum_{x \in B^{n-1}}\frac{1}{2}\Pr{[(r_2,\dots,r_n) = (x_2,\dots,x_n)]}\\
+            &= \frac{1}{2}.
+        \end{align*}
+    \end{proof}
+    Anche in questo caso è possibile ripetere l'algoritmo su una sequenza di $k$ prove, si ha interesse a capire come cambia la confidenza sull'esito. Non avendo informazioni sulla provenienza di $A,B,C$ è ragionevole assumere che $A\cdot B = C$ sia vero con probabilità $\frac{1}{2}$. A questo scopo si definiscono gli eventi $E$ che definisce la correttezza dell'identità, $B$ l'evento in cui l'algoritmo restituisce $Vero$.
+    
+    \vspace{1em}
+    Si inzia con $\Pr(E_0) = \Pr(\bar{E_0}) = \frac{1}{2}$ e poiché l'algorimo è a \emph{one-sided-error} $\Pr(B\mid E) = 1$, e $\Pr(B \mid \bar{E}) \leq \frac{1}{2}$. Ovvero è banale convincersi che la probabilità di successo dell'algorimo, data un'identità falsa, è certo. Applicando Bayes si può ottenere una formula per determinare la confidenza della correttezza alla prova $i+1$ sapendo la confidenza e il risultato della prova \textit{i-esima}
+    \[
+        \Pr{[E_{i+1}]} =  \frac{\Pr(B_i\mid E_i)\Pr{[E_i]}}{\Pr(B_i\mid E_i)\Pr{[E_i]} + \Pr(B_i\mid \bar{E_i})\Pr{[\bar{E_i}]}}
+    \]
+    In generale se prima di eseguire l'algoritmo l'\textit{i-esima} volta $\Pr{[E_i]} \geq \frac{2^i}{(2^i+1)}$ e l'algorimo restituisce $Vero$ ($\Pr{[B_i]}=1$) allora
+    % TODO: Mostrare meglio i passaggi magari con un ref ad un'altra pagina
+    \[
+        \Pr{[E_{i+1} \mid B_i]} \geq \frac{\frac{2^i}{(2^i+1)}}{\frac{2^i}{(2^i+1)} + \frac{1}{2}\frac{1}{(2^i+1)}} = \frac{2^{i+1}}{2^{i+1}+1} = 1 - \frac{1}{2^i+1}
+    \]
+    La confidenza alla \textit{i-esima} prova è $\geq 1 - \frac{1}{2^i+1}$. Con questo risultato si può affermare che la confidenza nella corretta del risultato dell'algorimo cresce esponenzialmente nel numero di prove effettuate.
+    
+    \subsection{Problema Min-Cut}
+    Spostiamo l'attenzione ora su un problema noto, il problema del \emph{Min-Cut}. Sia $G = \langle V,E \rangle$ un grafo. Un taglio (cut) è una partizione dei vertici $V$ in due sottoinsiemi non vuoti $A,B \subset V$ tali che $B = V-A$. L'insieme degli archi del taglio è definito come
+    \[
+        C = \{(u,v) \in E \mid u \in A, v \in B\}
+    \]
+    Il problema del \emph{min-cut} consiste nel trovare $C$ per cui $|C|$ è minima. $C$ inoltre è il minimo insieme di archi per cui il grafo $G$ è sconnesso.
+
+    \subsubsection{Algoritmo probabilistico}
+    L'algoritmo probabilistico per risolvere il Min-Cut è basato sull'operazione di \emph{contrazione} dei nodi. Il processo di contrazione avviene nel seguente modo
+    \begin{enumerate}
+        \item Si seleziona un arco $e=(u,v) \in_u E$ (in modo uniforme)
+        \item Si fondono i nodi $u$ e $v$ in un unico nodo.
+        \item Si rimuovono i \emph{self-loops} risultanti dalla contrazione.
+    \end{enumerate}
+    \input{figure/grafo.tex}
+    Si descrive ora l'algorimo probabilistico 
+    \begin{enumerate}
+        \item Ripeti $n-2$ volte:
+            \begin{enumerate}
+                \item Prendi $(u,v) \in_u E$
+                \item Contrai $u,v$, ed elimina i \emph{self-loops}
+            \end{enumerate}
+        \item Restituisci l'insieme di archi che connettono i due vertici rimanenti
+    \end{enumerate}
+
+    \begin{theorem}
+        L'algoritmo restituisce un \emph{min-cut} con probabilità $\geq \frac{1}{n(n-1)}$
+    \end{theorem}
+
+    \begin{lemma}
+        La contrazione dei vertici non riduce la grandezza del \emph{min-cut}, può solo aumentare
+    \end{lemma}
+    \begin{proof}
+        Ogni \emph{cutset} nel nuovo multigrafo è un \emph{cutset} nel grafo prima della contrazione
+    \end{proof}
+
+    \subsubsection*{Analisi dell'algorimo}
+    Per analizzare la probabilità di successo dell'algorimo, si parte supponendo che il grafo abbia un min-cut $C$ di $k$ archi, si calcola ora la probabilità di trovare tale \emph{cutset} $C$.
+
+    \begin{lemma}
+        Se l'arco contratto non appartiene al min-cut $C$, allora nessun altro arco eliminato appartiene a $C$.
+    \end{lemma}
+    \begin{proof}
+        Il processo di contrazione di $u$ e $v$ elimina gli archi paralleli $e_1 (u,v) \in E$, $e_2 (u,v) \in E$ ovvero tutti gli archi con estremi $u,v$. Tali archi appartengono o meno, contemporaneamente a $C$.
+    \end{proof} 
+    Si definiscono quindi due eventi $E_i$ che descrive l'evento in cui l'arco contratto all'iterazione \emph{i-esima} non appartiene a $C$, $F_i$ l'evento in cui nessun arco di $C$ è stato contratto nelle prime $i$ iterazioni $F_i = \bigcap_{j=1}^iE_j$. È facile vedere che $F_{n-2}$ è proprio l'evento in cui l'algorimo restituisce l'insieme corretto.
+
+    \vspace{1em}\noindent
+    Si parte notando che se $|C| = k$ allora la cardinalità di tutti i nodi è $\geq k$, inoltre il grafo ha almeno $\frac{nk}{2}$ archi. Per cui selezionando un arco $e \in E$ casualmente (in modo uniforme), la probabilità che $e$ sia un arco di $C$ è $\Pr(e\in E) \leq \frac{k}{\frac{nk}{2}} = \frac{2}{n}$, questo caso è proprio l'evento complementare di $E_1$, per cui $\Pr(E_1) \geq 1-\frac{2}{n}$. Ora assumendo che $E_1$ si sia verificato, rimangono $n-1$ nodi con un \emph{min-cut} di dimensione e grado minimo $\geq k$. Supponendo che in $i-1$ iterazioni l'algorimo non abbia mai selezionato nessun arco in $C$ ovvero verificando l'evento $F_{i-1}$ si deriva la formula
+    \[
+        \Pr{[E_i \mid F_{i-1}]} \geq 1 - \frac{k}{\frac{k(n-i+1)}{2}} = 1 - \frac{2}{n-i+1}
+    \]
+    
+    Per determinare la probabilità di successo dell'algorimo si deve calcolare $\Pr{[F_{n-2}]}$.
+    \begin{align*}
+        \Pr{[F_{n-2}]} &= \Pr{[E_{n-2}\cap F_{n-3}]} = \Pr{[E_{n-2} \mid F_{n-3}]}\Pr{[F_{n-3}]} = \\
+        &= \Pr{[E_{n-3} \mid F_{n-4}]}\cdots\Pr{[E_2\mid F_1]}\Pr{[F_1]} \geq\\
+        &\geq \prod_{i=1}^{n-2}\left( 1 - \frac{2}{n-i+1} \right) = \prod_{i=1}^{n-2} \frac{n-1-1}{n-i+1} =\\
+        &= \left( \frac{n-2}{n}\right) \left( \frac{n-3}{n-1}\right)\left( \frac{n-4}{n-2} \right) \cdots \left( \frac{2}{4}\right)\left(\frac{1}{3}\right) = \frac{2}{n(n-1)}
+    \end{align*}
+    Come al solito si analizza l'aumento della confidenza all'aumentare del numero di esecuzioni dell'algoritmo. Le diverse esecuzioni sono indipendenti per cui per $k$ prove si ha la probabilità di non trovare un \emph{min-cut} $ \leq \left( 1- \frac{2}{n(n-1)}\right)^k$. Per $k = n(n-1)\log n$ 
+    si ha $ \left( 1- \frac{2}{n(n-1)}\right)^k \leq e^{-2\log n} = \frac{1}{n^2}$.
+    \subsection{Quick Sort}

@@ -1,0 +1,51 @@
+\begin{figure}[h]
+    \centering
+    \begin{tikzpicture}[
+        node/.style={circle, draw=black, fill=gray!10, minimum size=7mm, thick},
+        selected/.style={circle, draw=red, fill=red!10, minimum size=7mm, thick},
+        contracted/.style={ellipse, draw=red, fill=red!20, minimum size=10mm, thick, font=\bfseries},
+        edge/.style={thick},
+        select_edge/.style={line width=2pt, red}
+    ]
+
+        % --- GRAFO ORIGINALE G ---
+        \node[selected] (u) at (0,1) {$u$};
+        \node[selected] (v) at (2,1) {$v$};
+        \node[node] (a) at (-1,-0.5) {$a$};
+        \node[node] (b) at (1,-1) {$b$};
+        \node[node] (c) at (3,-0.5) {$c$};
+
+        % Archi G
+        \draw[select_edge] (u) -- (v) node[midway, above] {$e$};
+        \draw[edge] (u) -- (a);
+        \draw[edge] (u) -- (b); % Arco 1 verso b
+        \draw[edge] (v) -- (b); % Arco 2 verso b
+        \draw[edge] (v) -- (c);
+        
+        \node at (1, -1.8) {\textbf{Grafo $G$}};
+
+        \draw[->, line width=1mm, -{Stealth[length=5mm]}] (3.5,0) -- (5.5,0);
+
+        \begin{scope}[xshift=8cm]
+            \node[contracted] (uv) at (1,1) {$uv$};
+            \node[node] (a2) at (-1,-0.5) {$a$};
+            \node[node] (b2) at (1,-1) {$b$};
+            \node[node] (c2) at (3,-0.5) {$c$};
+
+            % Archi G' con MULTI-ARCHI
+            \draw[edge] (uv) -- (a2);
+            % Rappresentazione di archi paralleli verso b
+            \draw[edge] (uv) to[bend left=15] (b2); 
+            \draw[edge] (uv) to[bend right=15] (b2);
+            \draw[edge] (uv) -- (c2);
+            
+            % Self-loop rimosso
+            \draw[red, dashed, thick] (uv) .. controls +(135:1.5cm) and +(45:1.5cm) .. (uv);
+            \node[red] at (1, 2.2) {\small Self-loop rimosso};
+
+            \node at (1, -1.8) {\textbf{Multigrafo $G'$ (Archi paralleli preservati)}};
+        \end{scope}
+
+    \end{tikzpicture}
+    \caption{Rappresentazione della contrazione di un arco}
+\end{figure}
