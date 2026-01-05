@@ -293,13 +293,31 @@
     \[
         \forall u \in S \ \Pr{[u \in R]} = 1 - \left( 1- \frac{1}{n}\right)^{n^{3/4}}\approx 1 - e^{-\frac{1}{n^{3/4}}} \approx \frac{1}{n^{1/4}}
     \]
-    \begin{center}  
-        \input{figure/figura1.tex}
-    \end{center}
-    Quindi si ottiene un \emph{multi-insieme} $R$ e due elementi $d,u$ in cui sono inclusi circa $2\sqrt{n}$ intermedi, per cui gli elementi in $R$ sono 
+    Quindi si ottiene un \emph{multi-insieme} $R$ che rappresenta un ``campione'' uniforme di $S$, e due elementi $d,u$ in cui sono inclusi circa $2\sqrt{n}$ valori intermedi, per cui gli elementi in $R$ sono distribuiti circa uniformemente tra gli elementi di $S$.
+    Si ha l'insieme $C$ per cui $|C| < \frac{n}{\log n}$, per cui è possibile ordinare $C$ in tempo lineare.
+    \input{figure/figura1.tex}
 
-    Si ha l'insieme $C$ per cui $|C| < \frac{n}{\log n}$ in tempo lineare.
+    Con alta probabilità $\frac{1}{2}n^{3/4} - \sqrt{n}$ elementi sono minori della mediana, mentre $\frac{1}{2}n^{3/4} - \sqrt{n}$ elementi sono maggiori della mediana, dato questo, allora la mediana appartiene al sottoinsieme $C$, se queste condizioni sono vere la mediana si trova proprio in posizione $\lfloor \frac{n}{2} \rfloor - \ell_d + 1$ di $C$ ordinato. 
 
-    
-
-    Con alta probabilità $\frac{1}{2}n^{3/4} - \sqrt{n}$ elementi sono minori della mediana
+    \vspace{1em}\noindent
+    L'algoritmo come visto sopra ha anche dei casi di fallimento, si dà una forma più rigorosa agli eventi che portano l'algoritmo al fallimento. Si definiscono le variabili aleatorie $Y_1,Y_2$. $Y_1$ conta il numero di elementi in $R$ (campioni) soto la mediana, al contrario $Y_2$ conta il numero di elementi sopra la mediana. Formalmente si definisce $y_{1}^i$ la variabile binaria 
+    \[
+        y_{1}^i = \begin{cases*}
+            1 \text{ se } x_i \in R < Mediana\\
+            0 \text{ altrimenti}
+        \end{cases*}
+        \quad
+        Y_1 = \sum_{i = 1}^{n^{3/4}}y_{1}^i
+    \]  
+    Si definiscono tre eventi $E_1$ per cui $C$ (l'intervallo di elementi $[d,u]$) è spostato a eccessivamente sinistra, l'evento $E_2$ è simmetrico, l'evento $E_3$ rappresenta una scelta di elementi in $R$ non sufficientemente uniformeme. 
+    \begin{align*}
+        &E_1: Y_1 < \frac{1}{2}n^{3/4}-\sqrt{n}\\
+        &E_2: Y_2 < \frac{1}{2}n^{3/4}-\sqrt{n}\\
+        &E_3: |C| > \frac{n}{\log n}
+    \end{align*}
+    È necessario uno solo di questi eventi per il fallimento dell'algoritmo, si calcolano le probabilità di avvenimento. Lo spazio di campionamento e l'insieme di tutte le possibili scelte di $n^{3/4}$ elementi da $S$ con ripetizione, ovvero $n^{n^{3/4}}$ punti. Per calcolare la probabilità dell'evento $E_1$ (legato alla variabile aleatoria $Y_1$),
+    \[
+    \mathbb{E}{[y_1^i]} = \frac{1}{2}
+    \quad
+    \Var{[y_1^i]} = \frac{1}{4}
+    \]
