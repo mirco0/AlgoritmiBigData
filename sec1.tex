@@ -215,3 +215,53 @@
     Come al solito si analizza l'aumento della confidenza all'aumentare del numero di esecuzioni dell'algoritmo. Le diverse esecuzioni sono indipendenti per cui per $k$ prove si ha la probabilità di non trovare un \emph{min-cut} $ \leq \left( 1- \frac{2}{n(n-1)}\right)^k$. Per $k = n(n-1)\log n$ 
     si ha $ \left( 1- \frac{2}{n(n-1)}\right)^k \leq e^{-2\log n} = \frac{1}{n^2}$.
     \subsection{Quick Sort}
+    Si passa ora al caso di un'altro algoritmo noto, il \emph{QuickSort}, un algoritmo di ordinamento che dato $S$ in input restituisce $S$ ordinato in output.
+    \subsubsection{Algoritmo deterministico}
+    Si descrivono i passaggi dell'algoritmo \emph{QuickSort} deterministico
+    \begin{enumerate}
+        \item Prendi il perno $y$ il primo elemento in $S$
+        \item Confronta tutti gli elementi di $S$ con $y$, a tale scopo si definiscono due insiemi \[
+            S_1 = \{ x \in S - \{y\} \mid x \leq y\} \quad S_2 = \{ x \in S-\{y\} \mid x > y\}
+        \]
+        \item Restituisci la lista $Det\_QS(S_1),y,Det\_QS(S_2)$
+    \end{enumerate}
+    \subsubsection{Algoritmo probabilistico}
+    Qui di seguito sono riportati brevemente i passaggi dell'algoritmo
+    \begin{enumerate}
+        \item Scegli un elemento per il perno $y \in_u S$
+        \item Confronta tutti gli elementi di $S$ con $y$, a tale scopo si definiscono due insiemi \[
+            S_1 = \{ x \in S - \{y\} \mid x \leq y\} \quad S_2 = \{ x \in S-\{y\} \mid x > y\}
+        \]
+        \item Restituisci la lista $QS(S_1),y,QS(S_2)$
+    \end{enumerate}
+    \subsubsection*{Analisi degli algoritmi}
+    In questo caso iniziamo analizzando l'algoritmo probabilistico. Siano $s_1,\dots,s_n$ gli elementi in $S$ ordinati, per determinare il numero di confronti eseguiti si definisce la variabile aleatoria binaria $X_{ij}$
+    \[
+        X_{ij} = \begin{cases*}
+            1 \text{ se } s_i \text{ è confrontato con } s_j\\
+            0 \text{ altrimenti }
+        \end{cases*}
+    \]
+    Sia allora $T$ la variabile che conta il numero di confronti totali durante l'esecuzione dell'algoritmo
+    \[
+        T = \sum_{i=0}^n\sum_{j>i}X_{ij}
+    \]
+    poiché si sta considerando di un algorimo probabilistico si è interessati a calcolare il valore atteso di $T$, $\mathbb{E}[T]$. Si vuole calcolare $\Pr[X_{ij} = 1]$, $s_i$ è confrontato con $s_j$ solo nel caso in cui uno dei due elementi è scelto come \emph{perno} prima che gli $j-i-1$ elementi tra $s_i$ e $s_j$ siano scelti. Il perno è scelto in modo uniforme, per cui anche gli elementi $[s_i,\dots,s_j]$ sono scelti in modo uniforme, si ottienere
+    \begin{align*}
+        &\Pr{[X_{ij} = 1]} = \frac{2}{j-i+1}\\
+        &\mathbb{E}[X_{ij}] = \frac{2}{j-i+1}
+    \end{align*}
+    Facendo uso delle proprietà del valore atteso
+    \begin{align*}
+        \mathbb{E}[T] &= \mathbb{E}[\sum_{i=0}^n\sum_{j>i}X_{ij}] = \sum_{i=0}^n\sum_{j>i}\mathbb{E}[X_{ij}]=\\
+        &= \sum_{i=0}^n\sum_{j>i}\frac{2}{j-i+1} \leq\\
+        &\leq n \underbrace{\sum_{k=1}^{n} \frac{2}{k}}_{
+            \substack{\text{numero}\\ \text{armonico}}
+        } = 2n \log n + O(n)
+    \end{align*}
+    Per cui il numero atteso di confronti nell'esecuzione del \emph{QuickSort} probabilistico è $O(n\log n)$.
+    
+    \vspace{1em}\noindent
+    Si passa ora all'analisi dell'algoritmo deterministico, ponendo come premessa un input $S$ perfettamente scelto da tutte le permutazioni di elementi. Ponendo questa premessa, se tutte le permutazioni hanno la stessa probabilità (quindi uniforme) allora anche il sottoinsieme $[s_i,\dots,s_j]$ ha probabilità uniforme.
+    
+    L'analisi dell'algoritmo in questo particolare caso è analoga alla versione probabilistica, si ottiene tempo di esecuzione $O(n \log n)$. È importante notare che nel caso deterministico è necessario che l'input sia distribuito in modo uniforme, ciò è un'assunzione molto forte.
