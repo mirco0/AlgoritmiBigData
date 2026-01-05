@@ -263,5 +263,43 @@
     
     \vspace{1em}\noindent
     Si passa ora all'analisi dell'algoritmo deterministico, ponendo come premessa un input $S$ perfettamente scelto da tutte le permutazioni di elementi. Ponendo questa premessa, se tutte le permutazioni hanno la stessa probabilità (quindi uniforme) allora anche il sottoinsieme $[s_i,\dots,s_j]$ ha probabilità uniforme.
-    
+
     L'analisi dell'algoritmo in questo particolare caso è analoga alla versione probabilistica, si ottiene tempo di esecuzione $O(n \log n)$. È importante notare che nel caso deterministico è necessario che l'input sia distribuito in modo uniforme, ciò è un'assunzione molto forte.
+    
+    \newpage
+    \subsection{Algoritmo per il Calcolo della Mediana}
+    %TODO: Inserire sezione richiami di probabilità con esempi (cupons collector)
+    Come visto in \textcolor{red}{Sezione 0} la mediana è un indice statistico. Dato $X$ un insieme non ordinato di elementi restituirene la mediana. Un algorimo deterministico banale consiste nell'ordinare $X$ e restituire l'elemento corretto, per una complessittà di $O(n\log n)$. Esiste anche un algoritmo deterministico che opera in $O(n)$.
+
+    \subsubsection{Algoritmo probabilistico}
+    L'algoritmo probabilistico prende in input $S$ un insieme di elementi da un'universo totalmente ordinato e restituisce in outupt \emph{$k+1$-esimo} elemento nell'insieme.
+    
+    L'algoritmo opera come segue
+    \begin{enumerate}
+        \item Scegli un \emph{multi-insieme} $R$ di $n^{3/4}$ elementi presi da $S$, Ordina $R$
+        \item Sia $d$ l'elemento $\left(\frac{1}{2}n^{3/4} - \sqrt{n}\right)$\emph{-esimo} più piccolo in $R$ ordinato
+        \item Sia $u$ l'elemento $\left(\frac{1}{2}n^{3/4} + \sqrt{n}\right)$\emph{-esimo} più piccolo in $R$ ordinato
+        \item Calcola l'insieme $C$ di elementi compresi tra $d$ e $u$, inoltre si definiscono $\ell_d,\ell_u$
+        \[
+            C =\{ x \in S \mid d \leq x \leq u \} \quad \ell_d = |\{ x \in S \mid x < d\}| \quad \ell_u = |\{ x \in S \mid x > u\}|
+        \]
+        \item Se $\ell_d > \frac{n}{2}$ o $\ell_u > \frac{n}{2}$ termina l'esecuzione con errore
+        \item Se $|C| < 4n^{3/4}$ ordina $C$
+        \item Restituisci in output l'elemento $\left( \lfloor \frac{n}{2}\rfloor - \ell_d +1\right)$\emph{-esimo} in $C$ ordinato.
+    \end{enumerate}
+    Facciamo chiarezza sull'algoritmo spiegando più nel dettaglio i diversi punti. Partiamo con la costruzione di $R$ da $S$.
+    \input{algorithms/median}
+    La probabilità che un elemento $u$ non finisca in $R$ in una estrazione è $1 - \frac{1}{n}$, per $k$ estrazioni indipendenti si ha $\left( 1- \frac{1}{n}\right)^{k}$ ovvero la probabilità di non inserire $u$ in $k$ estrazioni successive. Per cui la probabilità che un qualsiasi elemento $u$ di $S$ sia finito in $R$ è $1 - \left( 1- \frac{1}{n}\right)^{n^{3/4}}$.
+    \[
+        \forall u \in S \ \Pr{[u \in R]} = 1 - \left( 1- \frac{1}{n}\right)^{n^{3/4}}\approx 1 - e^{-\frac{1}{n^{3/4}}} \approx \frac{1}{n^{1/4}}
+    \]
+    \begin{center}  
+        \input{figure/figura1.tex}
+    \end{center}
+    Quindi si ottiene un \emph{multi-insieme} $R$ e due elementi $d,u$ in cui sono inclusi circa $2\sqrt{n}$ intermedi, per cui gli elementi in $R$ sono 
+
+    Si ha l'insieme $C$ per cui $|C| < \frac{n}{\log n}$ in tempo lineare.
+
+    
+
+    Con alta probabilità $\frac{1}{2}n^{3/4} - \sqrt{n}$ elementi sono minori della mediana
