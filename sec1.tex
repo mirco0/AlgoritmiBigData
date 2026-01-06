@@ -272,7 +272,7 @@
     Come visto in \textcolor{red}{Sezione 0} la mediana è un indice statistico. Dato $X$ un insieme non ordinato di elementi restituirene la mediana. Un algorimo deterministico banale consiste nell'ordinare $X$ e restituire l'elemento corretto, per una complessittà di $O(n\log n)$. Esiste anche un algoritmo deterministico che opera in $O(n)$.
 
     \subsubsection{Algoritmo probabilistico}
-    L'algoritmo probabilistico prende in input $S$ un insieme di elementi da un'universo totalmente ordinato e restituisce in outupt \emph{$k+1$-esimo} elemento nell'insieme.
+    L'algoritmo probabilistico prende in input $S$ un insieme di $2k +1$ elementi da un'universo totalmente ordinato e restituisce in outupt \emph{$k+1$-esimo} elemento nell'insieme.
     
     L'algoritmo opera come segue
     \begin{enumerate}
@@ -324,7 +324,7 @@
     Inoltre 
     \begin{align*}
         &\Pr{[y_1^i = 1] = \frac{1}{2}}\\
-        &\E{Y_1} = \E{\sum_{i=0}^{n^3/4}{y_1^i}} = \sum_{i=0}^{n^{3/4}}{\E{y_1^i}} = \frac{1}{2}n^{3/4}
+        &\E{Y_1} = \E{\sum_{i=0}^{n^{3/4}}{y_1^i}} = \sum_{i=0}^{n^{3/4}}{\E{y_1^i}} = \frac{1}{2}n^{3/4}
     \end{align*}
     Si ottiene un risultato simile per la varianza $\Var{[y_1^i]} = \frac{1}{4}$. 
 
@@ -333,20 +333,56 @@
     \begin{align*}
         \Pr{[E_1]} &= \Pr{[Y_1 < \frac{1}{2}n^{3/4} - \sqrt{n} ]} \leq\\
         &\leq \Pr{[|Y_1 - \E{Y_1}| > \sqrt{n}]} \leq\\
-        &\leq \frac{\Var{[Y_1]}}{\left(\sqrt{n}\right)^2} = \frac{1}{4n^{1/4}}
+        &\leq \frac{\Var{[Y_1]}}{\left(\sqrt{n}\right)^2} = \boxed{\frac{1}{4n^{1/4}}}
     \end{align*}
-    Per l'evento $E_2$ si ottiene un risultato simile $\Pr{[E_2]} \leq \frac{1}{4n^{1/4}}$, infine con alta probabilità $\Pr{[E_1 \cup E_2]} \leq \frac{2}{4n^{1/4}}$.
+    Per l'evento $E_2$ si ottiene un risultato simile $\Pr{[E_2]} \leq \frac{1}{4n^{1/4}}$, infine con alta probabilità $\Pr{[E_1 \cup E_2]} \leq \boxed{\frac{2}{4n^{1/4}}}$.
 
     \vspace{1em}\noindent
     Così facendo si è posto un \emph{upper-bound} alla probabilità del verificarsi dei primi due eventi $E_1,E_2$, per calcolare la probabilità di $E_3$ si definiscono altri due eventi $\mathcal{E}_{3,1}$ $\mathcal{E}_{3,2}$ che si verificano rispettivamente quando almeno $2n^{3/4}$ elementi in $C$ sono più grandi e più piccoli della mediana.
-    \[
+    \begin{align}
         \mathcal{E}_{3,1} = |\{ x \in C \mid x > M \}| > 2n^{3/4} \quad
-        \mathcal{E}_{3,2} = |\{ x \in X \mid x < M \}| > 2n^{3/4}
+        \mathcal{E}_{3,2} = |\{ x \in C \mid x < M \}| > 2n^{3/4}
+        \label{event:1}
+    \end{align}
+    Si dimostra facilmente che per $|C| > 4n^{3/4}$ almeno uno dei due eventi è verificato, poiché si assume che la mediana $M$ sia in $C$. Prendiamo in considerazione l'evento $\mathcal{E}_{3,2}$, si vuole calcolare il numero di elementi in $R$ fuori da $C$, ricordando che $|R| = n^{3/4}$
+    \[
+        |\{ x \in R \mid x > u\}| = n^{3/4} - \left(\frac{1}{2}n^{3/4}+\sqrt{n}\right) = \frac{n^{3/4}}{2} - \sqrt{n}
     \]
-    Si dimostra facilmente che per $|C| > 4n^{3/4}$ almeno uno dei due eventi è verificato.
-    \begin{proof}
-        \begin{align*}
-            |C| > 4n^{3/4} \implies \forall x \in S
-        \end{align*}
-    \end{proof}
-    % TODO: FINIRE
+    Inoltre dalla definizione di $\mathcal{E}_{3,2}$ (\ref{event:1}) allora $u$ è almeno l'elemento \emph{$\frac{1}{2}n+2n^{3/4}$-esimo} più grande in $S$ ($2n^{3/4}$ sono gli elementi più grandi della mediana $M$). Per cui almeno $\frac{1}{2}n^{3/4} - \sqrt{n}$ campioni di $R$ sono stati selezionati tra i $\frac{1}{2}n - 2n^{3/4}$ più grandi in $S$. 
+
+    \vspace{1em}
+    Sia ora $X$ la variabile aleatoria che conta il numero di campioni tra gli $\frac{1}{2}n - 2n^{3/4}$ elementi più grandi in $S$
+    \begin{gather}
+        X_i = \begin{cases*}
+            1 \text{ l'elemento \emph{i-esimo} campiona tra i più grandi}\\
+            0 \text{ altrimenti}
+        \end{cases*}\\
+        X = \sum_{i=0}^{n^{3/4}}X_i
+    \end{gather}
+    Quindi banalmente per $1/2n - 2n^{3/4}$ numero di elementi favorevoli, su $n$ numero di elementi totali
+    \[
+        \Pr{[X_i = 1]} = \frac{1/2n - 2n^{3/4}}{n}
+    \]
+    Inoltre si calcolano i valori attesi e varianze
+    \begin{gather*}
+        \E{X_i} = \E{(X_i)^2} = \frac{1}{2}- \frac{2}{n^{1/4}}\\
+        \Var{[X_i]} = \E{(X_i)^2} - \E{X_i}^2 \leq \frac{1}{4}\\
+        \E{X} = n^{3/4} \left( \frac{1}{2}- \frac{2}{n^{1/4}}\right)=\frac{1}{2}n^{3/4} - 2\sqrt{n}\\
+        \Var{[X]}\leq \frac{1}{4}n^{3/4}
+    \end{gather*}
+    Facendo uso della disuguaglianza di Chebyshev si da un \emph{bound} alla probabilità dell'evento $\mathcal{E}_{3,1}$
+    \begin{align*}
+        \Pr{[\mathcal{E}_{3,1}]} &= \Pr{[X \geq \frac{1}{2}n^{3/4} - \sqrt{n}]}\\
+        &\leq \Pr(|X- \E{X}| \geq \sqrt{n})\\
+        &\leq \frac{\Var[X]}{n} = \frac{\frac{n^{3/4}}{4}}{n} = \frac{1}{4n^{1/4}}.
+    \end{align*}
+    In modo del tutto simile $\Pr{\mathcal{E}_{3,2}}\leq \frac{1}{4n^{1/4}}$ tornando alla probabilità dell'evento principale $E_3$
+    \[
+        \Pr{[E_3]} \leq \Pr{[\mathcal{E}_{3,2}]} + \Pr{[\mathcal{E}_{3,2}]} = \boxed{\frac{1}{2n^{1/4}}}.
+    \]
+    Concludendo la probabilità fallimento e successo dell'algoritmo sono
+    \begin{align*}
+        \Pr{[\text{Fallimento}]} &= \Pr{[E_1]} + \Pr{[E_2]} + \Pr{[E_3]} \\
+        &\leq \frac{2}{4n^{1/4}} + \frac{1}{2n^{1/4}} = \frac{1}{n^{1/4}}\\
+        \Pr{[\text{Successo}]} &= 1 - \Pr{[\text{Fallimento}]} = 1 - \frac{1}{n^{1/4}}.
+    \end{align*}
