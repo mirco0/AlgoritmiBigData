@@ -1,0 +1,130 @@
+Iniziamo dando qualche definizione preliminare che permetteranno di poter analizzare al meglio gli algoritmi delle sezioni successive
+
+\subsection{Spazi di campionamento e funzioni di probabilità}
+\begin{definition}[Spazio di campionamento]
+    Uno \emph{spazio di campionamento} $\Omega$ è un insisme di elementi che descrivono gli esiti di un esperimento di interesse
+\end{definition}
+\vspace{1em}
+I sottoinsiemi di $\Omega$ prendono il nome di \emph{eventi}. Un evento $A$ accade se l'esito di un esperimento è un elemento di $A$.
+\vspace{1em}
+\begin{definition}[Funzione di probabilità]
+    Una funzione di probabilità (discreta) è un funzione $\Pr: \Omega \to [0,1]$ che soddisfa le seguenti condizioni
+    \begin{itemize}
+        \item $\Pr{[\Omega]} = 1$
+        \item Per ogni sequenza finita o numerabile di eventi mutualmente disgiunti a due a due $E_1,E_2\dots,E_n$ si ha che 
+        \[
+            \Pr{\left[\bigcup_{i\geq 1}^{n}E_i\right]} = \sum_{i=1}^{n}\Pr{[E_i]}
+        \]
+        \item Per due eventi disgiunti $E_1,E_2$
+        \[
+            E_1 \cap E_2 = \emptyset \quad \Pr{[E_1 cap E_2]} = 0 
+        \]
+        \item Per due eventi non disgiunti $E_1,E_2$
+        \begin{align*}
+            E_1 &= (E_1 \cap E_2) \cup (E_1 \cap \bar{E_2})\\
+            \Pr{[E_1]} &= \Pr(E_1 \cap E_2) + \Pr{[E_1 \cap \bar{E_2}]}
+        \end{align*}
+        \item Per 2 eventi $E_1,E_2$
+        \[
+            \Pr{[E_1 \cup E_2]} = \Pr{[E_1]} + \Pr{[E_2]} - \Pr{[E_1 \cap E_2]}
+        \]
+    \end{itemize}
+\end{definition}
+Da questi punti si arriva a un risultato noto, conosciuto come \emph{Union-buond} applicabile a una sequenza di eventi finiti o numerabili
+    \[
+        \Pr{\left[\bigcup_{i\geq 1}^{\infty}E_i\right]} \leq \sum_{i=1}^{\infty}\Pr{[E_i]}
+    \]
+    \begin{definition}[Spazio di probabilità]
+        Uno \emph{spazio di probabilità} contiene
+        \begin{itemize}
+            \item Uno spazio di campionamento $\Omega$
+            \item Una famiglia di insiemii $F$ che rappresenta tutti i possibili eventi $E \in F, E \subseteq \Omega$
+            \item Una funzione di probabilità $\Pr: F \to [0,1]$
+        \end{itemize}
+    \end{definition}
+
+
+Passando invece al concetto di \emph{probabilità condizionata} di eventi $E_1,E_2$. la probabilità condizionata di $E_1$ rispetto a un evento $E_2$ è la probabilità che si verifichi $E_1$, sapendo che $E_2$ è verificato
+\begin{definition}[Probabilità condizionata]
+    La probabilità condizionata di $E_1$ dato $E_2$ è
+    \begin{align*}    
+        &\Pr{[E_1|E_2]} = \frac{\Pr{[E_1 \cap E_2]}}{\Pr{[E_2]}}\\
+        &\Pr{[E_1 \cap E_2]} = \Pr{[E_1|E_2]}\Pr{[E_2]}
+    \end{align*}
+\end{definition}
+È possibile calcolare la probabilità di un evento mediante le probabilità condizionate di una serie di eventi  disgiuti, i quali presi complessivamente formano lo \emph{spazio di campionamento}. Arriviamo a un altro risultato importante
+\begin{theorem}[Teorema delle probabilità totali]
+    Siano $E_1,E_2,\dots,E_n$ eventi mutualmente disgiuti tali per cui $\bigcup_{i=1}^{n} E_i = \Omega$. La probabilità di un evento arbitrario $E \subset \Omega$ può essere espressa come
+    \begin{align*}
+        \Pr{[E]} &= \sum_{i=1}^{n}\Pr{[E_i \cap E]}\\
+        &= \Pr{[E|E_1]}\cdot\Pr{[E_1]} + \dots + \Pr{[E|E_m]}\cdot\Pr{[E_m]}\\
+        &= \sum_{i=1}^{n}\Pr{[E|E_i]}\cdot\Pr{[E_i]}
+    \end{align*}
+\end{theorem}
+
+\begin{theorem}[Teorema di Bayes]
+    Siano $E_1,E_2,\dots,E_n$ eventi disgiuti tali per cui $\bigcap_{i=1}^{n} E_i = \Omega$, la probabilità condizionata di $E_i$ dato un evento arbitratio $E$ può essere espressa 
+    \[
+    \Pr[E_i|E] = \frac{\Pr[E|E_i]\Pr[E_i]}{\Pr[E|E_1]\Pr[E_1]+ \dots + \Pr[E|E_n]\Pr[E_n]} = \frac{\Pr\left[E|E_i\right]\Pr\left[E_i\right]}{\Pr\left[E\right]}
+    \]
+\end{theorem}
+\vspace{1em}
+Da questo teorema possiamo derivare delle proprietà interessanti, come una definizione alternativa  di eventi indipendenti, due eventi $E_1,E_2$ si dicono indipendenti se $\Pr[E_1|E_2] = \Pr[E_1]$, e se e solo se $\Pr\left[E_1 \cap E_2 \right] = \Pr[E_1] \cdot \Pr[E_2]$. 
+\begin{theorem}
+    \label{thm:1}
+    Una sequenza di eventi $E_1,\dots,E_k$ sono mutualmente indipendenti se e solo se per qualsiasi sottoinsieme di eventi selezionati $I \subset \{1,\dots,k\}$
+    \[
+        \Pr\left[ \bigcap_{i \in I} E_i\right] = \prod_{i\in I}\Pr\left[E_i\right]
+    \]
+\end{theorem}
+
+\subsection{Variabili aleatorie}
+Spostiamo l'attenzione su un altro concetto importante molto utile nelle sezioni successive, le variabili aleatorie. Faremo uso principalmente di variabili aleatorie discrete. Quando si studia un evento probabilistico spesso si è interessati a dei valori associati agli eventi. Una qualsiasi funzione dello spazio di campionamento ai reali prende il nome di \emph{variabile aleatoria}.
+
+\begin{definition}[Variabile aleatoria discreta]
+    Una variabile aleatoria $X$ su $\Omega$ è una funzione a valori reali $X: \Omega \to \mathbb{R}$ è detta discreta se assume un numero finito di valori
+\end{definition}
+
+Per una variabile aleatoria discreta $X$ e un valore $a$ l'evento $X=a$ include tutti gli eventi di $\Omega$ in cui $X$ assume il valore $a$ $X=a$ rappresenta l'insieme \[
+    \{ s \in \Omega \mid X(s) = a \}
+\]
+Si definisce la probabilità dell'evento $E: X=a$ come \[
+    \Pr\left[X=a\right] = \sum_{\substack{s \in \Omega:\\X(s) = a}}
+    \Pr\left[s\right]
+\]
+
+Inoltre la nozione di \emph{indipendenza} può essere estesa alle variabili aleatorie
+\begin{definition}[indipendenza variabili aleatorie]
+    Due variabili aleatorie $X,Y$ sono indipendenti se e solo se
+    \[
+        \Pr\left[ (X=x \cap Y = y)\right] = \Pr\left[X=x\right] \cdot \Pr\left[Y=y\right]
+    \]
+    In modo analogo le variabili $X_1,\dots,X_n$ possono essere dimostrate indipendenti con il teorema \ref{thm:1} 
+\end{definition}
+Definiamo ora un concetto simile, la $k$\emph{-indipendenza}
+\begin{definition}[k-indipendenza]
+    Sia $W = \{ x_1,\dots,x_n\}$ un insieme di $n$ variabili aleatorie. Si dice che $W$ è $k$\emph{-wise} indipendente se per $k\leq n$
+    \[
+        \Pr\left[\bigcap_{j=1}^kX_{i_j} = x_{i_j} \right] = \prod_{j=1}^{k}\Pr\left[ X_{i_j} = x_{i_j}\right]
+    \]
+    Per ogni sottoinsieme $\{X_{i_1},\dots,X_{i_k}\} \subseteq W$ di $k$ variabili aleatorie. 
+    
+    Per $k = n$ l'insieme di variabili è detto completamente indipendente
+
+    \begin{definition}[Valore atteso]
+        Il valore atteso di una variabile aleatoria discreta $X$ denotato $\E{X}$ è dato da
+        \[
+            \E{X} = \sum_{i=0}i\Pr\left[X=i\right]
+        \]
+        $i$ è definita su tutti i valori che $X$ può assumere
+    \end{definition}
+    Il valore atteso ha inoltre la proprietà di linearità, come enunciato dal seguente teorema
+    \begin{theorem}[Linearità del valore atteso]
+        \[
+            \E{\sum_{i=1}^{n}X_i} = \sum_{i=1}^{n}\E{X_i}
+        \]
+    \end{theorem}
+\end{definition}
+
+\vspace{1em}
+Siano $X,Y$ due variabili indipendenti $\E{X\cdot Y} = \E{X} \cdot \E{Y}$, l'uguaglianza non è valida per variabili non indipendenti. 
