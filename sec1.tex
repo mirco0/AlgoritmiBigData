@@ -24,7 +24,7 @@
             Falso \text{ altrimenti}
         \end{cases*}
     \end{equation*}
-    Assumendo che la scelta di $r \in_u \{1,  \dots, 100d$ sia $O(1)$ e il calcolo di $f(r)$ e $g(r)$ sia $O(d)$, la complessità dell'algoritmo è $O(d)$.
+    Assumendo che la scelta di $r \in_u \{1,  \dots, 100d\}$ sia $O(1)$ e il calcolo di $f(r)$ e $g(r)$ sia $O(d)$, la complessità dell'algoritmo è $O(d)$.
 
     L'algoritmo probabilistico è molto migliore rispetto alla sua controparte deterministica, ma questo miglioramento comporta un costo non indifferente, l'algoritmo probabilistico in qualche caso potrebbe sbagliare.
 
@@ -266,7 +266,6 @@
 
     L'analisi dell'algoritmo in questo particolare caso è analoga alla versione probabilistica, si ottiene tempo di esecuzione $O(n \log n)$. È importante notare che nel caso deterministico è necessario che l'input sia distribuito in modo uniforme, ciò è un'assunzione molto forte.
     
-    \newpage
     \subsection{Algoritmo per il Calcolo della Mediana}
     %TODO: Inserire sezione richiami di probabilità con esempi (cupons collector)
     Come visto in \textcolor{red}{Sezione 0} la mediana è un indice statistico. Dato $X$ un insieme non ordinato di elementi restituirene la mediana. Un algorimo deterministico banale consiste nell'ordinare $X$ e restituire l'elemento corretto, per una complessittà di $O(n\log n)$. Esiste anche un algoritmo deterministico che opera in $O(n)$.
@@ -331,8 +330,8 @@
     \vspace{1em}\noindent
     Per la disuguaglianza di Chebyshev si ha
     \begin{align*}
-        \Pr{[E_1]} &= \Pr{[Y_1 < \frac{1}{2}n^{3/4} - \sqrt{n} ]} \leq\\
-        &\leq \Pr{[|Y_1 - \E{Y_1}| > \sqrt{n}]} \leq\\
+        \Pr{[E_1]} &= \Pr{\left[Y_1 < \frac{1}{2}n^{3/4} - \sqrt{n} \right]} \leq\\
+        &\leq \Pr{\left[|Y_1 - \E{Y_1}| > \sqrt{n}\right]} \leq\\
         &\leq \frac{\Var{[Y_1]}}{\left(\sqrt{n}\right)^2} = \boxed{\frac{1}{4n^{1/4}}}
     \end{align*}
     Per l'evento $E_2$ si ottiene un risultato simile $\Pr{[E_2]} \leq \frac{1}{4n^{1/4}}$, infine con alta probabilità $\Pr{[E_1 \cup E_2]} \leq \boxed{\frac{2}{4n^{1/4}}}$.
@@ -376,7 +375,7 @@
         &\leq \Pr(|X- \E{X}| \geq \sqrt{n})\\
         &\leq \frac{\Var[X]}{n} = \frac{\frac{n^{3/4}}{4}}{n} = \frac{1}{4n^{1/4}}.
     \end{align*}
-    In modo del tutto simile $\Pr{\mathcal{E}_{3,2}}\leq \frac{1}{4n^{1/4}}$ tornando alla probabilità dell'evento principale $E_3$
+    In modo del tutto simile $\Pr{\left[\mathcal{E}_{3,2}\right]}\leq \frac{1}{4n^{1/4}}$ tornando alla probabilità dell'evento principale $E_3$
     \[
         \Pr{[E_3]} \leq \Pr{[\mathcal{E}_{3,2}]} + \Pr{[\mathcal{E}_{3,2}]} = \boxed{\frac{1}{2n^{1/4}}}.
     \]
@@ -384,5 +383,5 @@
     \begin{align*}
         \Pr{[\text{Fallimento}]} &= \Pr{[E_1]} + \Pr{[E_2]} + \Pr{[E_3]} \\
         &\leq \frac{2}{4n^{1/4}} + \frac{1}{2n^{1/4}} = \frac{1}{n^{1/4}}\\
-        \Pr{[\text{Successo}]} &= 1 - \Pr{[\text{Fallimento}]} = 1 - \frac{1}{n^{1/4}}.
+        \Pr{[\text{Successo}]} &= 1 - \Pr{[\text{Fallimento}]} \geq 1 - \frac{1}{n^{1/4}}.
     \end{align*}
