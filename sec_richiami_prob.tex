@@ -1,132 +1,164 @@
-Iniziamo dando qualche definizione preliminare che permetterà di poter analizzare al meglio gli algoritmi delle sezioni successive.
+Iniziamo introducendo i concetti fondamentali della teoria della probabilità, necessari per analizzare rigorosamente le prestazioni e la correttezza degli algoritmi probabilistici che verranno presentati nelle sezioni successive.
 
 \subsection{Spazi di campionamento e funzioni di probabilità}
+
+Il punto di partenza per ogni analisi probabilistica è la definizione dell'ambiente in cui operiamo.
+
 \begin{definition}[Spazio di campionamento]
-    Uno \emph{spazio di campionamento} $\Omega$ è un insieme di elementi che descrivono gli esiti di un esperimento di interesse.
+    Uno \emph{spazio di campionamento} $\Omega$ è l'insieme di tutti i possibili esiti di un esperimento aleatorio. I sottoinsiemi di $\Omega$ prendono il nome di \emph{eventi}. Un evento $A$ si dice verificato se l'esito dell'esperimento è un elemento di $A$.
 \end{definition}
-\vspace{1em}
-I sottoinsiemi di $\Omega$ prendono il nome di \emph{eventi}. Un evento $A$ accade se l'esito di un esperimento è un elemento di $A$.
-\vspace{1em}
+
+Per quantificare la probabilità che un evento si verifichi, associamo allo spazio di campionamento una misura
 \begin{definition}[Funzione di probabilità]
-    Una funzione di probabilità (discreta) è un funzione $\Pr: \Omega \to [0,1]$ che soddisfa le seguenti condizioni:
+    Una funzione di probabilità è una funzione $\Pr: \mathcal{F} \to [0,1]$ (dove $\mathcal{F}$ è la famiglia degli eventi) che soddisfa i seguenti assiomi:
     \begin{itemize}
-        \item $\Pr{[\Omega]} = 1$
-        \item Per ogni sequenza finita o numerabile di eventi mutualmente disgiunti a due a due $E_1,E_2\dots,E_n$ si ha che 
+        \item \textbf{Normalizzazione:} $\Pr{[\Omega]} = 1$.
+        \item \textbf{Additività numerabile:} Per ogni sequenza di eventi a due a due disgiunti $E_1, E_2, \dots$ si ha:
         \[
-            \Pr{\left[\bigcup_{i\geq 1}^{n}E_i\right]} = \sum_{i=1}^{n}\Pr{[E_i]}
-        \]
-        \item Per due eventi disgiunti $E_1,E_2$:
-        \[
-            E_1 \cap E_2 = \emptyset \implies \Pr{[E_1 \cap E_2]} = 0 
-        \]
-        \item Per due eventi non disgiunti $E_1,E_2$:
-        \begin{align*}
-            E_1 &= (E_1 \cap E_2) \cup (E_1 \cap \bar{E_2})\\
-            \Pr{[E_1]} &= \Pr{[E_1 \cap E_2]} + \Pr{[E_1 \cap \bar{E_2}]}
-        \end{align*}
-        \item Per 2 eventi $E_1,E_2$:
-        \[
-            \Pr{[E_1 \cup E_2]} = \Pr{[E_1]} + \Pr{[E_2]} - \Pr{[E_1 \cap E_2]}
+            \Pr{\left[\bigcup_{i=1}^{\infty}E_i\right]} = \sum_{i=1}^{\infty}\Pr{[E_i]}
         \]
     \end{itemize}
 \end{definition}
-Da questi punti si arriva a un risultato noto, conosciuto come \emph{Union-bound}, applicabile a una sequenza di eventi finiti o numerabili:
-    \[
-        \Pr{\left[\bigcup_{i\geq 1}^{\infty}E_i\right]} \leq \sum_{i=1}^{\infty}\Pr{[E_i]}
-    \]
-    \begin{definition}[Spazio di probabilità]
-        Uno \emph{spazio di probabilità} contiene:
-        \begin{itemize}
-            \item Uno spazio di campionamento $\Omega$;
-            \item Una famiglia di insiemi $F$ che rappresenta tutti i possibili eventi $E \in F, E \subseteq \Omega$;
-            \item Una funzione di probabilità $\Pr: F \to [0,1]$.
-        \end{itemize}
-    \end{definition}
 
+Da questi assiomi fondamentali derivano diverse proprietà utili per il calcolo probabilistico, tra cui la probabilità del complemento $\Pr[\bar{E}] = 1 - \Pr[E]$ e il principio di inclusione-esclusione per eventi non disgiunti:
+\[
+    \Pr{[E_1 \cup E_2]} = \Pr{[E_1]} + \Pr{[E_2]} - \Pr{[E_1 \cap E_2]}
+\]
 
-Passando invece al concetto di \emph{probabilità condizionata} di eventi $E_1,E_2$. La probabilità condizionata di $E_1$ rispetto a un evento $E_2$ è la probabilità che si verifichi $E_1$, sapendo che $E_2$ è verificato.
+Un risultato noto è lo \emph{Union-bound}, che permette di limitare la probabilità che si verifichi almeno uno tra diversi eventi, senza conoscerne la dipendenza
+\[
+    \Pr{\left[\bigcup_{i=1}^{n}E_i\right]} \leq \sum_{i=1}^{n}\Pr{[E_i]}
+\]
+
+\subsection{Probabilità condizionata e Teoremi fondamentali}
+
+Spesso l'esito di un esperimento è influenzato da informazioni parziali già disponibili. Questo concetto è formalizzato dalla probabilità condizionata.
+
 \begin{definition}[Probabilità condizionata]
-    La probabilità condizionata di $E_1$ dato $E_2$ è
-    \begin{align*}    
-        &\Pr{[E_1|E_2]} = \frac{\Pr{[E_1 \cap E_2]}}{\Pr{[E_2]}}\\
-        &\Pr{[E_1 \cap E_2]} = \Pr{[E_1|E_2]}\Pr{[E_2]}
-    \end{align*}
+    La probabilità condizionata di un evento $E_1$ dato il verificarsi di un evento $E_2$ (con $\Pr[E_2] > 0$) è definita come:
+    \[
+        \Pr{[E_1|E_2]} = \frac{\Pr{[E_1 \cap E_2]}}{\Pr{[E_2]}}
+    \]
 \end{definition}
-È possibile calcolare la probabilità di un evento mediante le probabilità condizionate di una serie di eventi disgiunti, i quali presi complessivamente formano lo \emph{spazio di campionamento}. Arriviamo a un altro risultato importante.
+
+L'introduzione della probabilità condizionata ci permette di definire il concetto di \textbf{indipendenza}: due eventi $E_1, E_2$ sono indipendenti se la conoscenza del verificarsi di uno non altera la probabilità dell'altro, ovvero $\Pr[E_1|E_2] = \Pr[E_1]$, che equivale a richiedere $\Pr[E_1 \cap E_2] = \Pr[E_1] \cdot \Pr[E_2]$.
+
+Per analizzare eventi complessi che dipendono da diverse `'cause'' disgiunte, utilizziamo il Teorema delle Probabilità Totali e il Teorema di Bayes.
+
 \begin{theorem}[Teorema delle probabilità totali]
-    Siano $E_1,E_2,\dots,E_n$ eventi mutualmente disgiunti tali per cui $\bigcup_{i=1}^{n} E_i = \Omega$. La probabilità di un evento arbitrario $E \subset \Omega$ può essere espressa come:
-    \begin{align*}
-        \Pr{[E]} &= \sum_{i=1}^{n}\Pr{[E_i \cap E]}\\
-        &= \Pr{[E|E_1]}\cdot\Pr{[E_1]} + \dots + \Pr{[E|E_n]}\cdot\Pr{[E_n]}\\
-        &= \sum_{i=1}^{n}\Pr{[E|E_i]}\cdot\Pr{[E_i]}
-    \end{align*}
+    Sia $E_1, E_2, \dots, E_n$ una partizione dello spazio campionario $\Omega$ (ovvero eventi mutualmente disgiunti $\bigcup_{i=1}^{n} E_i = \Omega$.). Per ogni evento $E \subseteq \Omega$ vale:
+    \[
+        \Pr{[E]} = \sum_{i=1}^{n}\Pr{[E|E_i]}\cdot\Pr{[E_i]}
+    \]
 \end{theorem}
 
 \begin{theorem}[Teorema di Bayes]
     Siano $E_1,E_2,\dots,E_n$ eventi disgiunti tali per cui $\bigcup_{i=1}^{n} E_i = \Omega$, la probabilità condizionata di $E_i$ dato un evento arbitrario $E$ può essere espressa come:
     \[
-    \Pr[E_i|E] = \frac{\Pr[E|E_i]\Pr[E_i]}{\Pr[E|E_1]\Pr[E_1]+ \dots + \Pr[E|E_n]\Pr[E_n]} = \frac{\Pr\left[E|E_i\right]\Pr\left[E_i\right]}{\Pr\left[E\right]}
-    \]
-\end{theorem}
-\vspace{1em}
-Da questo teorema possiamo derivare delle proprietà interessanti, come una definizione alternativa di eventi indipendenti. Due eventi $E_1,E_2$ si dicono indipendenti se $\Pr[E_1|E_2] = \Pr[E_1]$, e se e solo se $\Pr\left[E_1 \cap E_2 \right] = \Pr[E_1] \cdot \Pr[E_2]$. 
-\begin{theorem}
-    \label{thm:1}
-    Una sequenza di eventi $E_1,\dots,E_k$ sono mutualmente indipendenti se e solo se per qualsiasi sottoinsieme di eventi selezionati $I \subset \{1,\dots,k\}$
-    \[
-        \Pr\left[ \bigcap_{i \in I} E_i\right] = \prod_{i\in I}\Pr\left[E_i\right]
+    \Pr[E_i|E] = \frac{\Pr[E|E_i]\Pr[E_i]}{\sum_{j=1}^n \Pr[E|E_j]\Pr[E_j]} = \frac{\Pr\left[E|E_i\right]\Pr\left[E_i\right]}{\Pr\left[E\right]}
     \]
 \end{theorem}
 
 \subsection{Variabili aleatorie}
-Spostiamo l'attenzione su un altro concetto importante molto utile nelle sezioni successive: le variabili aleatorie. Faremo uso principalmente di variabili aleatorie discrete. Quando si studia un evento probabilistico spesso si è interessati a dei valori associati agli eventi. Una qualsiasi funzione dallo spazio di campionamento ai reali prende il nome di \emph{variabile aleatoria}.
+
+In molte applicazioni non siamo interessati all'esito elementare dell'esperimento, ma a un valore numerico ad esso associato (ad esempio, il tempo di esecuzione di un algoritmo).
 
 \begin{definition}[Variabile aleatoria discreta]
-    Una variabile aleatoria $X$ su $\Omega$ è una funzione a valori reali $X: \Omega \to \mathbb{R}$; è detta discreta se assume un numero finito di valori.
-\end{definition}
-
-Per una variabile aleatoria discreta $X$ e un valore $a$, l'evento $X=a$ include tutti gli eventi di $\Omega$ in cui $X$ assume il valore $a$. $X=a$ rappresenta l'insieme: \[
-    \{ s \in \Omega \mid X(s) = a \}
-\]
-Si definisce la probabilità dell'evento $E: X=a$ come: \[
-    \Pr\left[X=a\right] = \sum_{\substack{s \in \Omega:\\X(s) = a}}
-    \Pr\left[s\right]
-\]
-
-Inoltre la nozione di \emph{indipendenza} può essere estesa alle variabili aleatorie.
-\begin{definition}[Indipendenza variabili aleatorie]
-    Due variabili aleatorie $X,Y$ sono indipendenti se e solo se
-    \[
-        \Pr\left[ (X=x \cap Y = y)\right] = \Pr\left[X=x\right] \cdot \Pr\left[Y=y\right]
-    \]
-    In modo analogo le variabili $X_1,\dots,X_n$ possono essere dimostrate indipendenti con il teorema \ref{thm:1}.
-\end{definition}
-
-Definiamo ora un concetto simile, la $k$\emph{-indipendenza}.
-\begin{definition}[k-indipendenza]
-    Sia $W = \{ x_1,\dots,x_n\}$ un insieme di $n$ variabili aleatorie. Si dice che $W$ è $k$\emph{-wise} indipendente se per $k\leq n$:
-    \[
-        \Pr\left[\bigcap_{j=1}^kX_{i_j} = x_{i_j} \right] = \prod_{j=1}^{k}\Pr\left[ X_{i_j} = x_{i_j}\right]
-    \]
-    Per ogni sottoinsieme $\{X_{i_1},\dots,X_{i_k}\} \subseteq W$ di $k$ variabili aleatorie. 
-    
-    Per $k = n$ l'insieme di variabili è detto completamente indipendente.
+    Una variabile aleatoria $X$ è una funzione $X: \Omega \to \mathbb{R}$. Essa si dice discreta se la sua immagine è un insieme finito o infinito numerabile.
 \end{definition}
 
 \begin{definition}[Valore atteso]
-    Il valore atteso di una variabile aleatoria discreta $X$ denotato $\E{X}$ è dato da
+    Il valore atteso di una variabile aleatoria discreta $X$, denotato con $\E{X}$, è definito come:
     \[
-        \E{X} = \sum_{x}x\Pr\left[X=x\right]
+        \E{X} = \sum_{i=1}^{n}i\Pr\left[X=x\right]
     \]
-    dove la somma è su tutti i valori $x$ che $X$ può assumere.
 \end{definition}
 
-Il valore atteso ha inoltre la proprietà di linearità, come enunciato dal seguente teorema:
-\begin{theorem}[Linearità del valore atteso]
-    \[
-        \E{\sum_{i=1}^{n}X_i} = \sum_{i=1}^{n}\E{X_i}
-    \]
-\end{theorem}
+Una proprietà fondamentale per lo studio degli algoritmi probabilistici è la \textbf{linearità del valore atteso}, la quale afferma che il valore atteso della somma di più variabili aleatorie è pari alla somma dei loro valori attesi, \emph{indipendentemente} dal fatto che esse siano indipendenti o meno:
+\[
+    \E{\sum_{i=1}^{n}X_i} = \sum_{i=1}^{n}\E{X_i}
+\]
 
-\vspace{1em}
-Siano $X,Y$ due variabili indipendenti $\E{X\cdot Y} = \E{X} \cdot \E{Y}$; l'uguaglianza non è valida per variabili non indipendenti.
+Infine, estendiamo il concetto di indipendenza alle variabili aleatorie. Un insieme di variabili $X_1, \dots, X_n$ è detto \emph{$k$-wise indipendente} se ogni sottoinsieme di $k$ variabili soddisfa la condizione di indipendenza numerica. Se questa condizione vale per $k=n$, le variabili si dicono completamente indipendenti.
+
+Anche il valore atteso può essere condizionato a un particolare evento, sia $X$ una variabile aleatorie e $\mathcal{E}$ un evento, il valore atteso di $X$ condizionato $\mathcal{E}$ è definito come 
+\[
+    \E{X|\mathcal{E}} = \sum_{x}x\Pr{\left[X = x|\mathcal{E}\right]}
+\]
+con $x$ valori assumibili da $X$.
+
+La \emph{varianza} misura quanto il valore di una variabile aleatoria si discosta globalmente dal valore atteso.
+
+
+\begin{definition}[Varianza]
+    La varianza su $X$ è definita come
+    \[
+    \Var\left[X\right] = \E{\left(X-\E{X}^2\right)} = \E{X^2} - \E{X}^2
+    \]
+\end{definition}
+La varianza di una variabile aleatoria è calcolata sommando il prodotto del quadrato della differenza tra il valore assunto e il valore atteso, con la probabilità che tale variabile assuma quei valori.
+Sia $\mu = \E{X}$ e $X$ una variabile aleatoria che assume i valori $\{1,\dots,n\}$
+\[
+    \Var[X] = \sum_{k=1}^{n}(k-\mu)^2\Pr{[X=k]}
+\]
+La deviazione standard invece si definisce come segue
+    \[
+        \sigma[X] = \sqrt{\Var[X]}
+    \]
+
+\subsection{Distribuzioni di probabilità}
+Una distribuzione di probabilità è un modello matematico che associa una probabilità a ogni possibile risultato di una variabile aleatoria. Ne esistono diversi tipi, tra cui si presentano la \emph{Distribuzione binomiale} e la \emph{Distribuzione geometrica}.
+
+\begin{definition}[Distribuzione binomiale]
+    Si supponga di eseguire un esperimento la cui probabilità di successo è $p \in [0,1]$, la probabilità di fallimento sarà dunque $1-p$. L'esperimento è descritto da una variabile aleatoria $Y$ così definita
+    \[
+        Y = \begin{cases*}
+            1 \text{ se l'esperimento ha successo}\\
+            0 \text{ altrimenti}
+        \end{cases*}
+    \]
+    $Y$ è una variabile aleatoria binaria che assume valori \{0,1\}, $Y$ è chiamata variabile bernoulliana.
+\end{definition}
+\emph{Osservazione:}\[
+    \E{Y} = p\cdot1 + (1-p)\cdot 0 = p = \Pr[Y=1]
+\]
+
+Una sequenza di $n$ esperimenti indipendenti, ogniuno con probabilità di successo $p$, è chiamata \emph{processo di Bernoulli}.
+
+Sia $X$ la variabile aleatoria che conta il numero di successo negli $n$ esperimenti con probabilità di successo $p$, $X$ ha distribuzione binomiale, denotata $X\sim Bin(n,p)$ ed è definita dalla seguente distribuzione di probabilità
+\[
+    \forall j = 0,\dots,n \quad \Pr\left[X = j\right] = \binom{n}{j}p^{j}\left(1-p\right)^{n-j}
+\]
+
+il fattore $p^j$ rappresenta i $j$ successi, al contrario $(1-p)^{n-j}$ rappresenta gli $n-j$ fallimenti.
+
+Passando ora al calcolo del valore atteso di $X$ (variabile aleatoria con distribuizione binomiale)
+\begin{align*}    
+    \E{X} &= \sum_{j=0}^{n}j\binom{n}{j}p^j\left(1-p\right)^{n-j}\\
+    &= \sum_{j=0}^{n}j \frac{n!}{\left(n-j\right)! j!}p^j\left(1-p\right)^{n-j} = \sum_{j=1}^{n}\frac{\left(n-1\right)!}{\left(j-1\right)!\left(n-j\right)!}p^j\left(1-p\right)^{n-j}\\
+    &= np\sum_{j=1}^{n}\frac{\left(n-1\right)!}{\left(j-1\right)!\left(\left(n-1\right)-\left(j-1\right)\right)!}p^{j-1}\left(1-p\right)^{((n-1)-(j-1))}\\
+    \substack{(k = j-1)} &= np\sum_{k=0}^{n-1}\frac{\left(n-1\right)!}{k!\left(\left(n-1\right)-k\right)!}p^{k}\left(1-p\right)^{(n-1)-k}\\
+    &= np \sum_{k=0}^{n-1} \binom{n-1}{k}p^k(1-p)^{(n-1)-k} = np
+\end{align*}
+
+Si fa presente, come, sfruttando la linearità del valore atteso, quest'ultimo può essere calcolato così: 
+
+se $X\sim Bin(n,p)$ allora $X=\#Successi$ su $n$ prove ogniunga delle quali con probabilità di successo $p$ $Y_i$ è la variabile aleatoria che tiene conto del successo per ogni esperimento \emph{i-esimo} come da un risultato precedente $\E{Y_i} = \Pr{[Y_i = 1]} = p$
+\[
+    X = \sum_{i = 1}^nY_i \implies \E{X} = \E{\sum_{i = 1}^n Y_i} = \sum_{i = 1}^n\E{Y_i} = np
+\] 
+
+Similmente si procede con il calcolo della varianza di $X$ (variabile binomiale)
+\begin{align*}
+    \E{X^2} &= \sum_{j=0}^{n}\binom{n}{j}{p^j(1-p)^{n-j}}j^2\\
+    &= \sum_{j=0}^{n}\frac{n!}{\left(n-j\right)!}{\left((j-j^2)+j\right)}\\
+    &= \sum_{j=0}^{n} \frac{n!(j-j^2)}{\left(n-j\right)!}{p^j(1-p)^{n-j}} + \sum_{j=0}^{n} \frac{n!j}{\left(n-j\right)!}{p^j(1-p)^{n-j}} \\
+    &= np \sum_{j=0}^{n}\frac{\left(n-1\right)}{\left(n-j\right)!\left(j-1\right)!}{p^{j-1}(1-p)^{n-j}}\\
+    &= n(n-1)p^2 + np\\
+    \Var[X] &=\E{X^2}-\left(\E{X}\right)^2 = n(n-1)p^2+np -n^2p^2 = \boxed{np(1-p)}
+\end{align*}
+In modo alternativo possiamo valutare la varianza delle variabili $Y_i$  
+\begin{align*}
+    \Var[X] &= \Var\left[\sum_{i=1}^n{Y_i}\right] = \sum_{i=1}^n\E{(Y_i-\E{Y_i}^2)}\\
+    &= n(p(1-p)^2 + (1-p)(-p)^2) = \boxed{np(1-p)} 
+\end{align*}
