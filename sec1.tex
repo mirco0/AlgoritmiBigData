@@ -246,14 +246,14 @@
     \[
         T = \sum_{i=0}^n\sum_{j>i}X_{ij}
     \]
-    poiché si sta considerando di un algorimo probabilistico si è interessati a calcolare il valore atteso di $T$, $\mathbb{E}[T]$. Si vuole calcolare $\Pr[X_{ij} = 1]$, $s_i$ è confrontato con $s_j$ solo nel caso in cui uno dei due elementi è scelto come \emph{perno} prima che gli $j-i-1$ elementi tra $s_i$ e $s_j$ siano scelti. Il perno è scelto in modo uniforme, per cui anche gli elementi $[s_i,\dots,s_j]$ sono scelti in modo uniforme, si ottienere
+    poiché si sta considerando di un algorimo probabilistico si è interessati a calcolare il valore atteso di $T$, $\E{T}$. Si vuole calcolare $\Pr[X_{ij} = 1]$, $s_i$ è confrontato con $s_j$ solo nel caso in cui uno dei due elementi è scelto come \emph{perno} prima che gli $j-i-1$ elementi tra $s_i$ e $s_j$ siano scelti. Il perno è scelto in modo uniforme, per cui anche gli elementi $[s_i,\dots,s_j]$ sono scelti in modo uniforme, si ottienere
     \begin{align*}
         &\Pr{[X_{ij} = 1]} = \frac{2}{j-i+1}\\
-        &\mathbb{E}[X_{ij}] = \frac{2}{j-i+1}
+        &\E{X_{ij}} = \frac{2}{j-i+1}
     \end{align*}
     Facendo uso delle proprietà del valore atteso
     \begin{align*}
-        \mathbb{E}[T] &= \mathbb{E}[\sum_{i=0}^n\sum_{j>i}X_{ij}] = \sum_{i=0}^n\sum_{j>i}\mathbb{E}[X_{ij}]=\\
+        \E{T} &= \E{\sum_{i=0}^n\sum_{j>i}X_{ij}} = \sum_{i=0}^n\sum_{j>i}\E{X_{ij}}=\\
         &= \sum_{i=0}^n\sum_{j>i}\frac{2}{j-i+1} \leq\\
         &\leq n \underbrace{\sum_{k=1}^{n} \frac{2}{k}}_{
             \substack{\text{numero}\\ \text{armonico}}
@@ -317,7 +317,35 @@
     \end{align*}
     È necessario uno solo di questi eventi per il fallimento dell'algoritmo, si calcolano le probabilità di avvenimento. Lo spazio di campionamento e l'insieme di tutte le possibili scelte di $n^{3/4}$ elementi da $S$ con ripetizione, ovvero $n^{n^{3/4}}$ punti. Per calcolare la probabilità dell'evento $E_1$ (legato alla variabile aleatoria $Y_1$),
     \[
-    \mathbb{E}{[y_1^i]} = \frac{1}{2}
-    \quad
-    \Var{[y_1^i]} = \frac{1}{4}
+        \E{y_1^i} = \frac{1}{2}
+        \quad
+        \Var{[y_1^i]} = \frac{1}{4}
     \]
+    Inoltre 
+    \begin{align*}
+        &\Pr{[y_1^i = 1] = \frac{1}{2}}\\
+        &\E{Y_1} = \E{\sum_{i=0}^{n^3/4}{y_1^i}} = \sum_{i=0}^{n^{3/4}}{\E{y_1^i}} = \frac{1}{2}n^{3/4}
+    \end{align*}
+    Si ottiene un risultato simile per la varianza $\Var{[y_1^i]} = \frac{1}{4}$. 
+
+    \vspace{1em}\noindent
+    Per la disuguaglianza di Chebyshev si ha
+    \begin{align*}
+        \Pr{[E_1]} &= \Pr{[Y_1 < \frac{1}{2}n^{3/4} - \sqrt{n} ]} \leq\\
+        &\leq \Pr{[|Y_1 - \E{Y_1}| > \sqrt{n}]} \leq\\
+        &\leq \frac{\Var{[Y_1]}}{\left(\sqrt{n}\right)^2} = \frac{1}{4n^{1/4}}
+    \end{align*}
+    Per l'evento $E_2$ si ottiene un risultato simile $\Pr{[E_2]} \leq \frac{1}{4n^{1/4}}$, infine con alta probabilità $\Pr{[E_1 \cup E_2]} \leq \frac{2}{4n^{1/4}}$.
+
+    \vspace{1em}\noindent
+    Così facendo si è posto un \emph{upper-bound} alla probabilità del verificarsi dei primi due eventi $E_1,E_2$, per calcolare la probabilità di $E_3$ si definiscono altri due eventi $\mathcal{E}_{3,1}$ $\mathcal{E}_{3,2}$ che si verificano rispettivamente quando almeno $2n^{3/4}$ elementi in $C$ sono più grandi e più piccoli della mediana.
+    \[
+        \mathcal{E}_{3,1} = |\{ x \in C \mid x > M \}| > 2n^{3/4} \quad
+        \mathcal{E}_{3,2} = |\{ x \in X \mid x < M \}| > 2n^{3/4}
+    \]
+    Si dimostra facilmente che per $|C| > 4n^{3/4}$ almeno uno dei due eventi è verificato.
+    \begin{proof}
+        \begin{align*}
+            |C| > 4n^{3/4} \implies \forall x \in S
+        \end{align*}
+    \end{proof}
