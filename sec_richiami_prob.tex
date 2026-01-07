@@ -132,13 +132,13 @@ Sia $X$ la variabile aleatoria che conta il numero di successo negli $n$ esperim
 
 il fattore $p^j$ rappresenta i $j$ successi, al contrario $(1-p)^{n-j}$ rappresenta gli $n-j$ fallimenti.
 
-Passando ora al calcolo del valore atteso di $X$ (variabile aleatoria con distribuizione binomiale)
+Passando ora al calcolo del valore atteso di $X$ (variabile aleatoria con distribuzione binomiale)
 \begin{align*}    
     \E{X} &= \sum_{j=0}^{n}j\binom{n}{j}p^j\left(1-p\right)^{n-j}\\
     &= \sum_{j=0}^{n}j \frac{n!}{\left(n-j\right)! j!}p^j\left(1-p\right)^{n-j} = \sum_{j=1}^{n}\frac{\left(n-1\right)!}{\left(j-1\right)!\left(n-j\right)!}p^j\left(1-p\right)^{n-j}\\
     &= np\sum_{j=1}^{n}\frac{\left(n-1\right)!}{\left(j-1\right)!\left(\left(n-1\right)-\left(j-1\right)\right)!}p^{j-1}\left(1-p\right)^{((n-1)-(j-1))}\\
     \substack{(k = j-1)} &= np\sum_{k=0}^{n-1}\frac{\left(n-1\right)!}{k!\left(\left(n-1\right)-k\right)!}p^{k}\left(1-p\right)^{(n-1)-k}\\
-    &= np \sum_{k=0}^{n-1} \binom{n-1}{k}p^k(1-p)^{(n-1)-k} = np
+    &= np \sum_{k=0}^{n-1} \binom{n-1}{k}p^k(1-p)^{(n-1)-k} = \boxed{np}
 \end{align*}
 
 Si fa presente, come, sfruttando la linearità del valore atteso, quest'ultimo può essere calcolato così: 
@@ -162,3 +162,148 @@ In modo alternativo possiamo valutare la varianza delle variabili $Y_i$
     \Var[X] &= \Var\left[\sum_{i=1}^n{Y_i}\right] = \sum_{i=1}^n\E{(Y_i-\E{Y_i}^2)}\\
     &= n(p(1-p)^2 + (1-p)(-p)^2) = \boxed{np(1-p)} 
 \end{align*}
+
+Si procede dando la definizione di distribuzione geometrica
+\begin{definition}[Distribuzione geometrica]
+    Si ha una distribuzione geometrica quando si esegue una sequenza di eventi indipendenti eseguita fino al primo successo, ogni prova avente successo $p$
+    \[
+        \Pr[X = n] = (1-p)^{n-1}p
+    \]
+    ovvero ci devono essere $n-1$ fallimenti consecutivi, e un successo
+\end{definition}
+Le variabili geometriche sono ``prive di memoria'', cioè la propbabilità di avere successo dopo $n$ tentativi è indipendente dal numero di fallimenti precedenti. In modo formale
+\[
+    \Pr[X = n+k | X > k] = \Pr[X=n]
+\]
+Il calcolo del valore atteso di una variabile geometrica $X$ i cui valori assunti sono nell'insieme dei naturali $\mathbb{N}$
+\[
+    \E{X} = \sum_{i=1}^{\infty}\Pr(X \geq i)
+\]
+Per una variabile geometrica $X$ con parametro $p$
+\begin{align*}
+    &\Pr[X \geq i] = \sum_{n=i}^{\infty}(1-p)^{n-1}p = (1-p)^{i-1}\\
+    &\E{X} = \sum_{i = 1}^{\infty}\Pr[X \geq 1] = \sum_{i = 1}^{\infty}(1-p)^i-1 = \frac{1}{1-(1-p)} = \boxed{\frac{1}{p}}.
+\end{align*}
+
+Mentre per la varianza si presenta solo il valore noto 
+\begin{align*}    
+    \E{X^2} &= \frac{(2-p)}{p^2}\\
+    \Var[X] &= \E{X^2} - \E{X}^2 =\\
+    &= \frac{2-p}{p^2} - \frac{1}{p^2}\\
+    &= \boxed{\frac{1-p}{p^2}}.
+\end{align*}
+
+Si presentano tecniche per stimare il discostamento di una variabile aleatoria dal suo valore atteso, ossia la probabilità che una variabile aleatoria assuma valori lontani dal suo valore atteso. Questi \emph{bounds} forniscono una stima della probabilità di insuccesso di un algorimo e permettono anche di dare stime sul \emph{running time} di un algoritmo.
+\begin{theorem}
+    Per una costante $a$
+    \[
+        \Var[aX] = a^2\Var{X}.
+    \]
+\end{theorem}
+\begin{proof}
+    \begin{align*}
+        \Var[aX] &= \E{\left( aX - \E{aX} \right)^2} = \E{a^2\left( X - \E{X}\right)^2}\\
+        &= a^2 \E{\left(X-\E{X}\right)^2} = a^2\Var[X].
+    \end{align*}
+\end{proof}
+
+\subsection{Teoremi noti}
+\begin{theorem}[Disuguaglianza di Markov]
+    Sia $X$ una variabile aleatoria che assume solo valori positivi, $\forall a \geq 0$ vale \[
+        \Pr[X \geq a] \leq \frac{\E{x}}{a}
+    \]
+\end{theorem}
+\begin{proof}
+    Per $a>0$ sia $I = \begin{cases*}
+        1 \text{ se } X a\\
+        0 \text{ altrimenti}
+    \end{cases*}$
+    Si osserva che essendo $X \geq 0$ vale $I \leq \frac{X}{a}$
+    Essendo $I$ una variabile aleatoria binaria
+    \[
+        \E{I} = \Pr[I=1] = \Pr[X \geq a]
+    \]
+    Facendo riferimento alla disuguaglianza precedente si ha
+    \[
+        \Pr[X\geq a] = \E{I} \leq \E{\frac{X}{a}} = \frac{\E{X}}{a}
+    \]
+\end{proof}
+
+\begin{theorem}[Disuguaglianza di Chebyshev]
+$\forall a>0$
+\[
+    \Pr[|X-\E{X}| \geq a] \leq \frac{\Var[X]}{a^2}
+\]    
+\end{theorem}
+
+
+\begin{theorem}
+    Siano $X_1,\dots,X_n$ variabili indipendenti, con la stessa distribuzione di probabilità, sia $\bar{X} = \frac{1}{n}\sum_{i=1}^{n}X_i$.
+    \[
+        \Var[\bar{X}] = \Var\left[ \frac{1}{n}\sum_{i=1}^{n}X_i\right] = \frac{1}{n^2}\Var\left[\sum_{i=1}^{n}X_i\right] = \frac{1}{n}\Var[X_i]
+    \]     
+\end{theorem}
+
+\begin{theorem}[Teorema della legge dei grandi numeri (debole)]
+    Siano $X_1,\dots,X_n$ variabili indipendenti con la stressa distribuzione di probabilità, sia $\bar{X} = \frac{1}{n}\sum_{i=1}^{n}X_i$, per ogni costante $\epsilon > 0$
+    \[
+        \lim_{x\to \infty} \Pr[|\bar{X}_n - \E{X}| \leq \epsilon] = 1
+    \]
+    \begin{proof}
+        \[
+            \Var[\bar{X}_n] = \frac{1}{n}\Var[X_i]
+        \]
+        Con il bound di Chebyshev
+        \[
+            \Pr[|\bar{X}_n - \E{X}| > \epsilon] \leq \frac{\Var[X_i]}{n\epsilon^2}
+        \]
+    \end{proof}
+\end{theorem}
+
+\subsection{Esempi pratici}
+Per mettere in pratica i punti discussi in questa sezione si presenta un problema modellabile attraverso una variabile aleatoria con distribuzione geometrica
+\subsubsection{Problema del Coupon Collector}
+% Preso da MITZ-UPFAL
+Si suppone di avere $n$ coupon di tipi differenti distribuiti in delle scatole. Si vuole calcolare quante scatole è necessario aprire per ottenere almeno un cuopon di ogni tipo.
+Sia $X$ la variabile aleatoria che conta il numero di scatole aperte fino all'ottenimento di ogni tipo di coupon. Sia $X_i$ il numero di scatole aperte quando si hanno $i-1$ coupon di diverso tipo.
+\[
+    X = \sum{i=1}^{n}X_i
+\]
+$X_i$ è una variabile geometrica con parametro $p_i$
+\[
+    p_i = 1 - \frac{i-1}{n}.
+\]
+Il numero di scatole da aprire atteso per ottenere l'\emph{i-esimo} coupon è $\E{X_i}$ 
+\[
+    \E{X_i} = \frac{1}{p_i} = \frac{n}{n-i+1}
+\]
+Il valore atteso di scatole da aprire per ottenere tutti gli $n$ coupon è $\E{X}$
+\begin{align*}
+    \E{X} &= \E{\sum_{i=1}^nX_i}\\
+    &=\sum_{i=1}^{n}\E{X_i} =\sum_{i=1}^{n} \frac{n}{n-i+1}\\
+    &=n\sum_{i=1}^n\frac{1}{n} = n\log{n} + \Theta(n).
+\end{align*}
+
+% Preso da MEDIAN-andy
+Si discute ora la seguente probabilità $\Pr{X \geq 2\E{X}}$ facendo uso della disuguaglianza di Markov 
+\[
+    \Pr[X \geq 2n \log n ] \leq \frac{1}{2}
+    \]
+Sapendo la natura della variabile aleatoria $X$ e dalle variabili $X_i$ è possibile fare di meglio, poiché $X_i$ è una variabile aleatoria con parametro $p = \frac{i-1}{n}$ allora \[
+\Var[X_i] \leq \frac{1}{p^2} \leq \left( \frac{n}{n-i+1}\right)^2
+\] e poiché le diverse variabili sono mutualmente indipendenti
+\begin{align*}
+    \Var[X] &= \sum_{i=1}^{n}\Var[X_i]\\
+    &\leq \sum_{i=1}^{n}\left(\frac{n}{n-i+1}\right)^2\\
+    &=n^2\sum_{i=1}^{n}\left(\frac{1}{i}\right)^2 \leq \frac{\pi^2n^2}{6}.
+\end{align*}
+
+Inoltre dalla disuguaglianza di Chebyshev con $a=\E{X}$
+\[
+    \Pr[|X-n\log n| \geq n \log n] \leq \frac{n^2\pi^2}{6n\log n} = \frac{\pi^2}{6n \log n} = O\left(\frac{1}{\log^2n}\right).
+\]
+la probabilità di non ottenere l'\emph{i-esimo} coupon dopo $n\log n + cn$ passi è 
+\[
+    \left(1 - \frac{1}{n}\right)^n(\log n + c) < e^{-(\log n + c)} = \frac{1}{e^{c}n}
+\]
+dopo $2n \log n$ passi la probabilità di non ottenere tutti coupon $< \frac{1}{n}$.
