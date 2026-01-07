@@ -1,0 +1,28 @@
+\subsection{Contention Resolution in sistemi distribuiti}
+Dai $n$ processi $P_1,\dots,P_n$ ogniuno dei quali compete per l'accesso a un database condiviso. Se due o più processi accedono al database contemporaneamente, tutti i processi sono bloccati. Determinare un protocollo per assicurare a ogni processo l'accesso al database. \emph{Nota: I processi non possono comunicare tra di loro}.
+
+\vspace{1em}\noindent
+\emph{Protocollo:} Ogni processo richiede l'accesso al database al tempo $t$ con probabilità $p = \frac{1}{n}$.
+
+Si definisce $S_{i,t}$ l'evento in cui il processo \emph{i-esimo} riesce ad accedere al database al tempo $t$. 
+\begin{theorem}
+    Siano $S_{i,t}$ le variabili aleatorie definite come sopra
+    $\frac{1}{en} \leq \Pr[S_{i,t}] \leq \frac{1}{2n}$.
+\end{theorem}
+
+\begin{proof}
+    Ogni processo è indipendente, per cui per l'indipendenza $\Pr[S_{i,t}] = p(1-p)^{n-1}$, in cui $p$ è la probabilità di successo di un solo processo, e $(1-p)^{n-1}$ è la probabilità in cui nessuno degli altri $n-1$ processi richiede l'accesso.
+
+    \vspace{1em}
+    Per cui impostando $p=\frac{1}{n}$ si ha che 
+    \[
+        \Pr\left[S_{i,t}\right] = \frac{1}{n}\left(1-\frac{1}{n}\right)^{n-1} \approx \boxed{\frac{1}{en}}
+    \]
+    \emph{Nota:} $\left( 1 - \frac{1}{n}\right)^{n-1}$ converge a $\frac{1}{e}$ per $n \to \infty$.
+\end{proof}
+% TODO: Riformulare
+\begin{theorem}
+    La probabilità che l'evento \emph{i-esimo} fallisca ad accedere al database in $en$ tentativi $\leq \frac{1}{e}$. Dopo $en(c \log n)$ tentativi, la probabilità $\leq \frac{1}{n^c}$
+\end{theorem}
+
+% TODO: Rifinire
