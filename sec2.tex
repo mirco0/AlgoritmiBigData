@@ -24,5 +24,35 @@ Si definisce $S_{i,t}$ l'evento in cui il processo \emph{i-esimo} riesce ad acce
 \begin{theorem}
     La probabilità che l'evento \emph{i-esimo} fallisca ad accedere al database in $en$ tentativi $\leq \frac{1}{e}$. Dopo $en(c \log n)$ tentativi, la probabilità $\leq \frac{1}{n^c}$
 \end{theorem}
+\begin{proof}
+    Sia $F_{i,t}$ l'evento in cui il processo $i$ fallisce fallisce nell'accesso al database nei round $1,\dots,t$. Poiché i tentativi sono indipendenti tra di loro, si ha che 
+    \[
+        \Pr[F_{i,t}] \leq \left(1- \frac{1}{en}\right)^t
+        \]
+        Per cui scegliendo $t = \lceil en \rceil$ si ha 
+        \[
+            \Pr[F_{i,t}] \leq \left(1-\frac{1}{en}\right)^{\lceil en \rceil} \leq \left(1-\frac{1}{en}\right)^{en} \leq \frac{1}{e}
+            \]
+            Scegliendo $t = \lceil en \rceil\cdot\lceil c \log n \rceil$ si ha 
+            \[
+                \Pr[F_{i,t}] \leq \left(\frac{1}{e}\right)^{c \log n} = \frac{1}{n^c}
+            \]
+\end{proof}
+Dati questi teoremi come basi, è possibile definire la probabilità per cui tutti i processi abbiano successo in $2e\, n \log n$ tentativi
+$\Pr[\text{Successo}] \geq 1 - \frac{1}{n}$
 
+\begin{proof}
+    Sia $F_t$ l'evento in cui almeno uno degli $n$ processi fallisce nell'accesso nei tentativi $1,\dots,t$
+    \begin{align*}
+        \Pr[F_t] &= \Pr\left[ \bigcup_{i=1}^{n} F_{i,t} \right] \leq\\
+        (\substack{\text{Per \emph{union buond \ref{union}}}}) &\leq \sum_{i=1}^n \Pr[F_{i,t}] \leq n\left(1-\frac{1}{en}\right)^t
+    \end{align*}
+    Inoltre per $t = 2e \, n \log n$ tentativi ($c = 2$), per il teorema precedente
+    \begin{align*}
+        \Pr[F_{i,t}] \leq n \cdot \left(\frac{1}{e}\right)^{2 \log n} = \frac{1}{n^2}.
+    \end{align*}
+    Concludendo \[
+        \Pr[F_t] \leq n \cdot \frac{1}{n^2} = \frac{1}{n}
+    \]
+\end{proof}
 % TODO: Rifinire
