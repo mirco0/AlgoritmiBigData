@@ -27,6 +27,7 @@ Da questi assiomi fondamentali derivano diverse proprietà utili per il calcolo 
 
 Un risultato noto è lo \emph{Union-bound}, che permette di limitare la probabilità che si verifichi almeno uno tra diversi eventi, senza conoscerne la dipendenza
 \[
+    \label{union}
     \Pr{\left[\bigcup_{i=1}^{n}E_i\right]} \leq \sum_{i=1}^{n}\Pr{[E_i]}
 \]
 
@@ -260,6 +261,39 @@ $\forall a>0$
     \end{proof}
 \end{theorem}
 
+\subsubsection{Chernoff Bounds}
+\begin{theorem}[Chernoff Bound (sopra la media)]
+    Si suppongono $X_1,\dots,X_n$ sono variabili indipendenti binarie, sia $X = X_1+\dots,X_n$. Allora $\forall \mu \geq \E{X}$ e $\forall \delta > 0$ si ha
+    \[
+        \Pr[X > (1 + \delta)\mu] < \left[ \frac{e^\delta}{\left(1+\delta\right)^{1+\delta}}\right]^{\mu}
+    \]
+    \end{theorem}
+    Si presenta un esempoio che permette di valutare l'importanza del teorema
+    \begin{example}
+        Poiché $\E{X} = \sum_{i=1}^{n}\E{X_i} = \frac{n}{2}$ $\Var[X] = \frac{n}{4}$ da Chebyshev 
+        \[
+            \Pr\left[\left| X - \frac{n}{2}\right| \geq \frac{n}{4} \left(\E{X}\cdot \frac{1}{2}\right)\right] \leq \frac{n}{4}.
+            \]
+            Applicando il Chernoff Bound $X \sim B(n,1/2)$ si ottiener
+            \[
+                \Pr\left[X > (1+ \frac{1}{4})\mu\right] \leq \left[ \frac{e^\delta}{(1+\delta)}\right]
+            \]
+            per $\delta = \frac{1}{4}$ e $\mu = \E{X} = \frac{n}{2}$ si ha
+            \[
+                \Pr\left[X \geq \left( 1 + \frac{1}{4}\right)\frac{n}{2} \right] \leq \left( \frac{e^{1/4}}{\left( 1 + \frac{1}{4}\right)^{1 + \frac{1}{4}}} \right)^{n/2} \leq \left( \frac{1.29}{1.32} \right)^{n/2} = \beta^{n/2}
+            \]
+            Per $\beta < 1$ costante per cui
+            \[
+                \Pr\left[X > (1 + \beta) \cdot \E{X}\right] \leq e^{-\Theta(n)}
+            \]
+    \end{example}
+
+    \begin{theorem}
+        Si suppongono $X_1,\dots,X_n$ sono variabili indipendenti binarie, sia $X = X_1+\dots,X_n$. Allora $\forall \mu \leq \E{X}$ e $\forall 0 <\delta < 1$ si ha
+        \[
+            \Pr[X < (1-\delta)\mu] < e^{-\delta^2 \frac{\mu}{2}}
+        \]
+    \end{theorem}
 \subsection{Esempi pratici}
 Per mettere in pratica i punti discussi in questa sezione si presenta un problema modellabile attraverso una variabile aleatoria con distribuzione geometrica
 \subsubsection{Problema del Coupon Collector}
