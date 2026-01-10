@@ -56,3 +56,49 @@ $\Pr[\text{Successo}] \geq 1 - \frac{1}{n}$
     \]
 \end{proof}
 % TODO: Rifinire
+\subsection{Problema del Load balancing}
+Si ha un sistema in cui $m$ \emph{jobs} arrivano in stream e devono essere processati immediatamente su $n$ processori identici. È necessario trovare un assegnamento che bilanci il \emph{carico di lavoro} tra i processori.
+
+Un approccio semplice e deterministico è quello di avere un \emph{controller} centralizzato che distribusca il carico con uno \emph{scheduling} Round-Robin. Ogni processore riceve al massimo $\lceil \frac{m}{n} \rceil$ \emph{jobs}. 
+
+Per un approccio decentralizzato si fa uso della probabilità e del calcolo probabilistico, ogni \emph{job} viene assegnato a un processore in modo uniformemente casuale. Si calcola la probabilità che un processore riceva troppi \emph{jobs} $\left(> \lceil \frac{m}{n} \rceil \right)$.
+
+A tale scopo si definiscono le variabili aleatorie $X_i$ il numero di \emph{jobs} assegnati al processore $i$,
+\[
+    Y_{ij} = \begin{cases*}
+        1 \text{ se il job $j$ è assegnato a $i$}\\
+        0 \text{ altimenti}
+    \end{cases*}
+\]
+
+Per cui si hanno i dati $\E{Y_{ij}} = \frac{1}{n}, \Pr[Y_{ij} = 1] = \frac{1}{n}$. Inoltre $X_i = \sum{j=1}^{n}Y_{ij}$ e si definisca $\mu = \E{X_i} = 1$, rappresenta il carico \emph{atteso} del processore $i$.
+
+Applicando i Chernoff Bounds da \ref{chernoff}, con $\delta = c - 1$ si ha
+\[
+    \Pr[X_i > c] < \frac{e^{c-1}}{c^c}
+\]
+
+Sia $\gamma(n)$ il numero $x$ tale che $x^x = n \implies (\gamma(n)^{\gamma(n)} = n)$ e sia $c = e\cdot \gamma(n)$
+\begin{align*}
+    &\Pr[X_i > c] < \frac{e^{c-1}}{c^c} < \left( \frac{e}{c}\right)^{c} =\\
+    &=\left( \frac{1}{\gamma(n)}\right)^{e\gamma(n)} < \left( \frac{1}{\gamma(n)} \right)^{2\gamma(n)} = \frac{1}{n^2}.
+\end{align*}
+
+Per lo union bound \ref{union} si mostra il risultato
+\[
+    \Pr\left[\bigcup_{j = 1}^{n} Y_{ij}\right] < \Pr\left[{\sum_{j=1}^{n}Y_{ij}}\right] = \Pr[X_i] > \frac{1}{n^2}
+\]
+Per cui $\lnot\Pr{\left[\sum_{i = 1}^nX_i\right]} = 1 - n\Pr\left[ \bar{X}_i  \right] < 1 - \frac{1}{n}$ è la probabilità che \emph{nessun processore riceve più di $e\cdot\gamma(n)$ jobs}. $e\cdot\gamma(n) = \Theta\left(\frac{\log n}{\log \log n} \right)$.
+
+\begin{theorem}
+    Si supponga il numero di \emph{jobs} $m = 16 n \log n$. Allora in media ogniuno degli $n$ processori gestisce $\mu = 16 \log n$ \emph{jobs}, con alta probabilità ogni processore gestirà tra $x$ compreso tra $\frac{1}{2}$ e $2$ carico medio.
+\end{theorem}
+
+\begin{proof}
+    Siano $X_{i}, Y_{ij}$ variabili aleatorie definite come sopra, applicando il Chernoff bound con $\delta = 1$
+    \begin{align*}
+        &\Pr[X_i > 2\mu] < \left( \frac{e}{4}\right)^{16 n \log n} < \left( \frac{1}{e}\right)^{\log n} = \frac{1}{n^2}\\
+        &\Pr\left[X_i > \frac{1}{2}\mu\right] < e^{-\frac{1}{2}\left(\frac{1}{2}\right)^2{16 n \log n}} = \frac{1}{n^2} 
+    \end{align*}
+    Per lo union buond \ref{union} ogni processore ha il carico tra $\frac{1}{2}$ e $2$ del carico medio, con probabilità $\geq 1- \frac{2}{n}$
+\end{proof}
