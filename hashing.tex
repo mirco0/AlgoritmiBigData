@@ -1,0 +1,105 @@
+In questa sezione vedremo le funzioni hash, delle funzioni che permettono di mappare degli elementi di un universo in uno degli elementi di un insieme finito. 
+Una funzione hash è una funzione $h: U \to [0,n)$, informalmente $h$ è utilizzata per ``randomizzare'' i dati:
+\begin{enumerate}
+    \item $h(x)$ dovrebbe essere più casuale possibile. Idealmente dovrebbe mappare in modo più uniforme possibile
+    \item $h(x)$ dovrebbe essere veloce da calcolare. Idealmente proporzionale al tempo di accesso a $x$
+    \item $h$ dovrebbe occupare poco spazio in memoria. Idealmente $O(1)$ parole di memoria
+\end{enumerate}
+\begin{definition}[Famiglia di funzioni hash]
+    Una famiglia di funzioni hash $\mathcal{H}$ è un sottoinsieme di funzioni $h: U \to [0,n) $, nell'inieme di tutte le funzioni hash $\mathcal{H} \subseteq [0,n)^{U}$.
+\end{definition}
+\vspace{0.5em}
+\begin{definition}[Funzione hash uniforme]
+    Una funzione hash $h$ da un universo $U = \{x_0,\dots,x_u\}\ (u = |U|)$ . $\mathcal{H}$ è detta uniforme se per ogni $y_1,\dots,y_u \in [0,n)$ si ha che
+    \[
+        \Pr\left[h(x_1),\dots,h(h_u) = y_1,\dots,y_u\right] = \frac{1}{n^u}
+    \]
+\end{definition}
+\begin{definition}
+    Una famiglia $\mathcal{H}$ è detta \emph{k-indipendente} se e solo se per una scelta uniforme di $h \in \mathcal{H}$ si ha 
+    \begin{enumerate}
+        \item Per ogni $x \in U$, $h(x)$ è una variabile aleatoria uniforme in $[0,n)$
+        \item Le variabili aleatorie $h(1),h(2),\dots,h(u)$ sono \emph{k-indipendenti}
+    \end{enumerate}
+    o in modo equivalente
+    \[
+        \Pr\left[\bigcap_{i=1}^{k}h(x_i) = y_i\right] = \frac{1}{n^k}
+    \]
+    per ogni scelta di $x_1,\dots,x_k \in [1,u]$ $y_1,\dots,y_k \in [0,n)$. O anche la \emph{k-tupla} $(h(x_1),\dots, h(x_k))$ è uniforme in $[0,n)^k$. Per $k=n$ la famiglia di funzioni hash è detta completamente uniforme.
+\end{definition}
+
+\subsection{Hashing universale}
+\begin{center}
+    \emph{Nota Bene: In questi appunti, $n$ è definito come il numero di slot di arrivo della funzione hash.}
+\end{center}
+Una famiglia di funzioni hash $\mathcal{H}$ è detta universale se $\forall h \in \mathcal{H} \ \ h: U \to [0,n)$ dati $x_1 \neq x_2 \in U$
+\[
+    \Pr[h(x_1) = h(x_2)] \leq \frac{1}{n}
+\]in pratica la probabilità di collisione di due elementi di $U$.
+Si nota che questa probabilità è quella che ci si aspetta per una funzione hash che dia un risultato \emph{veramente} totalmente casuale
+
+\begin{theorem}[2-indipendenza implica universalità]
+    \begin{align*}
+        \Pr[h(x_1) = h(x_2)] &= \sum_{y \in U} \Pr[h(x_1) = h(x_2) \land h(x_2) = y]\\
+        &= \sum_{y \in U} \Pr[h(x_1) = y \land h(x_2) = y]\\
+        &= \sum_{y \in U} \frac{1}{n^2} = \frac{1}{n}
+    \end{align*}
+\end{theorem}
+\begin{theorem}
+    Sia  $\mathcal{H}$ una famiglia di funzioni hash universali, $S \subseteq U$ un insieme di $k$ elementi. Sia $u \in S$. Si sceglie in modo uniforme una funzione $h$ da $\mathcal{H}$, e sia $X$ la variabile aleatoria che conta il numero di elementi di $S$ mappati nello stesso elemento $h(u)$ allora
+    \[
+        \E{X} \leq 1 + \frac{k}{n}.
+    \]
+\end{theorem}
+\begin{proof}
+    Sia $u$ fissato, per ogni $s \in S$, si definisce la variabile aleatoria $X_s$ associata
+    \[
+        X_s = \begin{cases*}
+            1 \text{ se } h(s) = h(u)\\
+            0 \text{ altrimenti}
+        \end{cases*} 
+        \quad X = \sum_{s \in S}X_s
+    \]
+    Per cui si ha
+    \begin{align*}
+        &\E{X} = \sum_{s \in S}{\E{X_s}} = \sum_{s \in S}\Pr[h(s) = h(u)]\\
+        &= 1 + \sum_{s \in S-\{u\}}\Pr[h(s) = h(u)]\\
+        \substack{\text{(Per universalità)}} &\leq 1 + \frac{k}{n}.
+    \end{align*}
+    \emph{Nota: per $m = \Theta(m)$ si ha $O(1)$ tempo per operazione.}
+\end{proof}
+
+Si passa ora alla definizione di una famiglia di funzioni hash \emph{2-indipendente}
+\subsection{Esempio famiglia hash universale}
+Si sceglie un numero primo $m > n$, è noto che esiste $m$ tale che $\forall n \ n \leq m \leq 2n$, successivamente si identifica ogni elemento $x \in U$ come un intero in \emph{base m}, di $r$ cifre $x = (x_1,x_2,\dots,x_r)$. Per una $a = (a_1,a_2,\dots,a_n) \in U, a_i \in [m]$ fissata si definisce
+\begin{align}
+    h_a(x) = \left[ \sum_{i=1}^{r}a_ix_i\right] \mod m
+\end{align}
+Per cui si definisce la famiglia di funzioni hash universale $\bar{\mathcal{H}}$
+\[
+ \bar{\mathcal{H}} = \{ h_a : a \in U\}
+\]
+Per $|U| = n$, $r$ deve essere $\log_m(n)$ poiché $m^r \geq n$. Ne risulta che per scegliere una funzione hash in modo uniforme $h \in_u \bar{\mathcal{H}}$ è sufficiente scegliere $a \in_u U$.
+
+\begin{theorem}[Universalità]
+    La famiglia $\bar{\mathcal{H}}$ è una famiglia universale
+\end{theorem}
+
+\begin{proof}
+    Sia $x = (x_1,x_2\dots,x_r)$ e $y = (y_1,y_2\dots,y_r)$ $\in U$ tale che $x \neq y$. 
+    
+    Si deve dimostrare $\Pr[h(x) = h(y)] \leq \frac{1}{n}$ (universalità).
+    \vspace{1em}
+    Poiché $x\neq y$ esiste $y$ t.c. $x_j \neq y_j$.
+    $h_a(x) = h_a(y)$ se e solo se
+    \[
+        a_j\underbrace{(y_j-x_j)}_z = \underbrace{\sum_{i\neq j}a_i(y_j - x_j)}_\alpha \mod m
+    \]
+    Si assume $a \in_u U$, quindi si assume $a_i$ fissato $\forall i \neq j$. Per $m$ primo $\mathbb{Z}_m$ è un campo, per cui $per z \neq 0$ esiste un'unica inversa moltiplicativa $z^{-1}$ tale che $z \cdot z^{-1} = 1 \mod m$
+
+    \begin{align*}
+        a_j \cdot z \cdot z^{-1} &= \alpha \cdot z^{-1} \mod m\\
+        a_j &= \alpha \cdot z^{-1} \mod m \substack{\text{ (soluzione unica)}} \\
+        &\Pr[a_j \equiv_m \alpha z^{-1}] \leq \frac{1}{m}.
+    \end{align*}
+\end{proof}
