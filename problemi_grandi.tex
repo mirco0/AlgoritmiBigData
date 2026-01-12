@@ -1,0 +1,86 @@
+In questa sezione si parla di problemi per cui la dimensione dei dati è eccessiva, ad esempio si potrebbe essere interessati a valutare uno dei seguenti problemi
+\begin{enumerate}
+    \item \textit{Pagine con una grande porzione di parole simili}
+    \item \textit{Clienti con acquisti simili}
+    \item \textit{Immagini con elementi silimi}
+\end{enumerate}
+\begin{example}
+    Input: punti ad alte dimensioni $x_1,x_2,\dots,x_N$
+    \[
+        \begin{bmatrix}
+            1 & 4 & 1\\
+            0 & 2 & 1\\
+            0 & 1 & 0\\
+        \end{bmatrix}
+        \implies
+        \begin{bmatrix}
+            1 & 4 & 1 & 0 & 2 & 1 & 0 & 1 & 0
+        \end{bmatrix} \in \{ 0,1,\dots,c\}^h.
+    \] per $h$ molto grande
+    Si introduce una funzione di distanza $d(x_1,x_2)$ che quantifichi quanto i due dati sono \emph{vicini}.
+    Un'applicazione comune consiste nel trovare tutte le coppie di dati in un insieme di dati che sono ``abbastanza'' vicini (rispetto a una soglia $s$) per cui $d(x_1,x_2) \leq s$.
+
+    Una soluzione deterministica banale richiede tempo $O(N^2\cdot h)$ con $N$ numero di punti e $h$ dimensione dei dati. Banalmente si calcola la distanza per ogni coppia possibile $\binom{n}{2} = O (n^2)$.
+\end{example}
+
+È possibile trovare coppie di dati simili in tempo $O(N \cdot h')$ con $h' << h$, come spiegato di seguito.
+\subsection{Document Similarity}
+Dato un grande insieme di documenti $U^*$ grande $N \approx 10^9$, si vogliono trovare i documenti simili. Le applicazioni possibili riguardano la ricerca di siti web duplicati e la ricerca di notizie simili.
+
+Il problema descritto presenta diverse sfide 
+\begin{itemize}
+    \item molti pezzi piccoli di un documento possono essere in ordine diverso
+    \item il numero di documenti ($N$) è troppo elevato per confrontare tutte le coppie
+    \item i documenti possono essere talmente grandi ($h$) da non poter essere mantenuti in memoria 
+\end{itemize}
+
+È inoltre necessario definire una funzione di distanza adeguata, a tale scopo si fa uso della \emph{Jaccard Similarity} definita su due insiemi $C_1,C_2$ come segue
+\[
+    \text{Jaccard similarity}(C_1,C_2) = \frac{|C_1 \cap C_2|}{|C_1 \cup C_2|}
+\]
+Si definisce anche un'altra misura \emph{Jaccard Distance} $d(C_1,C_2) = 1- \jsim(C_1,C_2)$. Resta ora da definire come applicare la Jaccard Similarity a due documenti (stringhe di lunghezza finita). 
+
+Si definiscono i punti chiave della risoluzione del problema
+\begin{enumerate}
+    \item Input: Un universo $U$ enorme di documenti
+    \item Shingling: conversione dei documenti in \emph{grandi insiemi}
+    \item Min-Hashing: conversione di grandi insiemi in \emph{piccole firme} mantenendo la $\jsim$
+    \item Local-Sensitive-Hashing: Individuare le firme che potrebbero essere simili 
+    \item Output: coppie di documenti candidati 
+\end{enumerate}
+
+Restano ora da definire nel dettaglio le tecniche descritte
+\subsubsection{Shingling}
+Facciamo uso della tecnica di \emph{Shingling} per convertire i documenti in insiemi. Un \emph{k-shingle} per un documento è una sequenza di $k$ token che appaiono in un documento. I \emph{token} possono generalmente essere definiti come: caratteri o parole, si fa uso di $U_t$ per rappresentare l'insieme di tutti i possibili \emph{token}.
+\begin{example} Si assumano i token come caratteri dell'alfabeto. Sia $k=2$
+    
+    Per i documenti $D_1 = abcab, D_2 = ccadf$, gli insiemi di \emph{2-shingle} corrispondenti sono 
+    \[
+        S(D_1) = \{ab,bc,ca\} \quad S(D_1) = \{cc,ca,ad,df\}
+    \]
+    
+\end{example}
+
+Ogni documento $D \in U$ può quindi essere rappresentato come l' insieme dei suoi \emph{k-shingle} $C = S(D)$. In modo più pratico ogni documento è rappresentato come $C=S(D)$ un vettore binario avente ogni possibile elemento dell'insieme $U^k$. Codificando gli insiemi come vettori binari è possibile definire l'intersezione come \emph{bitwise and} e l'unione come \emph{bitwise or}.È facile notare che questi vettori sono molto grandi, ma conservano i dati in modo sparso.
+
+\vspace{1em}
+È inoltre facile rappresentare la $\jsim$ con un'interpretazione probabilistica
+\[
+    \jsim(C_1, C_2) = \frac{C_1 \cap C_2}{C_1 \cup C_2} = \Pr[C_1 \cap C_2 | C_1 \cup C_2].
+\]
+
+Concludendo i \emph{k-shingle} permettono di rappresentare il contenuto dei documenti attraverso degli elementi di un insieme. Questa tecnica permette inoltre di trovare documenti simili anche per testi che appaiono in ordine diverso.
+
+L'insieme di tutti i dati gestiti è visibile come una matrice $M \in {0,1}^{N\times m}$ con $N$ numero di documenti e $m = |U|^k$ \emph{shingles} possibili. Si presenta un esempio di seguito
+\input{figure/matrice_doc.tex}
+
+\vspace{1em}\noindent
+Si passa ora alla tecnica del Min-hashing che permette di rendere i grandi insiemi di \emph{k-shingles} in piccole firme mantenendo la misura di similarità
+\subsubsection{Min-hashing}
+Si presenta un esempio per mostrare perché il min-hashing è necessario
+\begin{example}
+    Sia $N = 10^6$ il numero di documenti, per cui si hanno $10^6$ \emph{k-shingles}, e si ottengono $\frac{(10^6)^2}{2} = 5\cdot10^{11}$ confronti.
+\end{example}
+La tecnica precedente permette solo una rappresentazione robusta dei documenti, con il min-hashing si cerca un modo per trovare documenti simili tramtite delle piccole firme. 
+
+La difficoltà consiste nel definire una firma che conservi la similarità tra due insiemi.
