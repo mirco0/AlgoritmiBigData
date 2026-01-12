@@ -41,7 +41,11 @@ Spesso l'esito di un esperimento è influenzato da informazioni parziali già di
         \Pr{[E_1|E_2]} = \frac{\Pr{[E_1 \cap E_2]}}{\Pr{[E_2]}}
     \]
 \end{definition}
-
+\begin{definition}[Alta probabilità]
+    \label{whp}
+    Un evento è detto accadere con \emph{alta probabilità} rispetto a una quantità $n$, se la sua probabilità è almeno $1-n^{-c}$ per una costante $c$ arbitrariamente grande. È detto che un evento accade con probabilità inversamente polinomiale
+\end{definition}
+\vspace{1em}\noindent
 L'introduzione della probabilità condizionata ci permette di definire il concetto di \textbf{indipendenza}: due eventi $E_1, E_2$ sono indipendenti se la conoscenza del verificarsi di uno non altera la probabilità dell'altro, ovvero $\Pr[E_1|E_2] = \Pr[E_1]$, che equivale a richiedere $\Pr[E_1 \cap E_2] = \Pr[E_1] \cdot \Pr[E_2]$.
 
 Per analizzare eventi complessi che dipendono da diverse `'cause'' disgiunte, utilizziamo il Teorema delle Probabilità Totali e il Teorema di Bayes.
@@ -106,6 +110,7 @@ La deviazione standard invece si definisce come segue
     \[
         \sigma[X] = \sqrt{\Var[X]}
     \]
+
 
 \subsection{Distribuzioni di probabilità}
 Una distribuzione di probabilità è un modello matematico che associa una probabilità a ogni possibile risultato di una variabile aleatoria. Ne esistono diversi tipi, tra cui si presentano la \emph{Distribuzione binomiale} e la \emph{Distribuzione geometrica}.

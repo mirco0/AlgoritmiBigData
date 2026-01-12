@@ -1,0 +1,23 @@
+\begin{algorithm}[H]
+    \caption{Doubling/Halving Technique}
+    \DontPrintSemicolon
+    \SetKwComment{Comment}{// }{}
+
+    % \KwInit{$n = N = 1$}
+
+    \BlankLine
+    \Comment{In caso di espansione}
+    \If{$n > N$}{
+        $N \gets 2N$\;
+        scegli un nuovo numero primo $m$ tale che $m \sim \Theta(n)$\;
+        re-hash di tutti gli elementi in $O(n)$\;
+    }
+
+    \BlankLine
+    \Comment{In caso di contrazione}
+    \If{$n < N/4$}{
+        $N \gets N/2$\;
+        scegli un nuovo numero primo $m$ tale che $m \sim \Theta(n)$\;
+        re-hash di tutti gli elementi in $O(n)$\;
+    }
+\end{algorithm}

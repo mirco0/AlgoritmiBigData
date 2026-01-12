@@ -1,0 +1,90 @@
+% Diagramma TikZ: Funzionamento di una Hash Table con Liste di Trabocco (Chaining)
+% Richiede: \usepackage{tikz} \usetikzlibrary{shapes.geometric, arrows.meta, positioning}
+\begin{figure}[h]
+    \centering
+    \begin{tikzpicture}[
+        scale=0.9,
+        font=\small,
+    % Definizione Colori
+    colorU/.style={draw=black!80, fill=gray!5},
+    colorS/.style={draw=blue!60!black, fill=blue!10},
+    colorH/.style={draw=black!80!black, fill=black!5},
+    colorArrow/.style={draw=gray!40!black},
+    colorList/.style={draw=blue!60!black, fill=white},
+    % Stili
+    universo/.style={universo_shape, colorU, minimum width=4.5cm, minimum height=6.5cm, label={above:\textcolor{gray!80!black}{$U$}}},
+    sottoinsieme/.style={universo_shape, colorS, minimum width=2.8cm, minimum height=4cm, label={above:\textcolor{blue!80!black}{$S \subseteq U$}}},
+    cella/.style={draw=black!80!black, minimum width=1.4cm, minimum height=0.75cm, fill=white, outer sep=0pt},
+    % Indici a sinistra
+    indice/.style={font=\scriptsize\ttfamily\color{gray!80!black}, anchor=east, xshift=-0.1cm},
+    funzione/.style={->, >=Stealth, thick, colorArrow},
+    lista/.style={draw=blue!60, minimum width=0.8cm, minimum height=0.6cm, fill=blue!5, inner sep=2pt},
+    universo_shape/.style={draw, ellipse},
+    puntamento/.style={->, >=Stealth, semithick, blue!80!black}
+]
+
+    % --- Rappresentazione degli Insiemi ---
+    \node[universo] (U) at (0,0) {};
+    \node[sottoinsieme] (S) at (0,-0.5) {};
+    
+    % Chiavi all'interno di S
+    \node[circle, fill=blue!80!black, inner sep=1.8pt, label={[text=blue!90!black]left:{$k_1$}}] (k1) at (-0.5, 0.5) {};
+    \node[circle, fill=blue!80!black, inner sep=1.8pt, label={[text=blue!90!black]left:{$k_2$}}] (k2) at (0.4, -0.8) {};
+    \node[circle, fill=blue!80!black, inner sep=1.8pt, label={[text=blue!90!black]left:{$k_3$}}] (k3) at (-0.2, -2) {};
+    \node[circle, fill=blue!80!black, inner sep=1.8pt, label={[text=blue!90!black]left:{$k_4$}}] (k4) at (0.2, 0.8) {};
+
+    % --- Rappresentazione dell'Array H ---
+    \begin{scope}[shift={(6.5,2)}]
+        \node[anchor=south, font=\bfseries\color{black!90!black}] at (0.7, 0.4) {$H$};
+        
+        \node[cella] (c0) at (0.7, 0) {}; \node[indice] at (c0.west) {$0$};
+        \node[cella, below=0pt of c0] (c1) {}; \node[indice] at (c1.west) {$1$};
+        \node[cella, below=0pt of c1] (c2) {}; \node[indice] at (c2.west) {$2$};
+        
+        \node[cella, below=0pt of c2, fill=black!2] (cdot) {}; 
+        % \node at (cdot.center) {$\vdots$};
+        
+        \node[cella, below=0pt of cdot] (ci) {}; \node[indice] at (ci.west) {$i$};
+        
+        \node[cella, below=0pt of ci, fill=black!2] (cdot2) {};
+        % \node at (cdot2.center) {$\vdots$};
+        
+        \node[cella, below=0pt of cdot2] (cm) {}; \node[indice] at (cm.west) {$m-1$};
+    \end{scope}
+
+    % --- Liste di Trabocco (Chaining) ---
+    % Lista per l'indice 1 (Collisione k1, k4)
+    \node[lista, right=0.5 of c1] (l1_1) {$k_1$};
+    \node[lista, right=.5 of l1_1] (l1_2) {$k_4$};
+    % \node[right=0.2 of l1_2] (null1) {$\slash$};
+    
+    % Lista per l'indice i (Solo k2)
+    \node[lista, right=0.5 of ci] (li_1) {$k_2$};
+    % \node[right=0.2 of li_1] (null2) {$\slash$};
+
+    % Lista per l'indice m-1 (Solo k3)
+    \node[lista, right=0.5 of cm] (lm_1) {$k_3$};
+    % \node[right=0.2 of lm_1] (null3) {$\slash$};
+    
+    % Disegno puntatori liste
+    \draw[puntamento] (c1.center) -- (l1_1.west);
+    \draw[puntamento] (l1_1.east) -- (l1_2.west);
+    \draw[puntamento] (ci.center) -- (li_1.west);
+    \draw[puntamento] (cm.center) -- (lm_1.west);
+
+    % --- Mapping della Funzione di Hash ---
+    % Le frecce puntano verso l'indice, non toccano la cella (shorten >)
+    \draw[funzione, shorten >=15pt] (k1) to[out=15, in=180] node[midway, below, sloped, black] {$h(k_1)$} (c1.west);
+    % \draw[funzione, shorten >=15pt] (k4) to[out=15, in=180] node[midway, above, sloped, black] {$h(k_1)$} (c1.west);
+    \draw[funzione, dashed, blue!40, shorten >=15pt] (k4) to[out=0, in=160] node[midway, above, sloped, blue!70] {$h(k_4)$} (c1.west);
+    
+    \draw[funzione, shorten >=15pt] (k2) to[out=0, in=180] node[midway, below, sloped, black] {$h(k_2)$} (ci.west);
+    \draw[funzione, shorten >=33pt] (k3) to[out=-15, in=180, left=1] node[midway, below, sloped, black] {$h(k_3)$} (cm);
+
+    % --- Annotazioni Finali ---
+    \node[align=center, text width=7cm, font=\itshape, color=black!90!black] at (3.5, -4.8) {
+        Risoluzione delle collisioni mediante \\ \textbf{liste di trabocco}.
+        };
+
+    \end{tikzpicture}
+\end{figure}

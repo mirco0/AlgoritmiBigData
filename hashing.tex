@@ -32,7 +32,7 @@ Una funzione hash è una funzione $h: U \to [0,n)$, informalmente $h$ è utilizz
 \begin{center}
     \emph{Nota Bene: In questi appunti, $n$ è definito come il numero di slot di arrivo della funzione hash.}
 \end{center}
-Una famiglia di funzioni hash $\mathcal{H}$ è detta universale se $\forall h \in \mathcal{H} \ \ h: U \to [0,n)$ dati $x_1 \neq x_2 \in U$
+Una famiglia di funzioni hash $\mathcal{H}$ è detta universale se Scegliendo $h \in_u \mathcal{H} \ \ h: U \to [0,n)$ dati $\forall x_1 \neq x_2 \in U$
 \[
     \Pr[h(x_1) = h(x_2)] \leq \frac{1}{n}
 \]in pratica la probabilità di collisione di due elementi di $U$.
@@ -104,58 +104,112 @@ Per $|U| = n$, $r$ deve essere $\log_m(n)$ poiché $m^r \geq n$. Ne risulta che 
         &\Pr[a_j \equiv_m \alpha z^{-1}] \leq \frac{1}{m}.
     \end{align*}
 \end{proof}
-\input{alt.tex}
-% \subsubsection{Esempio 2}
-% Si mostra ora una famiglia  di funzioni hash \emph{2-indipendenti} sia $p \geq n$ un numero primo, siano $a,b \in \mathbb{Z}_m$ definite come nell'esempio precedente, si definisce la funzione hash $h_{a,b}$
-% \[
-%     h_{a,b}(x) = \left[ax + b \mod p\right] \mod m
-% \]
-% in pratical la funzione hash è definita come un polinomio scelto uniformemente in $\mathbb{Z}_m$ di grado 1. Si definisce la famiglia $\hat{\mathcal{H}}$
-% \[
-%     \hat{\mathcal{H}} = \{ h_{a,b} \mid a,b \in \mathbb{Z}_m\}
-% \] 
-% \begin{theorem}[2-indipendenza e universalità]
-%     $\hat{\mathcal{H}}$ è una famiglia \emph{2-indipendente} e universale
-% \end{theorem}
-% \begin{proof}
-%     Sia $X = (ax + b) \mod m$ e $Y = (ay +b) \mod m$ per $x \neq y$. Poiché $a \neq 0$ e $m > n$ allora $X \neq Y$.
-%     \[
-%         h_{a,b}(x) = \left[h_{a,b}(y) \iff X = Y \mod m\right] \mod m
-%     \]
-%     \begin{enumerate}
-%         \item $X$ e $Y$ sono distribuite in modo uniforme su $\mathbb{Z}_m$, poiché $a,b$ sono, a loro volta, distribuite in modo uniforme e $h$ è lineare iniettiva.
-%         \begin{proof}
-%             \begin{align}
-%                     ax + b \equiv_m ay + b
-%                 &\iff
-%                     a(x-y) \equiv_m 0
-%                 \\
-%                 \implies (x-y) \equiv_m 0
-%                 &\iff x = y
-%             \end{align}
-%         Il passaggio (6) è giustificato poichè $m-1 > x,y$
-%         \end{proof}
+
+\subsubsection{Esempio 2}
+Si mostra ora una famiglia  di funzioni hash \emph{2-indipendenti} sia $p \geq n$ un numero primo, siano $a,b \in \mathbb{Z}_p$ definite come nell'esempio precedente, si definisce la funzione hash $h_{a,b}$
+\[
+    h_{a,b}(x) = \left[ax + b \mod p\right] \mod m
+\]
+in pratica la funzione hash è definita come un polinomio scelto uniformemente in $\mathbb{Z}_p$ di grado 1. Si definisce la famiglia $\hat{\mathcal{H}}$
+\[
+    \hat{\mathcal{H}} = \{ h_{a,b} \mid a,b \in \mathbb{Z}_p\}
+\] 
+\begin{theorem}[2-indipendenza e universalità]
+    $\hat{\mathcal{H}}$ è una famiglia \emph{2-indipendente} e universale
+\end{theorem}
+\begin{proof}
+    Sia $X = (ax + b) \mod p$ e $Y = (ay +b) \mod p$ per $x \neq y$. Poiché $a \neq 0$ e $p > n$ allora $X \neq Y$.
+    \[
+        h_{a,b}(x) = \left[h_{a,b}(y) \iff X = Y \mod p\right] \mod m
+    \]
+    \begin{enumerate}
+        \item $X$ e $Y$ sono distribuite in modo uniforme su $\mathbb{Z}_p$, poiché $a,b$ sono, a loro volta, distribuite in modo uniforme e $h$ è lineare iniettiva.
+        \begin{proof}
+            \begin{align}
+                    ax + b \equiv_p ay + b
+                &\iff
+                    a(x-y) \equiv_p 0
+                \\
+                \implies (x-y) \equiv_p 0
+                &\iff x = y
+            \end{align}
+        Il passaggio (6) è giustificato poichè $ x,y < p-1$
+        \end{proof}
         
-%         \item $X$ e $Y$ sono quasi indipendenti tra loro, $\Pr[X = i \land Y = j] = \frac{1}{(p-1)p}$
-%         \begin{proof}
-%             \begin{equation}
-%                 \begin{cases*}
-%                     ax + b \equiv_m i\\
-%                     ay + b \equiv_m j\\
-%                 \end{cases*}
-%             \end{equation}
-%             Esiste un unica soluzione per $(a,b) \in {\mathbb{Z}_p}^2$, poiché il rango è 2.
-%             Siano $f,g$ soluzioni uniche del sistema lineare 
-%             \begin{align*}    
-%                 \Pr\left[ (ax + b) \equiv_m i \land (ay + b) \equiv_m j\right] &= Pr[a = f(x,y,i,j) \land b = g(x,y,i,j) ]\\
-%                 &= \Pr[a = f(x,y,i,j)] \cdot \Pr[b = g(x,y,i,j)]
-%             \end{align*}
-%             Per cui
-%             \begin{align*}    
-%                 \Pr\left[ Y = j\mid X = i\right] &= \frac{\Pr[X = i \land Y = j]}{\Pr[X = i]}\\
-%                 &= \frac{1}{p-1}
-%             \end{align*}
-%             Per una $i$ fissata in $\mathcal{Z}_m$ ci sono al massimo \frac{m}{}
-%         \end{proof}
-%     \end{enumerate}
-% \end{proof}
+        \item $X$ e $Y$ sono quasi indipendenti tra loro, $\Pr[X = i \land Y = j] = \frac{1}{(p-1)p}$
+        \begin{proof}
+            \begin{equation}
+                \begin{cases*}
+                    ax + b \equiv_p i\\
+                    ay + b \equiv_p j\\
+                \end{cases*}
+            \end{equation}
+            Esiste un unica soluzione per $(a,b) \in {\mathbb{Z}_p}^2$, poiché il rango è 2.
+            Siano $f,g$ soluzioni uniche del sistema lineare 
+            \begin{align*}    
+                \Pr\left[ (ax + b) \equiv_p i \land (ay + b) \equiv_p j\right] &= Pr[a = f(x,y,i,j) \land b = g(x,y,i,j) ]\\
+                &= \Pr[a = f(x,y,i,j)] \cdot \Pr[b = g(x,y,i,j)]
+            \end{align*}
+            Per cui
+            \begin{align*}    
+                \Pr\left[ Y = j\mid X = i\right] &= \frac{\Pr[X = i \land Y = j]}{\Pr[X = i]}\\
+                &= \frac{1}{p-1}
+            \end{align*}    
+        \end{proof}    
+    \end{enumerate}
+    Per una $i$ fissata in $\mathbb{Z}_p$ ci sono al massimo $\frac{p}{m}-1 \leq \frac{(p-1)}{m}$ valori per $Y$ tale che $Y = i \mod m$, ovvero tutti gli interi $\in \mathbb{Z}_p$ per cui la distanza da $i$ è un multiplo di $m$. Da 2 $\Pr[Y = j \mid X = i] = \frac{1}{p-1}$ per l'union buond si ottiene $\Pr[Y=i \mod m \mid X = i] \leq \frac{p-1}{m} frac{1}{p-1} = \frac{1}{m}$. $\hat{\mathcal{H}}$ è universale.
+\end{proof}
+
+\subsection{Perfect hashing}
+Parliamo ora di funzioni hash \emph{perfette} ovvero una funzione hash senza collisioni
+\begin{definition}[funzione hash perfetta]
+    Una funzione hash $h: [1,n] \to [0,M]$ è detta perfetta su un insieme $A \subseteq [1,n]$ se e solo se per ogni $x_1 \neq x_2 \in A$ si ha $h(x_1) \neq h(x_2)$, quindi è iniettiva su $A$. In generale cerchiamo una funzione che abbia tale proprietà con alta probabilità.
+\end{definition}
+\begin{theorem}
+    Se una famiglia $\mathcal{H}$ di funzioni $h: [1,n] \to [0,M)$ è universale e $M \geq n^{c+2}$ per una costante $c$ arbitrariamente grande allora $h \in_u \mathcal{H}$ è perfetta su ogni insieme $A \leq [1,n]$ con alta probabilità.
+\end{theorem}
+\begin{proof}
+    Universalità significa che $\Pr[h(x_1) = h(x_2)] \leq \frac{1}{M}$ per $x_1 \neq x_2$, ci sono al massimo $|A|^2 \leq n^2$ coppie di elementi distinti in $A$, dallo union bound la probabilità di avere almeno una collisione è al massimo $\frac{n^2}{M}$, scegliendo $M = n^{c+2}$ si ha una collisione con probabilità $\leq n^{-c}$, ovvero la funzione è perfetta con alta probabilità $(1-n^{-c}$).
+\end{proof}
+
+Il problema del dizionario è spesso presentato come l'esempio pratico per mostrare l'efficacia delle funzioni hash
+\subsection{Il problema del dizionario}
+Il dizionario è un tipo di dati, dato un universo $U$ di elementi possibili, mantiene un sottoinsieme arbitrario $S \subseteq U$ tale che operazioni come intersezione, unione, e ricerca in $S$ siano efficienti, queste operazioni sono rappresentate come:
+\begin{itemize}
+    \item \texttt{create()} inizializza un dizionario vuoto
+    \item \texttt{insert(u)} agggiunge un elemento $u \in U$ a $S$
+    \item \texttt{delete(u)} rimuove un elemento $u$ da $S$
+    \item \texttt{lookup(u)} risponde alla domanda $s \in S?$
+\end{itemize}
+
+La sfida principale riguarda la grandezza dell'universo $U$ che può essere estremamente grande, per cui definire un array di dimensione $|U|$ non è ragionevole, si cerca una soluzione proporzionale al sottoinsieme $n := |S|$.
+Una soluzione deterministica è implementata con gli alberi \emph{AVL} con $O(n)$ spazio e $O(\log n)$ tempo per operazione.
+
+\vspace{1em}
+Si presenta una soluzione probabilistica con $O(n)$ spazio e $O(1)$ tempo atteso per operazione, a tale scopo si presenta il concetto di tabelle hash.
+\subsubsection{Tabelle hash}
+Viene creato un array $H$ di grandezza $m \approx n$, quindi $H = [m]$. Si ha una collisione quando $h(u) = h(v)$ per u $\neq v$, mediamente per il paradosso del compleanno una collisione è attesa ogni $\sqrt{n}$ inserimenti.
+
+Per ogni posizione $i$ dell'array $H[i]$ contiene delle \emph{linked list} che contengono tutti gli elementi che collidono, solitamente chiamate \emph{liste di trabocco}.
+
+\input{figure/hash_table.tex}
+
+Le operazioni sono implementate come segue, 
+viene calcolato il valore di $h(u)$, successivamente l'operazione viene eseguita scandendo $H(h(u))$.
+È quindi necessario utilizzare una funzione hash $h$ che distribuisca gli elementi di $S$ in modo uniforme
+
+\vspace{1em}\noindent
+È possibile utilizzare la tecnica dell' \emph{hashing deterministico}, in cui ogni elemento $u \in U$ è rappresentato come intero, scegliendo un primo $p$, tale che $m \leq p \leq 2m$ allora $h$ è definito come 
+\[
+    h(u) = u \mod p
+\]
+funziona bene per applicazioni statiche in cui $S$ non varia.
+
+\vspace{1em}
+Per applicazioni in cui $S$ varia si fa uso delle funzioni hash universali, di cui sono state precedentemente descritte le proprietà ed esempi.
+Si ricorando le variabili $n$ rappresentate il numero di elementi di $S$, $N = |U|$, $m$ numero primo compreso $N \leq m \leq 2N$. Si fa uso della tecnica di \emph{doubling-halving}
+
+\input{algorithms/doubling_halving.tex}
+Si ottiene tempo $O(1)$ ammortizzato per eliminazione e inserimento, poiché il re-hasing avviene solo quando la dimensione raddoppia.
+
+%TODO: Fare perfect hashing
