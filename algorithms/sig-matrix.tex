@@ -1,0 +1,28 @@
+\begin{algorithm}[H]
+    \caption{Calcolo della matrice delle firme}
+    \DontPrintSemicolon
+    \SetKwComment{Comment}{// }{}
+
+    \KwIn{Matrice $M$ con $m$ righe e $N$ colonne; $t$ funzioni hash $f_1, \dots, f_t$}
+    \BlankLine
+
+    \For{ogni colonna $C=1 \dots N$}{
+        \For{ogni funzione hash $i=1 \dots t$}{
+            $SIG(i, C) \gets \infty$\;
+        }
+    }
+
+    \BlankLine
+    \For{ogni riga $j=1 \dots m$ della matrice originale $M$}{
+        \For{ogni colonna $C=1 \dots N$}{
+            \If{$M(j, C) = 1$}{
+                \For{ogni funzione hash $i=1 \dots t$}{
+                    Calcola l' \emph{i-esima} hash della riga $j$: $f_i(j)$\;
+                    \If{$f_i(j) < SIG(i, C)$}{
+                        Aggiorna $SIG(i, C) \gets f_i(j)$\;
+                    }
+                }
+            }
+        }
+    }
+\end{algorithm}

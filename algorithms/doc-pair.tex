@@ -1,0 +1,16 @@
+\begin{algorithm}[H]
+    \caption{Doc-Pair Check}
+    \DontPrintSemicolon
+    \SetKwComment{Comment}{// }{}
+
+    \KwIn{Colonne $C_1, C_2 \in \{0,1\}^h$; Parametro di confidenza $t$}
+    \BlankLine
+    
+    \For{$j=1$ \KwTo $t$}{
+        Scegli uniformemente a caso una permutazione $\pi_j \in_u \Pi_m$\;
+        Calcola gli hash $h_{\pi_j}(C_1)$ e $h_{\pi_j}(C_2)$\;
+    }
+    
+    \BlankLine
+    \KwRet $\text{Sign-Sim}(C_1, C_2) = \frac{|\{j : h_{\pi_j}(C_1) = h_{\pi_j}(C_2)\}|}{t}$\;
+\end{algorithm}

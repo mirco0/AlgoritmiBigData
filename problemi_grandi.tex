@@ -163,3 +163,34 @@ Qui di seguito si riporta un esempio di come il MinHashing conservi la similarit
     \input{figure/min_hash_similarity.tex}
 \end{example}
 
+\vspace{1em}\noindent
+Di seguito è riportato il codice che calcola la similarità tra le firme di due documenti
+
+\input{algorithms/doc-pair.tex}
+
+\vspace{1em}\noindent
+Si nota che $\jsim(C_1,C_2) \neq \text{Sign-Sim}(C_1,C_2)$, ma per il teorema principale del MinHashing $\jsim(C_1,C_2) = \mathbb{E}_{\pi}\left[{\text{Sign-Sim}(C_1,C_2)}\right]$ si ottiene il corollario:
+
+\begin{corollary}
+    \text{Sign-Sim}$(C_1,C_2) \longrightarrow \jsim(C_1,C_2)$ per $t \to \infty$.
+\end{corollary}
+\vspace{1em}\noindent
+Inoltre le $t$ funzioni hash sono mutualmente indipendenti, per cui si ha la concentrazione uguale a $|\text{Sign-Sim}(C_1,C_2) - \jsim(C_1,C_2)|$.
+
+\subsubsection*{Analisi complessità spaziale del MinHashing}
+Si scelgano $t = 100$ funzioni permutazioni casuali delle $m$ righe, $Sig(i,C)$ è l'indice della prima riga contenente `1' nella colonna $C$, permutata con l'\emph{i-esima} permutazione. \textbf{Sig$(i,C)$} è un indice, per cui occupa $\Theta(\log(|C|)) = \Theta(\log(m))$ spazio.
+
+\subsubsection*{Generazione di permutazioni casuali}
+È ora importante notare che le funzioni di MinHash $h_{\pi}(C)$ fanno uso di tante permutazioni casuali sull'insieme $U^k (m = |U|^k)$, generare permutazioni è un problema computazionalmente impegnativo, per cui le permutazioni vengono sostituite da $t$ funzioni hash casuali $h:[m]\to[m]$, la probabilità di 
+collisione è bassa, le collisioni vengono ignorate.
+
+\vspace{1em}
+Di seguito l'algoritmo efficiente per il calcolo della matrice delle firme come in figura \ref*{fig:3}, l'algoritmo fa uso di funzioni hash casuali per risolvere il problema delal generazione di permutazioni
+
+\input{algorithms/sig-matrix.tex}
+\subsubsection*{Analisi della complessità}
+L'algoritmo esegue $\Theta(mN)$ iterazioni, ogni iterazione richiede $t$ calcoli hash $f_i(i)$ se la condizione $M(j,C)$ è verificata.
+
+\vspace{1em}\noindent
+Tutte le tecniche impiegate fin'ora non hanno permesso di superare la barriera nel numero di confronti in $O(n^2)$ per determinare le coppie di documenti simili, si presenta quindi la seguente tecnica
+\subsubsection{Local Sensitive Hashing}
