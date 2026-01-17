@@ -83,4 +83,83 @@ Si presenta un esempio per mostrare perché il min-hashing è necessario
 \end{example}
 La tecnica precedente permette solo una rappresentazione robusta dei documenti, con il min-hashing si cerca un modo per trovare documenti simili tramtite delle piccole firme. 
 
-La difficoltà consiste nel definire una firma che conservi la similarità tra due insiemi.
+La difficoltà consiste nel definire una buona firma che conservi la similarità tra due insiemi.
+Per cui si cerca una funzione hash, da applicare agli insiemi \emph{shingle} (colonne della matrice $M$ vista in precedenza). La funzione hash cercata deve avere le seguenti proprietà
+\begin{enumerate}
+    \item $h(C)$ deve essere abbastanza piccolo da poter essere mantenuto in memoria
+    \item $\jsim(C_1,C_2)$ deve essere ``vicino'' all'equivalenza delle hash.
+    (se $\jsim(C_1,C_2)$ è alto, con alta probabilità $h(C_1) = h(C_2)$, viceversa se il valore di $\jsim(C_1,C_2)$ è basso, con alta probabilità $h(C_1) \neq h(C_2)$).
+\end{enumerate}
+
+A livello pratico si ``mandano'' i documenti in \emph{bucket}, due documenti simili devono finire nello stesso \emph{bucket}.
+
+Ovviamente la funzione hash cercata deve dipendere in qualche modo dalla misura di distanza, non tutte li funzioni hash funzionano su tutte le misure di distanza.
+
+La funzione hash della Jaccard Similarity è chiamata \emph{Min-Hashing}. Per ogni documento $D$ (colonna $C$ della matrice caratteristica $M$), per una funzione di permutazione $\pi$ si definisce la funzione $\text{Min\_Hashing}(C)_\pi = $ indice della prima riga nella quale $C$ ha valore 1, chiamato $\min(\pi(C))$. Per $\pi$ permutazione qualsiasi.
+
+\vspace{1em}\noindent
+Un problema da presentare è quello della generazione di una permutazione $\pi$ qualsiasi, non è un compito computazionalmente facile, nella pratica si fa uso di funzioni hash casuali, che permettono di approssimare il comportamento di una permutazione casuale.
+
+Si definisce nel dettaglio un esempio. Sia $M$ la matrice caratteristica del \emph{dataset}, $\Pi$ una permutazione scelta casualmente. Sia $m$ il numero di righe (\emph{k-shingles}) di $M$. Per una colonna $C$ di $M$ si definisce la funzione \emph{MinHash} $h_\pi(C)$ nel seguente modo
+\[
+    h_\pi(C) = \min \{ i \in [m]: C_\pi[i] = 1\} = \min(\pi(C)).
+\]
+
+\input{figure/min_hash.tex}
+Nella in figura \ref{fig:3} il documento $D_1$ ha i valori `1' per gli \emph{shingle} $\{1,2,3,4\}$, applicando le diverse permutazioni si ottiene
+\begin{align*}    
+    \pi_1(D_1) = \{2,3,5,4\} \quad \min = 2\\
+    \pi_2(D_1) = \{4,2,5,4\} \quad \min = 2\\
+    \pi_3(D_1) = \{3,4,1,5\} \quad \min = 1\\
+\end{align*}
+
+
+Il MinHashing ha una complessità spaziale $h_\pi(C) = \Theta(\log m)$ con $|C| = |U|^k = m$
+\newpage
+Si presenta una dimostrazione formale della proprietà di preservazione della similarità del MinHash
+\begin{theorem}
+    Siano $C_1,C_2$ fissati sia scelta una permutazione $\Pi$ in modo uniforme allora
+    \[
+        \Pr[h_\pi(C_1) = h_\pi(C_2)] = \jsim(C_1,C_2)
+    \]
+\end{theorem}
+\begin{proof}
+    Sia $X$ un documento $y \in X$ è uno dei suoi shingle allora $\Pr[\pi(y) \min \pi(X)] = \frac{1}{|X|}$ poiché è equiprobabile per qualsiasi riga di essere l'indice del minimo
+    \vspace{1em}
+    Sia $y$ tale che $\pi(y) = \min(\pi(C_1 \cap C_2))$ $\pi$ è uniforme casuale allora
+    \begin{align*}
+        \pi(y) = \min(\pi(C_1)) \text{ se $y \in C_1$} \\
+        \pi(y) = \min(\pi(C_2)) \text{ se $y \in C_2$}
+    \end{align*}
+    La probabilità che entrambi siano veri è 
+    \[
+        \Pr[\underbrace{\min(\pi(C_1)}_{h(C_1)} = \underbrace{\min(\pi(C_2))}_{h(C_2)})] = \frac{|C_1 \cap C_2|}{|C_1 \cup C_2|}
+    \]
+    Ovvero proprio la $\jsim(C_1,C_2)$
+\end{proof}
+Da questo teorema si può sfruttare la concentrazione del valore atteso per aumentare la confidenza. Usando MinHash mutualmente indipendenti $SIG(C) = \langle h_{\pi_1}(C),h_{\pi_2}(C),\dots, h_{\pi_t}(C) \rangle$
+
+\vspace{1em}\noindent
+Date queste premesse, si definisce la misura di similarità sulle firme descritte
+\begin{definition}[Similarità tra firme]
+    $\text{Sign-Sim}(C_1,C_2)$ è la funzione di similarità tra due vettori $\text{SIG}(C_1)$ e $\text{SIG}(C_2)$, dei due vettori firma \text{Sign}$(C_1)$ e \text{Sign}$(C_2)$ dove
+    \[
+        \text{Sign-Sim}(C_1,C_2) = \text{frazione delle firme MinHash in cui coincidono}.
+    \]
+    In modo pù formale è possibile definire una variabile aleatoria $Z$ che assume i segeunti valori
+    \[
+        Z = \begin{cases*}
+            1 \text{ se} \min(\pi(C_1)) = \min(\pi(C_2))\\
+            0 \text{ altrimenti}
+        \end{cases*}
+    \]
+    la Sign-Sim$(C_1,C_2)$ è equivalente a $\Pr[Z=1]$ dal teorema precedente.
+\end{definition}
+
+\vspace{1em}\noindent
+Qui di seguito si riporta un esempio di come il MinHashing conservi la similarità
+\begin{example}
+    Siano $\pi_1,\pi_2,\pi_3$ tre permutazioni casuali, e $M$ la matrice in input come nella figura \ref{fig:3}
+    \input{figure/min_hash_similarity.tex}
+\end{example}
+

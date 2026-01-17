@@ -20,7 +20,12 @@
     input_color/.style={fill=gray!5},
     % Stili testo
     header_text/.style={font=\small, color=black!90},
-    index_text/.style={font=\scriptsize\ttfamily, color=gray!80!black}
+    index_text/.style={font=\scriptsize\ttfamily, color=gray!80!black},
+    % Evidenziatori (Senza libreria 'fit')
+    highlight_red/.style={circle, draw=red!80!black, line width=1.2pt, minimum size=1.1em},
+    highlight_orange/.style={circle, draw=orange!90!black, line width=1.2pt, minimum size=1.1em},
+    arrow_red/.style={->, >=Stealth, red!80!black, line width=1pt},
+    arrow_orange/.style={->, >=Stealth, orange!90!black, line width=1pt}
 ]
 
 % --- 1. PERMUTATIONS PI_1, PI_2, PI_3 ---
@@ -56,7 +61,7 @@
 }
 
 % --- 3. SIGNATURE MATRIX ---
-\matrix (sig) [matrix of nodes, nodes={cell}, right=1.2cm of input, column sep=-\pgflinewidth, row sep=-\pgflinewidth] {
+\matrix (sig) [matrix of nodes, nodes={cell}, right=1.5cm of input, column sep=-\pgflinewidth, row sep=-\pgflinewidth] {
 |[pi1_color]| 2 & |[pi1_color]| 1 & |[pi1_color]| 2 & |[pi1_color]| 1 \\
 |[pi2_color]| 2 & |[pi2_color]| 1 & |[pi2_color]| 4 & |[pi2_color]| 1 \\
 |[pi3_color]| 1 & |[pi3_color]| 2 & |[pi3_color]| 1 & |[pi3_color]| 2 \\
@@ -71,8 +76,47 @@
 }
 
 % --- FRECCE DI FLUSSO (opzionali ma nello stile dei tuoi esempi) ---
-\draw[->, >=Stealth, color=gray!40, thick] ([xshift=2mm]input.east) -- ([xshift=-2mm]sig.west);
+\draw[->, >=Stealth, color=gray!40, thick] ([xshift=2mm]input.east) -- ([xshift=-5mm]sig.west);
 
-\end{tikzpicture}
-\caption{Processo di generazione della Signature Matrix tramite Minhashing.}
+
+    % --- FRECCE E LOGICA (Layer superiore) ---
+
+    % ESEMPIO 1 (Rosso): Calcolo di SIG(pi1,sud D1) = 2
+    % Disegno i cerchi direttamente sulle coordinate dei nodi esistenti
+    \node[highlight_red] (h_in_1) at (input-1-1) {};
+    \node[highlight_red] (h_pi_1) at (pi-1-1) {};
+    \node[highlight_red, rectangle, minimum size=7mm] (h_sig_1) at (sig-1-1) {};
+
+    % Frecce rosse
+    \draw[arrow_red] (h_in_1.west) to[out=200, in=-20] (h_pi_1.south); 
+    \draw[arrow_red] (h_pi_1.north) to[out=45, in=150] node[midway, above, font=\scriptsize, sloped] {MinHash} (h_sig_1.north west);
+
+    % ESEMPIO 2 (Arancione): Calcolo di SIG(pi2, D3) = 4
+    % Disegno i cerchi direttamente sulle coordinate dei nodi esistenti
+    \node[highlight_orange] (h_in_2) at (input-1-3) {};
+    \node[highlight_orange] (h_pi_2) at (pi-1-2) {};
+    \node[highlight_orange, rectangle, minimum size=7mm] (h_sig_2) at (sig-2-3) {};
+
+    % Frecce arancioni
+    \draw[arrow_orange] (h_in_2.west) to[out=200, in=-20] (h_pi_2.south);
+    \draw[arrow_orange] (h_pi_2.north) to[out=60, in=130] (h_sig_2.north west);
+
+    % --- LEGENDA ---
+    \node[below=5mm of input, align=center, font=\footnotesize, color=gray!30!black] {
+        Logica MinHashing: $\min \{ \pi(r) \mid \text{Input}[r,c] = 1 \}$\\
+        \textcolor{red!80!black}{\textbf{Esempio 1}}: $D_1$ ha 1 in riga 1 $\rightarrow$ $\pi_1(1) = 2$. Firma = 2.\\
+        \textcolor{orange!90!black}{\textbf{Esempio 2}}: $D_3$ ha 1 in riga 1 $\rightarrow$ $\pi_2(1) = 4$. Firma = 4.
+    };
+
+        \foreach \i in {1,...,7} {
+            \node[index_text, left=1pt of pi-\i-1.west] {$\i$};
+        }
+
+        % ETICHETTE RIGA (pi_1, pi_2, pi_3) a sinistra di SIG
+        \foreach \i in {1,...,3} {
+            \node[index_text, left=0pt of sig-\i-1.west] {$\pi_\i$};
+        }
+    \end{tikzpicture}
+    \caption{Processo di generazione della Signature Matrix tramite Minhashing.}
+    \label{fig:3}
 \end{figure}
