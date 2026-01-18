@@ -277,3 +277,63 @@ Impostando i parametri $b$ e $r$, si ha un punto di flesso a $k = \left(\frac{1}
 L'area verde sottostante la curva rappresenta il numero di falsi positivi, mentre l'area blu rappresenta il numero di falsi negativi.
 
 %TODO: Capire se argomentare oltre
+\newpage
+Per introdurre i prossimi problemi è necessario introdurre il concetto di Data Stream
+\input{data_stream.tex}
+
+\subsection{Pattern Matching}
+Si presenta il problema del pattern matching. Sia $\Sigma$ un alfabeto, data una stringa $y = y_{1}y_{2}\dots y_{n} \in \Sigma^{n}$, e una Stream $S \in \Sigma^m$ con $n<m$, determinare il numero di volte che $y$ appare in $S$, considerando $m$ e possibilmente anche $n$ molto grandi.
+
+\vspace{1em}\noindent
+Per risolvere il problema del Pattern Matching è necessario uno \emph{sketch} per l'identità tra stringhe, tra cui la \emph{funzione hash di Rabin}
+\begin{definition}[Funzione hash di Rabin]
+    Sia $q$ un numero primo tale che $q > |\Sigma|$ e $z \in_u [0,q)$ Sia $x[1,n] \in \Sigma^{n}$ una stringa di lunghezza $n$. La funzione hash di Rabin è definita
+    \[
+        K_{qz}(x) = \left( \sum_{i=1}^{n}x[i]\cdot z^{n-i}\right) \mod q
+    \]
+    Ovvero $K_{qz}$ è un polinomio in $\mathbb{F}_q$ valutato in $z$ con coefficienti i caratteri di $x$.
+\end{definition}
+
+Si definisce ora lo \emph{sketch} di Rabin
+\begin{definition}[Sketch di Rabin]
+    Si definisce il Rabin \emph{sketch} la coppia 
+    \[
+        f(x) = (K_{qz}(x), z^{|x|} \mod q)
+    \]
+    $f(x)$ fa uso di $O(\log q)$ bit, facendo uso di $q = n^{O(1)}$ $O(\log n)$ bit di spazio.
+\end{definition}
+
+\begin{lemma}[Concatenazione di caratteri]
+    $K_{qz}(x)$ è facile da aggiornare. Si supponga di avere $K_{qz}(x)$ e un carattere $c$, è facile calcolare $K_{qz}(x\cdot c)$: 
+    \[
+        K_{qz}(x\cdot c) = (K_{qz}(x) + z\cdot c) \mod q
+    \]
+    La lunghezza di $x\cdot c$ è $|x|+1$ e $z^{|x|+1} \mod q = (z^{|x|} \mod q)\cdot z \mod q$. 
+\end{lemma}
+\vspace{2em}
+\begin{lemma}[Concatenazione di stringhe]
+    Si supponga di avere $K_{qz}(x)$ e una stringa $y$, è facile calcolare $K_{qz}(x\cdot y)$: 
+    \[
+        K_{qz}(x\cdot y) = (K_{qz}(x) \cdot z^{|y|} +  K_{qz}(y)) \mod q
+    \]
+    La lunghezza di $x\cdot y$ è $|x|+|y|$ e $z^{|x|+|y|} \mod q = (z^{|x|} \mod q)\cdot (z^{|y|} \mod q)$. 
+\end{lemma}
+\vspace{2em}
+Inoltre un'altra proprietà dello \emph{sketch}: se $x \neq y$ allora $K_{qz}(x) \neq K_{qz}(y)$ con alta probabilità.
+
+\begin{lemma}
+    Siano $x,y$ due stringhe tali che $x \neq y$ con $\max(|x|,|y|) = n$ allora
+    \[
+        \Pr[K_{qz}(x) = K_{qz}(y)] \leq \frac{n}{q}
+    \]
+\end{lemma}
+\begin{proof}
+    \[
+        \Pr[K_{qz}(x) = K_{qz}(y)] = \Pr[ \underbrace{K_{qz}(x) - K_{qz}(y)} \equiv_q 0]
+    \]
+    $K_{qz}(x) - K_{qz}(y)$ è a sua volta un polinomio in $\mathbb{F}_q$, sia $x-y$ la stringa tale che $(x-y)[i]$ = $x[i]-y[i] \mod q$ (si aggiungano dei \emph{leading zeros} alla stringa più corta).
+    
+    \vspace{1em}
+    È facile notare che $K_{qz}(x) - K_{qz}(y) \mod q = K_{qz}(x-y)$ per $x \neq y$, $K_{qz}(x-y)$ è un polinomio di grado $\leq n$ su $\mathbb{F}_q$, per cui le radici sono al massimo $n$, gli elementi di $\mathbb{F}_q$ sono $q$, quindi si ottiene la probabilità di prendere una radice è $\leq \frac{n}{q}$.
+\end{proof}
+
