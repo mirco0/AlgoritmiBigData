@@ -2,7 +2,7 @@ In questa sezione si parla di problemi per cui la dimensione dei dati è eccessi
 \begin{enumerate}
     \item \textit{Pagine con una grande porzione di parole simili}
     \item \textit{Clienti con acquisti simili}
-    \item \textit{Immagini con elementi silimi}
+    \item \textit{Immagini con elementi simili}
 \end{enumerate}
 \begin{example}
     Input: punti ad alte dimensioni $x_1,x_2,\dots,x_N$
@@ -192,5 +192,88 @@ Di seguito l'algoritmo efficiente per il calcolo della matrice delle firme come 
 L'algoritmo esegue $\Theta(mN)$ iterazioni, ogni iterazione richiede $t$ calcoli hash $f_i(i)$ se la condizione $M(j,C)$ è verificata.
 
 \vspace{1em}\noindent
-Tutte le tecniche impiegate fin'ora non hanno permesso di superare la barriera nel numero di confronti in $O(n^2)$ per determinare le coppie di documenti simili, si presenta quindi la seguente tecnica
+Tutte le tecniche impiegate fin'ora non hanno permesso di superare la barriera nel numero di confronti in $\\Theta(n^2)$ per determinare le coppie di documenti simili, si presenta quindi la seguente tecnica
 \subsubsection{Local Sensitive Hashing}
+Con la tecnica del Local Sensitive Hashing si fa uso di una funzione $f(x,y)$, che permette di determinare se $(x,y)$ è una possibile coppia di cui la similarità va successivamente verificata.
+
+\vspace{1em}\noindent
+Si definisce $f(x,y)$, si consideri la matrice del MinHashing $SIG(i,C)\ i=1,\dots,t \; C=1,\dots,N$. Viene calcolato il valore hash delle colonne di $SIG(i,C)$, ogni coppia il cui valore hash è lo stesso è una \emph{coppia candidata}.
+
+\vspace{1em}\noindent
+Si presenta il procedimento in modo più formale,
+\begin{definition}
+    Sia definito $s$ un valore di similarità tale che $0<s<1$. Le colonne $X,Y$ di $SIG(*,*)$ sono dette \emph{candidate} se le firme MinHash ($SIG(*,X)$ e $SIG(*,Y)$) sono identiche per almeno una frazione $s$ delle loro righe:
+    \[
+        \frac{|\{ i \in [t] \mid SIG(i,X) = SIG(i,Y) \}|}{t} \geq s
+    \]
+\end{definition}
+Grazie al corollario precedente la similarità dei documenti è ``conservata'' dalle firme. \textit{Nota:} la similarità tra le firme è data da svariati valori identici tra loro.
+
+L'idea generale consiste nell'eseguire, tante volte, le hash delle colonne in $SIG(*,*)$, così facendo si ottengono dei \emph{bucket} in cui finiscono le firme dei documenti simili. Solo le coppie candidate hanno buona probabilità di collisione hash, quindi di finire nello stesso \emph{bucket}.
+
+\subsubsection*{Problemi tecnici}
+Calcolare l'hash completa di un documenti in un \emph{bucket} può portare a falsi positivi e falsi negativi per le coppie candidate.
+
+Per risolvere il problema, ogni firma (colonna di $SIG(*,*)$) viene partizionata in un insieme di \emph{bande}. La matrice $SIG(*,*)$ viene divisa in $b$ bande ogniuna composta da $r$ righe. Per ogni banda, si esegue l'hash \emph{LSH} in $c$ diversi \emph{bucket} ($c$ deve essere abbastanza grande rispetto a $r$, per evitare collisioni di firme diverse). 
+
+\vspace{1em}\noindent
+Il nuovo criterio per determinare le coppie di documenti simili consiste nel selezionare le firme che finiscono nello stesso \emph{bucket} per \emph{almeno} una banda.
+
+\vspace{1em}\noindent
+Dato questo nuovo criterio più preciso rimane da determinare i valori della variabili $b,r$ (e $t = br$) per ottenere una buona candidatura (tante coppie simili e poche collisioni di firme non simili).
+
+Per valutare la correttezza dell'algoritmo si assuma di fare uso di \emph{perfect hashing} in cui le collisioni derivano dalla \emph{bande} identiche.
+
+\begin{example}
+    Si suppongano $10^5$ colonne ($N = 10^5$) in $SIG(*,*)$, le firme di 100 righe ($t=100$), date queste premesse, la tabella delle firme occupa \textit{40Mb}.
+
+    Si scelgano $b=20$ bande ogniuna di $r=5$ interi.
+    L'obiettivo consiste nel trovare le coppie di documenti la cui similarità $\geq s$ per $s=0.8$ dato in input. 
+
+    \begin{enumerate}
+        \item[Caso 1.] Siano $C_1,C_2$ due documenti $80\%$ simili, si ha $\jsim(C_1,C_2) = 0.8$. Poiché $\jsim(C_1,C_2) \geq s$ allora $(C_1,C_2)$ deve essere una coppia candidata, per cui le hash devono avere almeno una \emph{banda} in comune.
+        
+        La probabilità che $C_1,C_2$ abbiano una \emph{banda} identica è $(0.8)^{5} = 0.328$ (tutti i 5 interi combaciano), mentre la probabilità che $C_1,C_2$ non abbiano \emph{nessuna} banda in comune è $(1-0.328)^{20} = 0.00035$ (nessuna delle 20 bande soddisfa la probabilità precedente).
+        
+        \noindent
+        Per cui il $99.965\%$ delle coppie $80\%$ simili vengno correttamente identificate.
+
+        \item[Caso 2.] Siano $C_1,C_2$ due documenti $30\%$ simili, si ha $\jsim(C_1,C_2) = 0.3$. Poiché $\jsim(C_1,C_2) < s$ allora $(C_1,C_2)$ non deve essere una coppia candidata. 
+        
+        Ovvero tutte le bande devono essere differenti
+        La probabilità che $C_1,C_2$ abbiano una \emph{banda} identica è $(0.3)^{5} = 0.00243$ (tutti i 5 interi combaciano), mentre la probabilità che $C_1,C_2$ non siano identici in \emph{nessuna} banda per tutte le 20 è $1 - (1-0.00243)^{20} = 0.0474$.
+
+        Per cui la probabilità di falsi positivi è $4.74\%$ per documenti con similarità $0.3$.
+    \end{enumerate}
+
+\end{example}
+Ne segue un'analisi dell'efficacia di \emph{LSH}. 
+\newpage
+Nella figura \ref{fig:4} viene rappresentata una funzione costante per il \emph{threshold} $s$, in cui tutte le coppie di documenti $C_1,C_2$ che hanno una similarità $< s$ vengono scartate, e le coppie di cui la similarità $\geq s$ vengono sempre individuate. Non ci sono falsi positivi ne falsi negativi.
+\input{figure/grafico1.tex}
+
+\noindent
+Impostando la variabile $r=1$, ovvero tutte bande di un solo elemento, la funzione è lineare come rappresentato nella figura \ref{fig:5}. Figura in cui non è presente un comportamento che separa chiaramente le coppie sopra il \emph{threshold}. La probabilità di selezionare una coppia $(C_1,C_2)$ è proporzionale alla $\jsim(C_1,C_2)$ (Per il teorema del MinHashing).
+\input{figure/grafico2.tex}
+
+Facendo uso della tecnica delle \emph{bande} permette di ottenere un comportamento che approssima l'ottimo rappresentato in \ref{fig:4}. Suppondendo una coppia di documenti $C_1,C_2$, per cui $\jsim(C_1,C_2) = x$ facendo uso della tecnica delle \emph{bande} si ottiene la probabilità che tutti gli elementi nella banda sono identici $= x^r$, e la probabilità che esista un elemento nella banda diverso $= 1 - x^r$.
+Per cui si ha 
+\begin{align*}
+    &\Pr[\text{Non esistenza di una band identica}] = (1-x^r)^b\\
+    &\Pr[\text{Esistenza di una band identica}] = 1 - (1-x^r)^b
+\end{align*}
+si è interessati all'ultima probabilità presentata, che ha la proprietà di aumentare con $b$ e diminuire con $r$. 
+
+\newpage \noindent
+Aumentare troppo una delle due variabili può portare a troppi falsi positivi o falsi negativi. È importante trovare un punto ottimale.
+
+\vspace{1em}\noindent
+Per un parametro $s$ fissato si deve segliere $t$ ovvero il numero di MinHash (numero di righe di $SIG(*,*)$), il numero di \emph{bande} $b$ e di conseguenza il numero $r$ di elementi per banda.
+
+\input{figure/grafico3.tex}
+Impostando i parametri $b$ e $r$, si ha un punto di flesso a $k = \left(\frac{1}{b}\right)^\frac{1}{r}$. Un idea efficace è quella di impostare $b,r$ tali che $b\cdot r \leq t$ e $s \approx \left(\frac{1}{b}\right)^\frac{1}{r}$. Come è possibile vedere in figura \ref{fig:6} cambiare i parametri $r$ e $b$ permette di approssimare molto bene un algoritmo ideale.
+
+\input{figure/grafico4.tex}
+L'area verde sottostante la curva rappresenta il numero di falsi positivi, mentre l'area blu rappresenta il numero di falsi negativi.
+
+%TODO: Capire se argomentare oltre

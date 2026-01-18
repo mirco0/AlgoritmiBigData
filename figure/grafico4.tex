@@ -1,0 +1,17 @@
+\begin{figure}[h]
+    \centering
+    \begin{tikzpicture}
+    \begin{axis}[standard]
+        \addplot [name path=curve, domain=0:1, samples=100, red, ultra thick] {1-(1-x^5)^10};
+        
+        \path [name path=bottom] (axis cs:0,0) -- (axis cs:1,0);
+        \path [name path=top] (axis cs:0,1) -- (axis cs:1,1);
+
+        \addplot [green!60!black, fill opacity=0.4] fill between [of=curve and bottom, soft clip={domain=0:0.6}];
+        \addplot [blue!70!black, fill opacity=0.4] fill between [of=curve and top, soft clip={domain=0.6:1}];
+
+        \draw [dashed, black, thick] (axis cs:0.6, 0) -- (axis cs:0.6, 1)
+            node[pos=1.05, font=\small] {$s$};
+    \end{axis}
+    \end{tikzpicture}
+\end{figure}

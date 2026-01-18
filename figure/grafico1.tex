@@ -1,0 +1,15 @@
+\begin{figure}[h]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[standard]
+            \draw [red, ultra thick] (axis cs:0, 0) -- (axis cs:0.6, 0);
+            \draw [red, ultra thick] (axis cs:0.6, 0) -- (axis cs:0.6, 1);
+            \draw [red, ultra thick] (axis cs:0.6, 1) -- (axis cs:1, 1);
+            
+            \draw [dashed, black, thick] (axis cs:0.6, 0) -- (axis cs:0.6, 1)
+            node[pos=1.05, font=\small] {$s$};
+        \end{axis}
+    \end{tikzpicture}
+    \caption{Figura che rappresenta l'efficacia ideale}
+    \label{fig:4}
+\end{figure}
