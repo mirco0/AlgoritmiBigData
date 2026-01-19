@@ -336,4 +336,56 @@ Inoltre un'altra proprietà dello \emph{sketch}: se $x \neq y$ allora $K_{qz}(x)
     \vspace{1em}
     È facile notare che $K_{qz}(x) - K_{qz}(y) \mod q = K_{qz}(x-y)$ per $x \neq y$, $K_{qz}(x-y)$ è un polinomio di grado $\leq n$ su $\mathbb{F}_q$, per cui le radici sono al massimo $n$, gli elementi di $\mathbb{F}_q$ sono $q$, quindi si ottiene la probabilità di prendere una radice è $\leq \frac{n}{q}$.
 \end{proof}
+Nel seguente codice si mostra la costruzione del poliomio per una data stringa $x=x_1,\dots,x_n$
+\input{algorithms/karps-rabin.tex}
 
+\vspace{1em}\noindent
+L'algoritmo con input $(q,z,x)$ richiede spazio $O(\log q)$, mentre il procedimento per la costruzione del polinomio di $x$ e $y$ concatenate richiede spazio $O(\log q + \log(|y|) \log q)$.
+
+\begin{corollary}[probabilità di errore]
+    Sia $q$ un primo, tale che $n^{c+1} \leq q \leq 2n^{c+1}$ per qualche $c>0$ allora per ogni $x\neq y$,
+    \[
+        Pr{K_{qz}(x) = K_{qz}(y) \mod q} \leq \frac{1}{n^c}
+    \]
+\end{corollary}
+\noindent
+La dimensione dello \emph{sketch} è $O(\log n)$ contro $O(n)$ iniziale.
+
+\vspace{2em}\noindent
+Ritornando al problema del pattern matching, si ricorda il problema: data una stringa $y$ contare quante volte appare nel Data Stream con alfabeto $\Sigma = [s]$, la Stream è una stringa $x<x_1,x_2,\dots,x_m> \in \Sigma^m$ e $y = <y_1,y_2,\dots,x_m> \in \Sigma^n$.
+
+\vspace{1em}
+Si suppone di aver letto i caratteri dalla Stream $<x_1,x_2,\dots,x_i>$ con $i\geq n$, quindi sono stati già calcoli gli \emph{sketch} $K_{qz}(<x_{n-i+1},\dots,x_i>)$ e $K_{qz}(y)$, quando un nuovo elemento della Stream viene ricevuto $x_{i+1}$ si calcola il nuovo \emph{sketch}
+\[
+    K_{qz}(<x_{i-n+2},\dots, x_{i+2}>)= ( K_{zq}(<x_{i-n+1},\dots, x_{i}>) - x_{i-n+1}\cdot z^{n-1}) z + x_{i+1}) \mod q
+\]
+in modo più pratico, viene tolto l'elemento meno recente $x_{i-n+1}$ e viene inserito il nuovo elemento $x_{i+1}$.
+
+Si procede ripetendo con $i$ aumentato di 1.
+
+\subsubsection*{Analisi delle prestazioni}
+\begin{lemma}[Complessità spaziale] Per una Stream lunga $m$, un pattern lungo $n$ lo spazio occupato dall'algoritmo è $\Theta(n)$, è facile da verificare vedendo che è necessario mantenere gli ultimi $n$ elementi della Stream per toglierli al momento giusto.
+\end{lemma}
+
+\begin{lemma}[Complessità temporale] Il numero di operazioni per elemento è $O(1)$, aggiornare lo \emph{sketch} richiede un numero costante di operazioni, è sufficiente precalcolare $z^{n-1} \mod q$.
+\end{lemma}
+
+Un migliore algoritmo è quello di \emph{Porat-Porat} che occupa $O(\log n)$ spazio.
+
+\subsection{Proprietà algoritmi su Stream}
+Dal momento che non è possibile memorizzare l'intera Stream è necessario mantenere un \emph{sample}, per effettuare il \emph{sampling} della Stream esistono due approcci:
+\begin{enumerate}
+    \item Campionare gli elementi in modo proporzionale alla grandezza della Stream, come ad esempio mantenere $\frac{1}{10}$ degli elementi.
+    \item Mantenere un campione casuale di una grandezza fissata su una Stream arbitrariamente grande. 
+    Ad ogni passo $k$ si vuole un campione di $s$ elementi da mantenere in memoria, c'è da definire la proprietà degli elementi da mantenere. 
+    
+    \textbf{Dinamicità della Stream}: per ogni passo $k$ ogniuno dei $k$ elementi visto fino ad ora deve avere la stessa probabilità di essere nel campione.
+    \vspace{1em}\noindent
+    
+\end{enumerate}
+\subsection{Problemi di campionamento}
+\subsubsection{Problema 1: Campione a porzione fissa}
+Si assuma lo scenario in cui la Stream $U$ è composta da \emph{query} dei motori di ricerca, ovvero ogni elemento della Stream è una tupla \textit{(ID utente, query, tempo)}. Lo scopo principale è quello di trovare un campione $S \subseteq U$ che per, un utente medio $u$ e una query $q$, approssimi bene la frazione di occorrenze $q$ in $U$ fatte da $u$.
+\begin{definition}[Occorrenza $q$]
+    Una tupla in $U$ è chiamata \emph{occorrenza $q$} se ha il compomente $query = q$.
+\end{definition}

@@ -1,0 +1,13 @@
+
+\vspace{1em}
+\begin{algorithm}[H]
+    \caption{Algoritmo di KarpRabin}
+    \DontPrintSemicolon
+
+    \KwIn{$q$ numero primo; $z \in_u \mathbb{F}_q$; $x = <x_0,x_1,\dots,x_{n-1}> \in [s]^{n}$ stringa}
+    \BlankLine
+    $K_{qz}(\varepsilon) = 0$\;
+    \For{$j=1$ \KwTo $n$}{
+        $(K_{qz}(<x_0,x_1,\dots,x_{j-1}>) z + x_{j}) \mod q$\;
+    }
+\end{algorithm}
