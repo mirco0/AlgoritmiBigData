@@ -146,7 +146,7 @@ Date queste premesse, si definisce la misura di similarità sulle firme descritt
     \[
         \text{Sign-Sim}(C_1,C_2) = \text{frazione delle firme MinHash in cui coincidono}.
     \]
-    In modo pù formale è possibile definire una variabile aleatoria $Z$ che assume i segeunti valori
+    In modo pù formale è possibile definire una variabile aleatoria $Z$ che assume i seguenti valori
     \[
         Z = \begin{cases*}
             1 \text{ se} \min(\pi(C_1)) = \min(\pi(C_2))\\
@@ -389,3 +389,170 @@ Si assuma lo scenario in cui la Stream $U$ è composta da \emph{query} dei motor
 \begin{definition}[Occorrenza $q$]
     Una tupla in $U$ è chiamata \emph{occorrenza $q$} se ha il compomente $query = q$.
 \end{definition}
+
+Un algoritmo banale consiste nel calcolare il valore Hash di ogni elemento (quindi fare uso di \emph{bucket}) nella Stream è prendere una porzione di \emph{bucket}. Segue un esempio 
+\input{algorithms/naive_sampling.tex}
+
+\subsubsection*{Analisi procedura}
+Supponiamo che la Stream $U$ sia tale che ogni utente $u$ faccia $m$ query differenti una volta, e $d$ query differenti due volte, per cui $U = m+2d$. L'algoritmo dovrebbe approssimare bene la frazione degli utenti medi che hanno due occorrenze in $U$. La frazione delle \emph{$d$-query} è $\frac{d}{m+d}$, il valore $\E{|S|} = \frac{1}{10}\cdot |U|$ (la probabilità di inserimento di una tupla $t$ è $\frac{1}{10}$). Infine $S$ conterrà $\frac{m}{10}$ delle \emph{query} $m$, poiché la probabilità di inserimento è $\frac{1}{10}$ ed è presente esattamente un'occorrenza per ogniuna delle $m$ query.
+
+\begin{align*}    
+    \E{\text{Elementi distinti} \in S} &= \frac{m}{10} + \frac{d}{100} + \frac{18d}{100}\\ 
+    \E{|S|} &= \frac{m}{10} + \frac{2d}{100} + \frac{18d}{100}\\ 
+\end{align*}
+Si giustificano i calcoli. Le query $d$ vengono campionate con probabilità $\frac{1}{10}$, ce ne sono due, la probabilità di campionarle entrambe è $\frac{1}{100}$ per $d$ query allora $\frac{d}{100}$, $\frac{18d}{100}$ vengono campionati una sola volta ($\left(\frac{1}{10} \cdot \frac{9}{10}\right) d$ volte). 
+
+In $S$ ci saranno $\frac{19}{100}d$ delle \emph{query $d$}
+\begin{proof}
+    $\frac{d}{100}$ delle \emph{query $d$} appariranno due volte, altre $\frac{18d}{100}$ appariranno esattamente una volta.
+\end{proof}
+Infine l'algoritmo darà l'approssimazione di $S$ come 
+\[
+    \frac{\frac{d}{100}}{\frac{m}{10}+\frac{d}{100}+\frac{18d}{100}} = \frac{d}{10m + 19d}
+\]
+questo approccio non è quindi funzionante, si presenta un secondo approccio, in cui vengono campionati gli utenti sia $I$ l'insieme degli utenti, si scelga una porzione degli utenti (per esempio $\frac{1}{10}$) e si mettano le loro \emph{occorrenze $q$} in $S$ (con la tecnica dei \emph{bucket} vista in precedenza). Si restituisca la media calcolata in $S$.
+
+\input{algorithms/user_sample.tex}
+\subsubsection*{Analisi campionamento degli utenti}
+Sia $Q$ l'insieme delle query, $I$ l'insieme degli \emph{ID utente}. Fissando una data query $q$ si definisce la funzione $x(v,q)$ come il numero di \emph{occorrenze $q$} da $u$ nella Stream. INoltre si definisce la variabile aleatoria $X_S(V,q)$ come il numero di occorrenze dall'utente $V$ (variabile)in $S$. Nell'algoritmo \ref{alg:user_sample} gli ID degli utenti $V$ è una variabile aleatoria uniforme.
+
+Il valore cercato è $AVG_{V \in I}(x(v,q)) = \mathbb{E}_{V \in S}\left[X_S(V,q)\right]$ per ogni $q$ fissata. Per cui $AVG_{V \in S}(V_S(V,q))$ (il risultato dell'algoritmo).
+
+\vspace{1em} Sia $C_j$ una variabile aleatoria definita come segue \[
+    C_j = \begin{cases*}
+        1 \text{ se l'hash di $j$ è 0 }\\
+        0 \text{ altrimenti }
+    \end{cases*}
+\]
+sia inoltre $x_j$ la variabile che conta il numero di elementi dell'utente $j$ in $U$. $\E{|S|} = \sum_j{x_j\cdot \Pr\left[C_j = 1\right]} = \frac{1}{10}\cdot \sum_{j}{x_j} = \frac{|U|}{10}$. È da notare che la varianza può esssere molto grande, si presenta quindi una soluzione generale. 
+
+\vspace{1em}\noindent
+Sia $U$ una Stream di tuple $(x_1,x_2,\dots,x_k)$ una chiave è un sottoinsieme $(x_{i_1},x_{i_2},\dots,x_{i_j})$, per ottenere un campione $S$ di porzione $a/b$ della Stream si procede nel seguente modo:
+\begin{enumerate}
+    \item si esegue l'hash della chiave in $b$ \emph{buckets}
+    \item si inseriscono in $S$ solo le tuple le cui hash $\leq a$.
+\end{enumerate}
+Poiché non è sempre possibile mantenere un sottoinsieme di dimensione proporzionale allo Stream è possibile utilizzare un altro metodo:
+\begin{enumerate}
+    \item si esegue l'hash di ogni chiave in un grande numero $b$ di \emph{buckets}
+    \item si imposta una soglia iniziale $t \leq b$ per cui tutti gli elementi più piccoli della soglia finiscono in $S$
+    \item se $S$ diventa troppo grande $t$ viene ridotto e tutti gli elementi sopra la nuova soglia vengono rimossi
+    \item si ripete finché necessario
+\end{enumerate}
+
+\subsubsection{Problema 2: Campione di spazio fissato}
+Si suppone di voler mantere in memoria un campione di $S$ di esattamente $s$ elementi, supponendo di aver visto $n$ elementi al tempo $n$, allora ogni tuopla deve essere nel campione con probabilità $\frac{1}{n}$. Si presenta l'algoritmo di Reservoir-sampling
+\subsubsection{Reservoir Sampling}
+Il metodo di \emph{Reservoir Sampling} consiste nel salvare in $S$ i primi $s$ elementi, quando arriva un elemento \emph{$n$-esimo}, per $n\geq s$
+\begin{enumerate}
+    \item scegli con probabilità $\frac{s}{n}$ se inserire il nuovo elemento in $S$
+    \item se l'elemtento è scelto per l'inserimento si sceglie un elemento $x \in_u S$ da rimuovere con probabilità $\frac{1}{s}$.
+\end{enumerate}
+
+\begin{theorem}
+    Per ogni $s\geq 1$ e per ogni tempo $n\geq s$ l'algoritmo Reservoir Sampling ha la seguente proprietà: dopo $n$ passi $S$ contiene ogniuno degli $n$ elementi con la stessa probabilità
+\end{theorem}
+\begin{proof}
+    Caso Base:
+    
+    dopo aver visto $n = s$ elementi $S$ ha tutti gli elementi con probabilità $\frac{s}{s} =1$.
+    
+    \vspace{1em}\noindent
+    Caso Induttivo:
+
+    Assumendo che al passo $n$ ogni elemento appartenga con probabilità $\frac{s}{n}$, dopo l'elemento $n+1$ la proprietà è mantenuta ovvero $\frac{s}{n+1}$. 
+
+    \vspace{1em}\noindent
+    Per ogni ``vecchio'' elemento già in $S$, la probabilità che l'algoritmo lo mantenga è
+    \[
+        \underbrace{\left(1 - \frac{s}{n+1} \right)}_{\substack{\text{Elemento $n+1$}\\\text{scartato}}}
+        + \underbrace{\left( \frac{s}{n+1}\right)}_{\substack{\text{Elemento $n+1$}\\ \text{non scartato }}} \cdot \underbrace{\left(\frac{s-1}{s}\right)}_{\substack{\text{Qualsiasi altro} \\ \text{elemento è scelto}}} = \frac{n}{n+1}
+    \]
+    quindi al tempo $n$ ogni elemento in $S$ è presente con probabilità $\frac{s}{n}$, al tempo $n+1$ ogni vecchio elemento $x \in S$ rimane con probabilità $\frac{n}{n+1}$. Infine la probabilità che l'elemento sia in $S$ è $\frac{s}{n}\cdot\frac{n}{n+1} = \frac{s}{n+1}$.
+\end{proof}
+\subsubsection{Sliding Window}
+Un modello utile riguarda una finestra di lunghezza $N$ sulla Stream, in cui sono contenuti gli $N$ elementi più recenti.
+$N$ è grande abbastanza da non poter mantenere gli elementi in memoria. 
+
+\subsubsection{Counting Bits}
+Sia $I$ una Stream di bit infiita, con una finestra di lunghezza $N$. Si vuole calcolare il valore della funzione $\#1(I,N,k)$ che rappresenta il numero di \emph{`1'} negli ultimi $k$ bit ($k\leq N$). Una soluzione banale consiste nel memoriazzare gli ultimi $N$ bit
+\begin{theorem}
+    Per una Stream con distribuzione arbitraria la funzione $\#1(I,N,k)$ richiede spazio $\geq N$.
+\end{theorem}
+\begin{proof}
+    Si supponga sia possibile fare uso dello schema di rappresentazione $R(N,k)$, con $|R(N,K)| \leq N-1$ allora devono esistere 2 bit nella finestra $w$ che hanno la stessa rappresentazione in $R(N,k)$, assumiamo per qualche $k$
+    \begin{align*}
+        x = \dots 1\; x_{k-1}x_{k-2}\dots x_1\\
+        z = \dots 0\; x_{k-1}x_{k-2}\dots x_1
+    \end{align*}
+    in pratica $x$ e $z$ sono entrambi esprimibili con qualche $R(N,k)$ di cui la dimensione è $\leq N-1$ (in qualche modo qualche informazione viene persa). Qualsiasi algoritmo per $\#1(I,N,k)$ non riesce a distinguere una finestra $x$ da una finestra $z$, quindi fallisce.
+\end{proof}
+Nel caso in cui una finestra $N$ non possa essere salvata in memoria è necessario fornire un'approssimazione per il valore della funzione $\#1(I,N,k)$. Si fa uso del metodo \emph{DIGM}
+\subsubsection*{DIGM (Datar, Gioinis, Indikm, Motwani)}
+Il meotodo \emph{DIGM} funziona con qualsiasi distribuzione su Stream lo spazio utilizzato è $O(\log 2N)$ bit per Stream, e non fornisce mai l'approssimazione più del $50\%$ del valore effettivo.
+
+Più precisamente (dalle note di Prezza) DIGM usa $O(\varepsilon^{-1} \log^{2}m)$ spazio fornendo una $(1+ \varepsilon)$ approssimazione. Ne seugue una descrizione del funzionamento, sia $B = \lceil 1 / \varepsilon \rceil$, i bit della Stream vengono raggruppati in gruppi $G_1,G_2,\dots,G_t$ che devono soddisfare le seguenti condizioni 
+\begin{enumerate}
+    \item ogni $G_i$ inizia e finisce con il bit \textit{1}
+    \item tra due gruppi adiacenti $G_i,G_{i+1}$ ci sono solamente bit \textit{0},
+    
+    per cui la Stream è della forma $0^{m_0}G_0,0^{m_1}G_1,\dots,0^{m_t}G_t$ 
+    \item ogni gruppo $G_i$ contiene $2^k$ bit \textit{1}
+    \item Per ogni $\leq i \leq t$ se $G_i$ contiene $2^k$ bit \textit{1} allora $G_{i+1}$ contiene $2^k$ o $2^{k-1}$ bit \textit{1}
+    \item Per ogni $k$ eccezione per la più grande, il numero $Z_k$ di gruppi contenenti $2^k$ bit \textit{1} soddisfa $B \leq Z_k \leq B+1$ (i gruppi devono essere adiacenti).
+\end{enumerate}
+
+La ``testa'' della Stream è l'elemento più recente. Per ogni $k$ ci sono almeno $B=1$ gruppi che contengono $2^k$ bit \textit{1} e al massimo $B+1$ gruppi con $2^k$ bit \textit{1}.
+
+\vspace{1em}\noindent
+È necessario definire come aggiornare i gruppi quando nuovi elementi vengono ricevuti, se il bit è \textit{0} non si fa nulla, al contrario per nuovi bit \textit{1} si procede come segue
+\begin{enumerate}
+    \item viene creato un nuovo gruppo con il nuovo bit \textit{1}
+    \item se ci sono $B+2$ gruppi contenenti $2^0$ bit \textit{1}, i gruppi più a sinistra vengono uniti in modo tale che ci siano $B$ gruppi contenenti $2^0$ bit \textit{1}. Così facendo il nuovo gruppo contiene $2^1$ bit \textit{1}
+    \item il processo viene ripetuto con i gruppi contenenti $2^i$ bit \textit{1}.
+\end{enumerate}
+è facile vedere che un singolo aggiornamento richiede tempo $O(\log m)$ facendo uso di una doppia lista collegata.
+
+Sia $L$ una lista globale
+\[
+    L = \ell_q \leftrightarrow \ell_{q-1} \leftrightarrow \cdots \leftrightarrow \ell_1. 
+\]
+in cui l'elemento $\ell_i$ contiene tutti i gruppi con $2^i$ bit \textit{1} ed è a sua volta una doppia lista collegata
+\[
+    \ell_i = G_{j_1} \leftrightarrow \cdots \leftrightarrow G_{j_s} 
+\]
+in cui, appunto, $G_{j_1},\dots,G_{j_s}$ sono tutti i gruppi contenenti $2^i$ bit \textit{1}. Ogni gruppo è una coppia \textit{(sx,dx)} che rappresenta l'inizio e la fine del gruppo. Per ogni lista collegata $\ell_i$ viengno salvate la testa, la coda, numero di bit contenuti e numero di bit \textit{1} contenuti nei suoi gruppi. 
+
+\vspace{1em}\noindent
+Per cui trovare i gruppi più a sinistra dato un $\ell_i$, unirli e spostare un gruppo in $\ell_{i+1}$ richiede tempo $O(1)$. Un aggiornamento richiede tempo $O(q) = O(\log m)$, più precisamente un aggiornamento richiede tempo $O(1)^{*}$ \emph{ammortizzato}.
+\begin{proof}
+    Si supponga che un aggiornamento aumenti $Z_k$ di un unità ($Z_k$ è il numero di gruppi con $2^k$ elementi), questo significa che prima dell'aggiornamento $Z_{k'} = B+1$ per ogni $k' \leq k$. In turno questa configrazione richiede $2^k-1$ aggiornamenti precedenti, che aggiunti al nuovo aggiornamento fa $2^k$ aggiornamenti totali. Un solo aggiornamento ogni $2^k$ costa $O(k)$. Il costo ammortizzato è $\sum_{k=1}^{\infty}\frac{k}{2^k} = O(1)$.
+\end{proof}
+
+Si procede valutando il \emph{fattore di approssimazione} di \emph{DISM}.
+%TODO: creare figura
+\input{figure/DISM_window.tex}
+
+La figura \ref{DISM_window} corrisponde al caso peggiore. Nel caso peggiore la query ( la finestra con $\bar{m}$ bit) comprende solamente l'ultimo bit di un blocco, il vero numero di bit \textit{1} nella finestra è $d$. La risposta restituita $\tilde{d}$ include l'intero blocco di $2^k$ bit \textit{1}.
+
+Sia $k$ tale che il gruppo più vecchio che interseca la finestra ha $2^k$ bit \textit{1}. Sia $d$ il vero numero di bit \textit{1} nella finestra, $\tilde{d}$ la somma dei bit \textit{1} nei gruppi che intersecano la finestra (l'approssimazione). 
+
+Se $k=0$ è facile verificare che $\tilde{d} = d$ poiché ogni gruppo che interseca la finestra contiene esattamente un bit. È possibile supporre $k>0 \implies \tilde{d} \geq d$, dal momento che viene contato ogni blocco che interseca la finestra.
+
+Si calcola un \textit{lower-bound} per $d$ (poiché la finestra espande un gruppo con $2^k$ bit \textit{1}), allora la finestra sicuramente contiene almeno $B$ gruppi contenenti $2^j$ bit \textit{1} per ogni $j = 1,\dots,k$
+\begin{align*}
+    d \geq & B \cdot 2^k + B\cdot 2^{k-1} + \dots + B \cdot 2^0\\
+    =& B \cdot \sum_{i = 0}^{k-1}2^i = B(2^k-1)
+\end{align*}
+Inoltre $d \leq \tilde{d} \leq d(1 + \varepsilon)$. 
+
+%TODO: terminare dalle slides lezione 4/12/25
+
+\vspace{1em}\noindent
+È anche possibile gestire il caso in cui la Stream sia di interi e si vuole approssimare il valore della somma degli ultimi $k$ elementi. Si presenta la procedura di risoluzione 
+\begin{enumerate}
+    \item sapendo che ogni intero fa uso $\leq m$ bit allora gli $m$ bit dell'intero vengono trattati come una Stream stessa
+    
+    si fa uso di DIGM per la stima del numero di bit \textit{1} nella rappresentazione binaria di ogni intero. Sia $c_i$ il conto stimato per l'\textit{i-esimo} bit, la somma è $\sum_{i=0}^{m-1}c_{i}2^{i}$
+    \item si fa uso dei \emph{bucket} per mantenere le somme parziali (la somma degli elementi in un \emph{bucket} di dimensione $b$ è al massimo $2^b$)
+\end{enumerate}

@@ -1,0 +1,24 @@
+\begin{algorithm}[H]
+    \caption{User-Sample Algorithm}
+    \DontPrintSemicolon
+    \SetKwComment{Comment}{// }{}
+
+    \KwData{$I$: Insieme di tutti gli ID Utente}
+    \KwResult{$S$: Campione contenente tutte le q-occorrenze degli utenti selezionati}
+
+    \BlankLine
+    \Comment{Fase 1: Selezione di 1/10 degli utenti}
+    Scegli una funzione di hash $h$ che mappi gli ID utente in 10 bucket i.u.a.r.\;
+    $S \gets \emptyset$\;
+    
+    \For{$ID \in I$}{
+        \If{$h(ID) == 1$}{
+            Estrai tutte le \emph{occorrenze $q$} associate a tale $ID$ e aggiungile a $S$\;
+        }
+    }
+
+    \BlankLine
+    \Comment{Fase 2: Elaborazione dei dati}
+    Esegui computazioni medie (statistiche) sul campione $S$\;
+    \label{alg:user_sample}
+\end{algorithm}
