@@ -122,6 +122,73 @@ e definendo $\delta = \left( \frac{1}{2}\right)^t$, risolvendo per $t$ si ottien
 
 \begin{theorem}
     Scegliendo $\varepsilon > 0$ (errore), e $\delta > 0$ (probabilità di fallimento) per una $s = 2/\varepsilon$ fissata e $t = \log(1\delta)$ il \emph{MinSketch} $M$ usa $O\left( \frac{\log 1/s}{\varepsilon}\right)$ parole di spazio e $f_y \leq \tilde{f_y} \leq f_y + \varepsilon m$ con probabilità $\geq 1 - \delta$. Il tempo di aggiornamento e query è $O(\log(1/\delta))$.
-
 \end{theorem}
 
+\subsection{Filtro delle Stream}
+Si parla ora di filtro su Stream: ogni elemento $x$ nella Stream è una tupla $x = <k_1,\dots,k_k>$, in input è data un insieme $S$ di valori ``buoni'' per le tuple aventi una particolare chiave $k$.
+
+\vspace{1em}\noindent
+Una soluzione banale consiste nel salvare $S$ in una tabella hash $T$, per ogni elemento $x$ viene calcolata l'hash di $k_(x)$, successivamente verificata con la tabella $T$.
+
+Un problema è evidente quando l'insieme $S$ è troppo grande da non poter essere mantenuto interamente in memoria
+
+\subsubsection{Algoritmo First-Cut}
+Sia $U = \{ \text{tutti i valori possibili per la chiave $k$} \}$, e $S$ l'insieme di tutti i valori ``buoni'' della chiave $k$ scelta, l'algoritmo si sviluppa ora in 2 fasi
+
+\begin{enumerate}
+    \item[Fase 1:]
+    Viene creato un array $B[1,n]$ di $n$ bit, inizializzato a 0
+    
+    Viene scelta una funzione hash $h: U \to [n]$
+    
+    Per ogni componente $s \in S$ viene calcolato il valore hash $h(s)$
+    
+    Viene impostato $B[h(s)] = 1$ 
+    
+    \item[Fase 2:]
+    
+    Sia $x = <x_1,\dots,x_k>$ un nuovo elemento della Stream
+    
+    Viene calcolato $h(x_k)$
+    
+    Se $B[h(x_k)] = 1$ l'elemento $x$ è accettato
+\end{enumerate}
+
+Questo metodo permette dei falsi positivi, ma mai dei falsi negativi \textit(one-sided-error). Analisi dell'algoritmo 
+\begin{theorem}
+    Se un elemento è in $S$, allora sicuramente il nel vettore $B$ esiste la posizione corrispondente uguale a 1. Si ha un falso positivo solo nel caso di collisione
+\end{theorem}
+
+\vspace{1em}\noindent
+Si analizza più nel dettaglio l'algoritmo, per calcolare la probabilità di falsi positivi sia $|S| = m$, $|B| = n$ (ovvero il numero di \emph{bucket}), per qualche elemento $u \in U$ la probabilità di finire in una posizione di $B$ già inizializzata a 1 è esattamente la frazione \emph{ERR} di \emph{bucket} in $B$. Si procede stimando \emph{ERR} con l'esperimento \textit{balls into bins}.
+Mandando $m$ palline in $n$ \emph{bucket} con la stessa probabilità per ogniuno, qual è la probabilità che un \emph{bucket} riceva almeno una pallina. 
+
+\vspace{1em}
+In questo caso i \emph{bucket} sono $0,\dots,n-1$, mentre le palline sono i valori hash $h(k(x))$ degli elementi $S = \{1,2,\dots,m\}$, la probabilità che una pallina finisca in un \emph{bucket} è $\frac{1}{n}$ allora 
+\[
+    \Pr[\emph{ERR}] = 1 - \left(1-\frac{1}{n}\right)^m \approx 1 - e^{-\frac{m}{n}}
+\]
+per $m$ molto più piccolo di $n$, $\Pr[\emph{ERR}] \approx \frac{m}{n}$
+
+Si è ottenuto quindi che la frazione dei falsi positivi è proprio $1-e^{-\frac{m}{n}}$
+
+\subsubsection{Filtri di Bloom}
+Si consideri $|S| = m$, $|B| = n$ si fa uso di $k$ funzioni hash indipendenti $h_1,\dots,h_k$, si descrive il processo di inizializzazione:
+\begin{itemize}
+    \item si imposta $B = [0,\dots,0]$
+    \item si esegue l'hash degli elementi $s \in S$, facendo uso di ogni funzione hash, $h_i$ $B[h_i(s)]$
+\end{itemize}
+e il processo di esecuzione
+\begin{itemize}
+    \item quando viene ricevuto un elemento con chiave $x$
+    \item se $B[h_i(x)] = 1$ per $i = 1,\dots,k$ $x$ viene accettato
+\end{itemize}
+
+Si procede facendo un'analisi dell'algoritmo, si analizza quindi il numero di \emph{bucket} nel vettore $B$ contenenti \textit{1}, la vengono fatti $k\cdot m$ tentativi per $n$ \emph{bucket}, quindi la frazione di \textit{1} è \[
+    1-e^{-\frac{k\cdot m}{n}} \approx \frac{k\cdot m}{n}
+\] e poiché le $k$ funzioni hash sono mutualmente indipendenti e $x$ viene accettato se tutti i \emph{bucket} contengono 1. La probabilità dei falsi positivi è $\left( 1 - e^{-\frac{k\cdot m}{n}}\right)^k$.
+
+\vspace{1em}\noindent
+È necessario determinare un valore di $k$ ottimale, in cui la funzione è minima, con l'analisi matematica si ottiene il valore di $k = \frac{n}{m}\log(2)$.
+
+\subsection{Conteggio degli elementi distinti}

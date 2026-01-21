@@ -1,0 +1,43 @@
+\begin{figure}[h]
+    \centering
+    \begin{tikzpicture}[
+        % Stile dei singoli bit (quadrati semplici)
+        bit/.style={
+            draw=black!15, 
+            minimum size=0.7cm, 
+            inner sep=0pt, 
+            font=\footnotesize
+        },
+        % Stile dei bucket (rettangoli rossi sottili)
+        bucket/.style={
+            draw=red,
+            thick,
+            inner sep=-2pt
+        },
+        % Font per le etichette
+        label/.style={font=\scriptsize}
+    ]
+
+    % Sequenza di bit (0-15)
+    \foreach \v [count=\i from 0] in {0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1} {
+        \node[bit] (b\i) at (\i*0.7, 0) {\v};
+    }
+
+    % Bucket (G1-G4) basati sull'immagine originale
+    \node[bucket, fit=(b1) (b8)]   (G1) {};
+    \node[bucket, fit=(b10) (b11)] (G2) {};
+    \node[bucket, fit=(b12) (b13)] (G3) {};
+    \node[bucket, fit=(b15) (b15)] (G4) {};
+
+    % Etichette G_i
+    \node[above=1mm of G1, label] {$G_1 (4)$};
+    \node[above=1mm of G2, label] {$G_2 (2)$};
+    \node[above=1mm of G3, label] {$G_3 (2)$};
+    \node[above=1mm of G4, label] {$G_4 (1)$};
+
+    % Marcatori temporali
+    \node[below=4mm of b0.west, anchor=north west, label, align=left] {Inizio\\stream};
+    \node[below=2mm of b15.south, label] {Testa};
+
+    \end{tikzpicture}
+\end{figure}

@@ -504,6 +504,7 @@ Più precisamente (dalle note di Prezza) DIGM usa $O(\varepsilon^{-1} \log^{2}m)
 \end{enumerate}
 
 La ``testa'' della Stream è l'elemento più recente. Per ogni $k$ ci sono almeno $B=1$ gruppi che contengono $2^k$ bit \textit{1} e al massimo $B+1$ gruppi con $2^k$ bit \textit{1}.
+\input{figure/DIGM_gruppi.tex}
 
 \vspace{1em}\noindent
 È necessario definire come aggiornare i gruppi quando nuovi elementi vengono ricevuti, se il bit è \textit{0} non si fa nulla, al contrario per nuovi bit \textit{1} si procede come segue
@@ -532,9 +533,9 @@ Per cui trovare i gruppi più a sinistra dato un $\ell_i$, unirli e spostare un 
 
 Si procede valutando il \emph{fattore di approssimazione} di \emph{DISM}.
 %TODO: creare figura
-\input{figure/DISM_window.tex}
+\input{figure/DGIM_window.tex}
 
-La figura \ref{DISM_window} corrisponde al caso peggiore. Nel caso peggiore la query ( la finestra con $\bar{m}$ bit) comprende solamente l'ultimo bit di un blocco, il vero numero di bit \textit{1} nella finestra è $d$. La risposta restituita $\tilde{d}$ include l'intero blocco di $2^k$ bit \textit{1}.
+La figura \ref{DGIM_window} corrisponde al caso peggiore. Nel caso peggiore la query ( la finestra con $\bar{m}$ bit) comprende solamente l'ultimo bit di un blocco, il vero numero di bit \textit{1} nella finestra è $d$. La risposta restituita $\tilde{d}$ include l'intero blocco di $2^k$ bit \textit{1}.
 
 Sia $k$ tale che il gruppo più vecchio che interseca la finestra ha $2^k$ bit \textit{1}. Sia $d$ il vero numero di bit \textit{1} nella finestra, $\tilde{d}$ la somma dei bit \textit{1} nei gruppi che intersecano la finestra (l'approssimazione). 
 
