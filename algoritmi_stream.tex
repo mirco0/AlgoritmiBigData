@@ -192,3 +192,76 @@ Si procede facendo un'analisi dell'algoritmo, si analizza quindi il numero di \e
 È necessario determinare un valore di $k$ ottimale, in cui la funzione è minima, con l'analisi matematica si ottiene il valore di $k = \frac{n}{m}\log(2)$.
 
 \subsection{Conteggio degli elementi distinti}
+Il problema del conteggio consiste nel, data una Stream sequenza di elementi scelti da un universo $U$, di dimensione $N$, mantenendo un contatore $d$ di elementi distrinti visti fino ad ora.
+
+\vspace{1em}
+Un approccio banale consiste nel mantenere un insieme di elementi precedentemente visti, attraverso una tabella hash.
+
+Con la limitazione nello spazio se si è disposti ad accettare un margine di errore ma con una probabilità limitata è possibile fare uso dell'approccio di \textit{Flajolet-Martin}.
+
+In cui in una fase preliminare viene scelta una funzione hash $h$ che mappa ogniuno degli $N$ elementi di $U$ in almeno $\log_2(N)$ bit 
+\[
+    h:[N] \to \{0,1\}^s \ \ s\geq \log_2(N)
+\]
+Per ogni elemento della Stream $a$ sia $r(a) =$ posizione del primo \textit{1} contando dalla destra in $h(a)$,  $R = \max{r(a)}$ visto $\forall a$. Il valore stimato $m = 2^R$. 
+
+Si annunciano le proprietà utili dell'algoritmo \textit{FM}: per le occorrenze ripetute dello stesso elemento, il valore stimato $R$ non viene \text{mai} modificato.
+
+Lo \emph{Sketch} $R$ può essere facilmente combinato con altri, avendo gli \emph{Sketch} $R_1,R_2,\dots, R_k$ da differenti Stream, essi possono essere combinati calcolando $\max(R_1,R_2,\dots,R_k)$. Segue una breve dimostrazione del funzionamento del metodo
+
+\begin{proof}
+    Si assuma $h: [N] \to \{0,1\}^s$ con $s \geq \log(N)$, poiché $h$ è una funzione hash perfetta
+    \begin{itemize}
+        \item Per ogni $a$ vale che $\Pr[r(a) \geq r] = \left(\frac{1}{2}\right)^r$
+        
+        Sia la variabile aleatoria $X_r = \begin{cases*}
+            1 \text{ se $\exists \bar{a} \ r(\bar{a}) \geq r$ }\\
+            0 \text{ altrimenti}
+        \end{cases*}$ è facile notare che 
+        
+        \item $\Pr[X_r = 1] = 1 - (1-1-\frac{1}{2^r})$ e $\Pr[X_r = 0] = \left(1-\frac{1}{2^r}\right)^d$ (dove $d$ è il vero numero di elementi distinti visti)
+    \end{itemize}
+
+    Si calcola ora l'output restituito ovvero $m = 2^R$ e si calcola la probabilità di errore per $c > 0$
+
+    \begin{align*}
+        \Pr[m > 2^{c} \cdot d] &= \Pr[R > \log d + c] =\\
+        &= \Pr(X_{\log d +c } = 1)\leq \frac{d}{2^{\log d + c}} = 2^{-c}\\
+        \Pr[m < 2^c \cdot d] &= \Pr[X_{\log{d} +c}] \leq e^{-2^{c-1}}
+    \end{align*}
+    Per $c = 2$ si ottiene una \textit{8-approssimazione} con probabilità $\geq 2/3$
+\end{proof}
+\emph{Flajolet-Martin} occupa $O(\log \log d)$ spazio 
+
+\begin{proof}
+    È necessario memorizzare $R \leq \log_2(N)$ bit perché è memorizzata la quantità $R$ e $R \leq d + c$.
+\end{proof}
+
+$\E{2^R}$ è potenzialmente infinita, la probabilità dimezza per $R+1$ rispetto a $R$, ma il valore raddoppia, è possibile fare uso di più funzioni hash $h_i$ e combinare gli \emph{sketch} $R_i$ nel seguente modo, gli \emph{sketch} vengono partizionati in piccoli gruppi, per ogni gruppo viene calcolata la mediana, e viene infine calcolata la media delle mediane ottenute.
+
+\subsection{Calcolo dei momenti}
+Sia una Stream $I$ composta da elementi di $A$ tale che $|A| = N$, sia $m_i$ il numero di volte in cui il valore $i$ appare in $I$.
+
+\vspace{1em}\noindent
+Il momento \emph{k-esimo} è definito
+\[
+    \sum_{i \in A}{m_i^k}
+\]
+\begin{itemize}
+    \setlength{\itemindent}{1.5cm}
+    \item[Momento 0]: numero di elementi distinti
+    \item[Momento 1]: $|I|$ Cardinalità di $I$ 
+    \item[Momento 2]: Numero \emph{sorpresa} che misura quanto la distribuzione degli elementi sia sbilanciata 
+\end{itemize}
+\noindent
+Si mostra un esempio per il numero \emph{sopresa}
+
+\begin{example}
+    Sia una Stream di lunghezza 100 con 11 valori distinti di cui le frequenze sono riportate di seguito
+
+    \input{figure/numero_sorpresa.tex}
+\end{example}
+
+Si presenta un metodo di calcolo di momenti su una Stream chiamato \emph{AMS} (\textit{Alon Matias Szegedy}).
+
+\subsubsection{Metodo AMS}
