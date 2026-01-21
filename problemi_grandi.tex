@@ -443,6 +443,7 @@ Poiché non è sempre possibile mantenere un sottoinsieme di dimensione proporzi
 \subsubsection{Problema 2: Campione di spazio fissato}
 Si suppone di voler mantere in memoria un campione di $S$ di esattamente $s$ elementi, supponendo di aver visto $n$ elementi al tempo $n$, allora ogni tuopla deve essere nel campione con probabilità $\frac{1}{n}$. Si presenta l'algoritmo di Reservoir-sampling
 \subsubsection{Reservoir Sampling}
+\label{reservoir}
 Il metodo di \emph{Reservoir Sampling} consiste nel salvare in $S$ i primi $s$ elementi, quando arriva un elemento \emph{$n$-esimo}, per $n\geq s$
 \begin{enumerate}
     \item scegli con probabilità $\frac{s}{n}$ se inserire il nuovo elemento in $S$

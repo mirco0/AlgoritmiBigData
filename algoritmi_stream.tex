@@ -1,0 +1,105 @@
+In questa sezione si presentano diversi algoritmi che operano sulle Stream
+\begin{itemize}
+    \item Stima delle frequenze di elementi (Sampling e CountMin)
+    \item Filtro di Stream (Bloom filters)
+    \item Conteggio del numero di elementi diversi (Flajolet-Martin)
+    \item Stima dei momenti (Algoritmo AMS)
+\end{itemize}
+
+\subsection{Stima delle frequenze}
+Data una Stream $x_1,\dots,x_m$ di interi con $x_i \in [n]$ e per ogni elemento $y \in [n]$ si definisce la frequenza di $y$ come il numero di volte in cui $y$ appare nella Stream
+\[
+    f_y = |\{i: x_i = y\}|
+\]
+\subsubsection{Sampling}
+La prima soluzione fa uso del \emph{Sampling}, assumendo di conoscere la lunghezza della stream $(m)$, se così non fosse si fa uso del \emph{Reservoir Sampling} \ref{reservoir}, si scelgono $j_1,\dots,j_q \in_u [1,m]$ con $q$ valore determinato in un secondo momento. Durante la Stream vengono salvati gli elementi $x_{j_1},\dots,x_{j_q}$ creando così uno \emph{sketch}. Si definisce l'indicatore booleano $\mathbb{I}_{x=y}$
+\[
+    \mathbb{I}_{x=y} = 
+    \begin{cases*}
+        1 \text{ se } x = y\\
+        0 \text{ altrimenti}     
+    \end{cases*}
+\]
+\begin{lemma}
+    Per ogni dati $y$ e $x_j$
+    \[
+        \E{\mathbb{I}_{x_{j}=y}} = \frac{f_y}{m}
+    \]
+\end{lemma}
+\begin{proof}
+    Ogni elemento della Stream ha probabilità $\frac{1}{m}$ di essere scelto come $x_{jk}$ ogni $y$ ha $f_y$ occorrenze nella Stream.
+\end{proof}
+
+Ora è possibile affermare che
+\begin{equation}
+    \label{eq:1}
+    \E{\sum_{k=1}^{q}{\mathbb{I}_{{x}_{jk} = y}}} = q \cdot \frac{f_y}{m} = \frac{q}{m}\cdot f_y
+\end{equation}
+È possibile calcolare lo stimatore $\tilde{f_y} = \frac{m}{q} \cdot \sum_{k=1}^{q}{\mathbb{I}_{{x}_{jk} = y}}$ facendo uso dello \emph{sketch} inoltre, per (\ref{eq:1}), si ha uno stimatore \emph{senza bias}.
+
+In altre parole $\tilde{f_y}$ è il numero di occorrenze di $y$ nel \emph{sample} scalato per un fattore $\frac{m}{q}$, banalmente si ottiene:
+\begin{lemma}
+    \[
+        \E{\tilde{f_y}} = f_y
+    \]
+\end{lemma}
+\begin{proof}
+    \[
+        \frac{m}{q}\E{\sum_{k=1}^{q}{\mathbb{I}_{{x}_{jk} = y}}} = \frac{m}{q}\cdot{\frac{q}{m}\cdot f_y} = f_y
+        \]
+        
+\end{proof}
+applicando il Chernoff bound
+\begin{align}
+    \Pr[|\tilde{f_y} - f_y| > \varepsilon m] &= \Pr\left[ \frac{q}{m} |\tilde{f_y} - f_y| > \varepsilon q \right] = \\
+    &= \Pr\left[ \left|\sum_{k=1}^{q}{\mathbb{I}_{{x}_{jk} = y}} - \E{\sum_{k=1}^{q}{\mathbb{I}_{{x}_{jk} = y}}}\right| > \varepsilon q \right]\\
+    %&\Pr\left[ \left|\sum_{k=1}^{q}{\mathbb{I}_{{x}_{jk} = y}} - \E{\sum_{k=1}^{q}{\mathbb{I}_{{x}_{jk} = y}}}\right| > \varepsilon q \right] < \\
+    \substack{\text{Per il}\\ \text{Chernoff Bound}}&< 2 \exp\left(-\frac{(\varepsilon q)^2}{2q}\right) = 2 \exp\left(-\frac{\varepsilon^2 q}{2}\right)
+\end{align}
+Si vuole $(1) < \delta$ per cui si deve ottenere $q$ tale che $q > \varepsilon^{-2}\log\left(\frac{2}{\delta}\right)$
+
+\begin{theorem}
+    Dato un fattore di approssimazione $\varepsilon$ e un parametro di confidenza $\delta$, in una qualsiasi Stream di $m$ elementi e per ogni elemento $y$ l'algoritmo restituisce uno stimatore \emph{unbiased} $\tilde{f_y}$ tale che $|\tilde{f_y}- f_y| < 3 \varepsilon$ con probabilità almeno $1- \delta$. La complessità spaziale è $O(\varepsilon^{-2} \log\left(\frac{2}{\delta}\right))$
+\end{theorem}
+
+\subsubsection{Algoritmo Min-Sketch}
+Il count Min-Sketch è un metodo che meno spazio (asintoticamente) rispetto al metodo visto in precedenza basato sul \emph{sampling}, inoltre ha un errore del tipo \emph{one-sided}.
+
+\begin{definition}[Count MinSketch]
+    Il count MinSketch è una matrice $M \in \mathbb{N}^{t\times s}$ inizializzata a 0. $s \times t$ determina il fattore di errore e la probabilità di successo. A ogni riga $j$ è associata una funzione hash universale $h_j: [1,n] \to [1,s]$ per $j = 1,\dots,t$
+\end{definition}
+
+Si definisce l'inserimento di un elemento $x$ nello \emph{sketch}, per ogni $j=1,\dots,t$
+\[
+    M(j,h_{j}(x)) = M(j,h_{j}(x)) + 1
+\]
+e la procedura per il calcolo delle stime delle frequenze: $M(j,h_{j}(x))$ è il contatore delle volte che l'elemento $y$ è stato visto. Per la stima delle frequenze si restituisce $\tilde{f_y} = \min\{M(j,h_{j}(x)): j = 1,\dots,y\}$. 
+
+Si nota che si hanno a disposizione $t$ funzioni hash indipendenti, di cui ogniuna mappa un elemento della Stream in $s$ slot differenti. Poiché il contatore $M(j,h_{j}(x))$ viene aumentato ogni volta che l'elemento $y$ viene visto nella Stream. Si ha quindi 
+
+\begin{enumerate}
+    \item per ogni $y \in [n]$, $M(j,h_{j}(x)) \geq f_y$ non fornisce mai una sottostima
+    \item per ogni $z \in [n]$, con $z \neq y$ tali che $h_j(z) = h_j(y)$ (ovvero due elementi per cui si ha una collisione) si ha che $M(j,h_{j}(x)) = f_y +f_z$
+\end{enumerate}
+
+Come studiato l' hashing universale minimizza il numero di collisioni, per cui lo stimatore $\tilde{f_y} = \min\{M(j,h_{j}(x)): j = 1,\dots,y\}$ sbaglia solo se avviene una collisione in tutte le funzioni hash $j = 1,\dots,t$. 
+
+Si cerca di stimare la probabilità $\Pr[M(j,h_{j}(x)) > f_y + \varepsilon m]$ per $\varepsilon > 0$, a tale scopo si definisce la variabile aleatoria $\mathbb{I}(j,x,y)$ come segue 
+\[
+    \mathbb{I}(j,x,y) = 
+    \begin{cases*}
+        1 \text{ se } h_j(x) = h_j(y)\\
+        0 \text{ altrimenti}
+    \end{cases*}
+\]
+
+Sia $S = \{x_1,\dots,x_m\}$ l'insieme degli elementi distinti nella Stream, si calcola il valore atteso di $M(j,h_{j}(y))$
+
+\begin{align*}
+    \E{M(j,h_{j}(y))} = f_y + \E{\sum_{x \neq y} f_x \mathbb{I}(j,x,y)} = f_y + \sum_{x \neq y} f_x \E{\mathbb{I}(j;x,y)}
+\end{align*}
+Inoltre poiché $h_j(y)$ è fa uso di hashing universale su una tabella di $s$ slot e $\sum_{x \in S}f_x = m$
+\begin{align*}
+    &f_y + \sum_{\substack{x \in S \\ x \neq y}}f_x \E{\mathbb{I}(j,x,y)} \leq f_y + \sum_{x \neq y}f_x \frac{1}{s}\\
+    &= f_y + \frac{1}{s}\sum_{x \neq y}f_x \leq f_y + \frac{m}{s}
+\end{align*}
