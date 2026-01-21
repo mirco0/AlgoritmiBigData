@@ -1,5 +1,5 @@
 \subsection{Contention Resolution in sistemi distribuiti}
-Dai $n$ processi $P_1,\dots,P_n$ ogniuno dei quali compete per l'accesso a un database condiviso. Se due o più processi accedono al database contemporaneamente, tutti i processi sono bloccati. Determinare un protocollo per assicurare a ogni processo l'accesso al database. \emph{Nota: I processi non possono comunicare tra di loro}.
+Dai $n$ processi $P_1,\dots,P_n$ ognuno dei quali compete per l'accesso a un database condiviso. Se due o più processi accedono al database contemporaneamente, tutti i processi sono bloccati. Determinare un protocollo per assicurare a ogni processo l'accesso al database. \emph{Nota: I processi non possono comunicare tra di loro}.
 
 \vspace{1em}\noindent
 \emph{Protocollo:} Ogni processo richiede l'accesso al database al tempo $t$ con probabilità $p = \frac{1}{n}$.
@@ -59,7 +59,7 @@ $\Pr[\text{Successo}] \geq 1 - \frac{1}{n}$
 \subsection{Problema del Load balancing}
 Si ha un sistema in cui $m$ \emph{jobs} arrivano in stream e devono essere processati immediatamente su $n$ processori identici. È necessario trovare un assegnamento che bilanci il \emph{carico di lavoro} tra i processori.
 
-Un approccio semplice e deterministico è quello di avere un \emph{controller} centralizzato che distribusca il carico con uno \emph{scheduling} Round-Robin. Ogni processore riceve al massimo $\lceil \frac{m}{n} \rceil$ \emph{jobs}. 
+Un approccio semplice e deterministico è quello di avere un \emph{controller} centralizzato che distribuisca il carico con uno \emph{scheduling} Round-Robin. Ogni processore riceve al massimo $\lceil \frac{m}{n} \rceil$ \emph{jobs}. 
 
 Per un approccio decentralizzato si fa uso della probabilità e del calcolo probabilistico, ogni \emph{job} viene assegnato a un processore in modo uniformemente casuale. Si calcola la probabilità che un processore riceva troppi \emph{jobs} $\left(> \lceil \frac{m}{n} \rceil \right)$.
 
@@ -91,7 +91,7 @@ Per lo union bound \ref{union} si mostra il risultato
 Per cui $\lnot\Pr{\left[\sum_{i = 1}^nX_i\right]} = 1 - n\Pr\left[ \bar{X}_i  \right] < 1 - \frac{1}{n}$ è la probabilità che \emph{nessun processore riceve più di $e\cdot\gamma(n)$ jobs}. $e\cdot\gamma(n) = \Theta\left(\frac{\log n}{\log \log n} \right)$.
 
 \begin{theorem}
-    Si supponga il numero di \emph{jobs} $m = 16 n \log n$. Allora in media ogniuno degli $n$ processori gestisce $\mu = 16 \log n$ \emph{jobs}, con alta probabilità ogni processore gestirà tra $x$ compreso tra $\frac{1}{2}$ e $2$ carico medio.
+    Si supponga il numero di \emph{jobs} $m = 16 n \log n$. Allora in media ognuno degli $n$ processori gestisce $\mu = 16 \log n$ \emph{jobs}, con alta probabilità ogni processore gestirà tra $x$ compreso tra $\frac{1}{2}$ e $2$ carico medio.
 \end{theorem}
 
 \begin{proof}
@@ -100,5 +100,5 @@ Per cui $\lnot\Pr{\left[\sum_{i = 1}^nX_i\right]} = 1 - n\Pr\left[ \bar{X}_i  \r
         &\Pr[X_i > 2\mu] < \left( \frac{e}{4}\right)^{16 n \log n} < \left( \frac{1}{e}\right)^{\log n} = \frac{1}{n^2}\\
         &\Pr\left[X_i > \frac{1}{2}\mu\right] < e^{-\frac{1}{2}\left(\frac{1}{2}\right)^2{16 n \log n}} = \frac{1}{n^2} 
     \end{align*}
-    Per lo union buond \ref{union} ogni processore ha il carico tra $\frac{1}{2}$ e $2$ del carico medio, con probabilità $\geq 1- \frac{2}{n}$
+    Per lo union bound \ref{union} ogni processore ha il carico tra $\frac{1}{2}$ e $2$ del carico medio, con probabilità $\geq 1- \frac{2}{n}$
 \end{proof}

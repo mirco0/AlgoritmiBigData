@@ -1,4 +1,4 @@
-È naturale domandarsi riguardo la scelta di utilizzare algoritmi \emph{probabilistici} per cui c'è una possibilità di ottienere un risultato errato, rispetto agli algoritmi \emph{deterministici} in cui si ha la certezza di ottenere sempre un risultato corretto. In questa sezione si vedono degli algoritmi di esempio che giustificano questa scelta.
+È naturale domandarsi riguardo la scelta di utilizzare algoritmi \emph{probabilistici} per cui c'è una possibilità di ottenere un risultato errato, rispetto agli algoritmi \emph{deterministici} in cui si ha la certezza di ottenere sempre un risultato corretto. In questa sezione si vedono degli algoritmi di esempio che giustificano questa scelta.
     \subsection{Verifica Identità polinomiali}
     \subsubsection{Algoritmo deterministico}
         Iniziamo descrivendo brevemente il problema, siano $f(x)$ e $g(x)$ due polinomi per cui $d = \deg(f) = \deg(g)$ per cui
@@ -38,7 +38,7 @@
         \]
         I due polinomi sono ovviamente diversi,
         per $r = 2$ si ha $F(2) = 19$ e $G(2) = 16$, mentre per $r=1$ $F(1) = 9 = G(1)$ 
-        ne segue che se l'algoritmo secgliesse $r = 2$ si arriverebbe a una risposta errata.
+        ne segue che se l'algoritmo scegliesse $r = 2$ si arriverebbe a una risposta errata.
     \end{example}
     Sia $f(x) \neq g(x)$, e la somma dei gradi di $x$ in $f$ e $g$ è limitato da $d$. Definiamo $h(x)$ come segue:
     \[
@@ -104,7 +104,7 @@
         Falso \text{ altrimenti }    
     \end{cases*}
     \]
-    L'algorimo esegue moltiplicazioni tra le matrici e il vettore scelto $\bar{r}$, più efficienti rispetto alla moltiplicazione tra matrici, di seguito un analisi per determinare l'efficacia in termini probabilistici dell'algoritmo.
+    L'algoritmo esegue moltiplicazioni tra le matrici e il vettore scelto $\bar{r}$, più efficienti rispetto alla moltiplicazione tra matrici, di seguito un analisi per determinare l'efficacia in termini probabilistici dell'algoritmo.
 
     \subsubsection*{Analisi}
     Il seguente risultato fornisce una base utile per determinare la probabilità di successo dell'algoritmo
@@ -141,16 +141,16 @@
     Anche in questo caso è possibile ripetere l'algoritmo su una sequenza di $k$ prove, si ha interesse a capire come cambia la confidenza sull'esito. Non avendo informazioni sulla provenienza di $A,B,C$ è ragionevole assumere che $A\cdot B = C$ sia vero con probabilità $\frac{1}{2}$. A questo scopo si definiscono gli eventi $E$ che definisce la correttezza dell'identità, $B$ l'evento in cui l'algoritmo restituisce $Vero$.
     
     \vspace{1em}
-    Si inzia con $\Pr(E_0) = \Pr(\bar{E_0}) = \frac{1}{2}$ e poiché l'algorimo è a \emph{one-sided-error} $\Pr(B\mid E) = 1$, e $\Pr(B \mid \bar{E}) \leq \frac{1}{2}$. Ovvero è banale convincersi che la probabilità di successo dell'algorimo, data un'identità falsa, è certo. Applicando Bayes si può ottenere una formula per determinare la confidenza della correttezza alla prova $i+1$ sapendo la confidenza e il risultato della prova \textit{i-esima}
+    Si inizia con $\Pr(E_0) = \Pr(\bar{E_0}) = \frac{1}{2}$ e poiché l'algoritmo è a \emph{one-sided-error} $\Pr(B\mid E) = 1$, e $\Pr(B \mid \bar{E}) \leq \frac{1}{2}$. Ovvero è banale convincersi che la probabilità di successo dell'algoritmo, data un'identità falsa, è certo. Applicando Bayes si può ottenere una formula per determinare la confidenza della correttezza alla prova $i+1$ sapendo la confidenza e il risultato della prova \textit{i-esima}
     \[
         \Pr{[E_{i+1}]} =  \frac{\Pr(B_i\mid E_i)\Pr{[E_i]}}{\Pr(B_i\mid E_i)\Pr{[E_i]} + \Pr(B_i\mid \bar{E_i})\Pr{[\bar{E_i}]}}
     \]
-    In generale se prima di eseguire l'algoritmo l'\textit{i-esima} volta $\Pr{[E_i]} \geq \frac{2^i}{(2^i+1)}$ e l'algorimo restituisce $Vero$ ($\Pr{[B_i]}=1$) allora
+    In generale se prima di eseguire l'algoritmo l'\textit{i-esima} volta $\Pr{[E_i]} \geq \frac{2^i}{(2^i+1)}$ e l'algoritmo restituisce $Vero$ ($\Pr{[B_i]}=1$) allora
     % TODO: Mostrare meglio i passaggi magari con un ref ad un'altra pagina
     \[
         \Pr{[E_{i+1} \mid B_i]} \geq \frac{\frac{2^i}{(2^i+1)}}{\frac{2^i}{(2^i+1)} + \frac{1}{2}\frac{1}{(2^i+1)}} = \frac{2^{i+1}}{2^{i+1}+1} = 1 - \frac{1}{2^i+1}
     \]
-    La confidenza alla \textit{i-esima} prova è $\geq 1 - \frac{1}{2^i+1}$. Con questo risultato si può affermare che la confidenza nella corretta del risultato dell'algorimo cresce esponenzialmente nel numero di prove effettuate.
+    La confidenza alla \textit{i-esima} prova è $\geq 1 - \frac{1}{2^i+1}$. Con questo risultato si può affermare che la confidenza nella corretta del risultato dell'algoritmo cresce esponenzialmente nel numero di prove effettuate.
     
     \subsection{Problema Min-Cut}
     Spostiamo l'attenzione ora su un problema noto, il problema del \emph{Min-Cut}. Sia $G = \langle V,E \rangle$ un grafo. Un taglio (cut) è una partizione dei vertici $V$ in due sottoinsiemi non vuoti $A,B \subset V$ tali che $B = V-A$. L'insieme degli archi del taglio è definito come
@@ -167,7 +167,7 @@
         \item Si rimuovono i \emph{self-loops} risultanti dalla contrazione.
     \end{enumerate}
     \input{figure/grafo.tex}
-    Si descrive ora l'algorimo probabilistico 
+    Si descrive ora l'algoritmo probabilistico 
     \begin{enumerate}
         \item Ripeti $n-2$ volte:
             \begin{enumerate}
@@ -188,8 +188,8 @@
         Ogni \emph{cutset} nel nuovo multigrafo è un \emph{cutset} nel grafo prima della contrazione
     \end{proof}
 
-    \subsubsection*{Analisi dell'algorimo}
-    Per analizzare la probabilità di successo dell'algorimo, si parte supponendo che il grafo abbia un min-cut $C$ di $k$ archi, si calcola ora la probabilità di trovare tale \emph{cutset} $C$.
+    \subsubsection*{Analisi dell'algoritmo}
+    Per analizzare la probabilità di successo dell'algoritmo, si parte supponendo che il grafo abbia un min-cut $C$ di $k$ archi, si calcola ora la probabilità di trovare tale \emph{cutset} $C$.
 
     \begin{lemma}
         Se l'arco contratto non appartiene al min-cut $C$, allora nessun altro arco eliminato appartiene a $C$.
@@ -197,15 +197,15 @@
     \begin{proof}
         Il processo di contrazione di $u$ e $v$ elimina gli archi paralleli $e_1 (u,v) \in E$, $e_2 (u,v) \in E$ ovvero tutti gli archi con estremi $u,v$. Tali archi appartengono o meno, contemporaneamente a $C$.
     \end{proof} 
-    Si definiscono quindi due eventi $E_i$ che descrive l'evento in cui l'arco contratto all'iterazione \emph{i-esima} non appartiene a $C$, $F_i$ l'evento in cui nessun arco di $C$ è stato contratto nelle prime $i$ iterazioni $F_i = \bigcap_{j=1}^iE_j$. È facile vedere che $F_{n-2}$ è proprio l'evento in cui l'algorimo restituisce l'insieme corretto.
+    Si definiscono quindi due eventi $E_i$ che descrive l'evento in cui l'arco contratto all'iterazione \emph{i-esima} non appartiene a $C$, $F_i$ l'evento in cui nessun arco di $C$ è stato contratto nelle prime $i$ iterazioni $F_i = \bigcap_{j=1}^iE_j$. È facile vedere che $F_{n-2}$ è proprio l'evento in cui l'algoritmo restituisce l'insieme corretto.
 
     \vspace{1em}\noindent
-    Si parte notando che se $|C| = k$ allora la cardinalità di tutti i nodi è $\geq k$, inoltre il grafo ha almeno $\frac{nk}{2}$ archi. Per cui selezionando un arco $e \in E$ casualmente (in modo uniforme), la probabilità che $e$ sia un arco di $C$ è $\Pr(e\in E) \leq \frac{k}{\frac{nk}{2}} = \frac{2}{n}$, questo caso è proprio l'evento complementare di $E_1$, per cui $\Pr(E_1) \geq 1-\frac{2}{n}$. Ora assumendo che $E_1$ si sia verificato, rimangono $n-1$ nodi con un \emph{min-cut} di dimensione e grado minimo $\geq k$. Supponendo che in $i-1$ iterazioni l'algorimo non abbia mai selezionato nessun arco in $C$ ovvero verificando l'evento $F_{i-1}$ si deriva la formula
+    Si parte notando che se $|C| = k$ allora la cardinalità di tutti i nodi è $\geq k$, inoltre il grafo ha almeno $\frac{nk}{2}$ archi. Per cui selezionando un arco $e \in E$ casualmente (in modo uniforme), la probabilità che $e$ sia un arco di $C$ è $\Pr(e\in E) \leq \frac{k}{\frac{nk}{2}} = \frac{2}{n}$, questo caso è proprio l'evento complementare di $E_1$, per cui $\Pr(E_1) \geq 1-\frac{2}{n}$. Ora assumendo che $E_1$ si sia verificato, rimangono $n-1$ nodi con un \emph{min-cut} di dimensione e grado minimo $\geq k$. Supponendo che in $i-1$ iterazioni l'algoritmo non abbia mai selezionato nessun arco in $C$ ovvero verificando l'evento $F_{i-1}$ si deriva la formula
     \[
         \Pr{[E_i \mid F_{i-1}]} \geq 1 - \frac{k}{\frac{k(n-i+1)}{2}} = 1 - \frac{2}{n-i+1}
     \]
     
-    Per determinare la probabilità di successo dell'algorimo si deve calcolare $\Pr{[F_{n-2}]}$.
+    Per determinare la probabilità di successo dell'algoritmo si deve calcolare $\Pr{[F_{n-2}]}$.
     \begin{align*}
         \Pr{[F_{n-2}]} &= \Pr{[E_{n-2}\cap F_{n-3}]} = \Pr{[E_{n-2} \mid F_{n-3}]}\Pr{[F_{n-3}]} = \\
         &= \Pr{[E_{n-3} \mid F_{n-4}]}\cdots\Pr{[E_2\mid F_1]}\Pr{[F_1]} \geq\\
@@ -215,7 +215,7 @@
     Come al solito si analizza l'aumento della confidenza all'aumentare del numero di esecuzioni dell'algoritmo. Le diverse esecuzioni sono indipendenti per cui per $k$ prove si ha la probabilità di non trovare un \emph{min-cut} $ \leq \left( 1- \frac{2}{n(n-1)}\right)^k$. Per $k = n(n-1)\log n$ 
     si ha $ \left( 1- \frac{2}{n(n-1)}\right)^k \leq e^{-2\log n} = \frac{1}{n^2}$.
     \subsection{Quick Sort}
-    Si passa ora al caso di un'altro algoritmo noto, il \emph{QuickSort}, un algoritmo di ordinamento che dato $S$ in input restituisce $S$ ordinato in output.
+    Si passa ora al caso di un altro algoritmo noto, il \emph{QuickSort}, un algoritmo di ordinamento che dato $S$ in input restituisce $S$ ordinato in output.
     \subsubsection{Algoritmo deterministico}
     Si descrivono i passaggi dell'algoritmo \emph{QuickSort} deterministico
     \begin{enumerate}
@@ -246,7 +246,7 @@
     \[
         T = \sum_{i=0}^n\sum_{j>i}X_{ij}
     \]
-    poiché si sta considerando di un algorimo probabilistico si è interessati a calcolare il valore atteso di $T$, $\E{T}$. Si vuole calcolare $\Pr[X_{ij} = 1]$, $s_i$ è confrontato con $s_j$ solo nel caso in cui uno dei due elementi è scelto come \emph{perno} prima che gli $j-i-1$ elementi tra $s_i$ e $s_j$ siano scelti. Il perno è scelto in modo uniforme, per cui anche gli elementi $[s_i,\dots,s_j]$ sono scelti in modo uniforme, si ottienere
+    poiché si sta considerando di un algoritmo probabilistico si è interessati a calcolare il valore atteso di $T$, $\E{T}$. Si vuole calcolare $\Pr[X_{ij} = 1]$, $s_i$ è confrontato con $s_j$ solo nel caso in cui uno dei due elementi è scelto come \emph{perno} prima che gli $j-i-1$ elementi tra $s_i$ e $s_j$ siano scelti. Il perno è scelto in modo uniforme, per cui anche gli elementi $[s_i,\dots,s_j]$ sono scelti in modo uniforme, si ottiene
     \begin{align*}
         &\Pr{[X_{ij} = 1]} = \frac{2}{j-i+1}\\
         &\E{X_{ij}} = \frac{2}{j-i+1}
@@ -268,10 +268,10 @@
     
     \subsection{Algoritmo per il Calcolo della Mediana}
     %TODO: Inserire sezione richiami di probabilità con esempi (cupons collector)
-    Come visto in \textcolor{red}{Sezione 0} la mediana è un indice statistico. Dato $X$ un insieme non ordinato di elementi restituirene la mediana. Un algorimo deterministico banale consiste nell'ordinare $X$ e restituire l'elemento corretto, per una complessittà di $O(n\log n)$. Esiste anche un algoritmo deterministico che opera in $O(n)$.
+    Come visto in \textcolor{red}{Sezione 0} la mediana è un indice statistico. Dato $X$ un insieme non ordinato di elementi restituirne la mediana. Un algoritmo deterministico banale consiste nell'ordinare $X$ e restituire l'elemento corretto, per una complessità di $O(n\log n)$. Esiste anche un algoritmo deterministico che opera in $O(n)$.
 
     \subsubsection{Algoritmo probabilistico}
-    L'algoritmo probabilistico prende in input $S$ un insieme di $2k +1$ elementi da un'universo totalmente ordinato e restituisce in outupt \emph{$k+1$-esimo} elemento nell'insieme.
+    L'algoritmo probabilistico prende in input $S$ un insieme di $2k +1$ elementi da un universo totalmente ordinato e restituisce in output \emph{$k+1$-esimo} elemento nell'insieme.
     
     L'algoritmo opera come segue
     \begin{enumerate}
@@ -299,7 +299,7 @@
     Con alta probabilità $\frac{1}{2}n^{3/4} - \sqrt{n}$ elementi sono minori della mediana, mentre $\frac{1}{2}n^{3/4} - \sqrt{n}$ elementi sono maggiori della mediana, dato questo, allora la mediana appartiene al sottoinsieme $C$, se queste condizioni sono vere la mediana si trova proprio in posizione $\lfloor \frac{n}{2} \rfloor - \ell_d + 1$ di $C$ ordinato. 
 
     \vspace{1em}\noindent
-    L'algoritmo come visto sopra ha anche dei casi di fallimento, si dà una forma più rigorosa agli eventi che portano l'algoritmo al fallimento. Si definiscono le variabili aleatorie $Y_1,Y_2$. $Y_1$ conta il numero di elementi in $R$ (campioni) soto la mediana, al contrario $Y_2$ conta il numero di elementi sopra la mediana. Formalmente si definisce $y_{1}^i$ la variabile binaria 
+    L'algoritmo come visto sopra ha anche dei casi di fallimento, si dà una forma più rigorosa agli eventi che portano l'algoritmo al fallimento. Si definiscono le variabili aleatorie $Y_1,Y_2$. $Y_1$ conta il numero di elementi in $R$ (campioni) sotto la mediana, al contrario $Y_2$ conta il numero di elementi sopra la mediana. Formalmente si definisce $y_{1}^i$ la variabile binaria 
     \[
         y_{1}^i = \begin{cases*}
             1 \text{ se } x_i \in R < Mediana\\
@@ -308,7 +308,7 @@
         \quad
         Y_1 = \sum_{i = 1}^{n^{3/4}}y_{1}^i
     \]  
-    Si definiscono tre eventi $E_1$ per cui $C$ (l'intervallo di elementi $[d,u]$) è spostato a eccessivamente sinistra, l'evento $E_2$ è simmetrico, l'evento $E_3$ rappresenta una scelta di elementi in $R$ non sufficientemente uniformeme. 
+    Si definiscono tre eventi $E_1$ per cui $C$ (l'intervallo di elementi $[d,u]$) è spostato a eccessivamente sinistra, l'evento $E_2$ è simmetrico, l'evento $E_3$ rappresenta una scelta di elementi in $R$ non sufficientemente uniforme. 
     \begin{align*}
         &E_1: Y_1 < \frac{1}{2}n^{3/4}-\sqrt{n}\\
         &E_2: Y_2 < \frac{1}{2}n^{3/4}-\sqrt{n}\\

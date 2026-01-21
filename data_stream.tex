@@ -3,11 +3,11 @@ In molti ambiti di data mining non tutti i dati sono disponibili interamente in 
 Si può pensare al \emph{dataset} come infinito e non stazionario (la distribuzione varia nel tempo). Gli elementi in input entrano in modo veloce: il sistema non può memorizzare l'intero stream $S$, solo piccoli \emph{sketch} di possono essere mantenuti e aggiornati.
 
 \vspace{1em}\noindent
-Un Data Stream è una sequenza $x_1,x_2,\dots,x_m$ di elementi, si ricevono tali elementi uno per volta, da $x_1$ a $x_m$. Tipicamente $m$ è troppo grande e non tutti gli elementi nella Steam possono essere memorizzati. Lo scopo degli algoritmi sulle steam è quello di calcolare delle statistiche utili utilizzando meno memoria possibile, un algoritmo sulle stream è valutato secondo i seguenti parametridi uno \emph{sketch} $H(S)$:
+Un Data Stream è una sequenza $x_1,x_2,\dots,x_m$ di elementi, si ricevono tali elementi uno per volta, da $x_1$ a $x_m$. Tipicamente $m$ è troppo grande e non tutti gli elementi nella Stream possono essere memorizzati. Lo scopo degli algoritmi sulle stream è quello di calcolare delle statistiche utili utilizzando meno memoria possibile, un algoritmo sulle stream è valutato secondo i seguenti parametri di uno \emph{sketch} $H(S)$:
 \begin{enumerate}
     \item \textbf{Memoria} utilizzata
     \item \textbf{Ritardo} per elemento, ovvero il tempo impiegato per operare quando un nuovo elemento viene ricevuto
     \item \textbf{Probabilità} di restituire la soluzione corretta o una buona approssimazione 
     \item \textbf{Tasso di approssimazione}
 \end{enumerate}
-Gli \emph{sketch} devono inoltre essere facili da aggiornare per nuovi valori della Stream $f(xa) = F(f(x),f(a))$. I problemi più comuni di Data Stream includono, filtraggio, conteggio di occorrenzem stima dei momenti, individuare i $k$ elementi più frequenti.
+Gli \emph{sketch} devono inoltre essere facili da aggiornare per nuovi valori della Stream $f(xa) = F(f(x),f(a))$. I problemi più comuni di Data Stream includono, filtraggio, conteggio di occorrenze, stima dei momenti, individuare i $k$ elementi più frequenti.

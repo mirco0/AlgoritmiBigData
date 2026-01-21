@@ -75,7 +75,7 @@ Si definisce l'inserimento di un elemento $x$ nello \emph{sketch}, per ogni $j=1
 \]
 e la procedura per il calcolo delle stime delle frequenze: $M(j,h_{j}(x))$ è il contatore delle volte che l'elemento $y$ è stato visto. Per la stima delle frequenze si restituisce $\tilde{f_y} = \min\{M(j,h_{j}(x)): j = 1,\dots,y\}$. 
 
-Si nota che si hanno a disposizione $t$ funzioni hash indipendenti, di cui ogniuna mappa un elemento della Stream in $s$ slot differenti. Poiché il contatore $M(j,h_{j}(x))$ viene aumentato ogni volta che l'elemento $y$ viene visto nella Stream. Si ha quindi 
+Si nota che si hanno a disposizione $t$ funzioni hash indipendenti, di cui ognuna mappa un elemento della Stream in $s$ slot differenti. Poiché il contatore $M(j,h_{j}(x))$ viene aumentato ogni volta che l'elemento $y$ viene visto nella Stream. Si ha quindi 
 
 \begin{enumerate}
     \item per ogni $y \in [n]$, $M(j,h_{j}(x)) \geq f_y$ non fornisce mai una sottostima
@@ -114,7 +114,7 @@ Poiché si fa uso $h_j$ universale $\Pr[h_j(x) = h_j(y)] \leq \frac{1}{s}$, si c
     \]
 \end{lemma}
 
-Qual è la probabilità che lo stimatore $\tilde{f_y} > f_y + \varepsilon m$, si ricorda che lo stimatore $\tilde{f_y}$ è definito come il minimo fra tutte le righe, se il minimo supera  $f_y + \varepsilon m$ allora tutte le righe lo superan, e poiché le funzioni hash $h_j$ sono scelte indipendentemente
+Qual è la probabilità che lo stimatore $\tilde{f_y} > f_y + \varepsilon m$, si ricorda che lo stimatore $\tilde{f_y}$ è definito come il minimo fra tutte le righe, se il minimo supera  $f_y + \varepsilon m$ allora tutte le righe lo superano, e poiché le funzioni hash $h_j$ sono scelte indipendentemente
 \[
     \Pr[\tilde{f_y} \geq f_y + \varepsilon m]  \leq \left( \frac{1}{2}\right)^t
 \] 
@@ -161,7 +161,7 @@ Questo metodo permette dei falsi positivi, ma mai dei falsi negativi \textit(one
 
 \vspace{1em}\noindent
 Si analizza più nel dettaglio l'algoritmo, per calcolare la probabilità di falsi positivi sia $|S| = m$, $|B| = n$ (ovvero il numero di \emph{bucket}), per qualche elemento $u \in U$ la probabilità di finire in una posizione di $B$ già inizializzata a 1 è esattamente la frazione \emph{ERR} di \emph{bucket} in $B$. Si procede stimando \emph{ERR} con l'esperimento \textit{balls into bins}.
-Mandando $m$ palline in $n$ \emph{bucket} con la stessa probabilità per ogniuno, qual è la probabilità che un \emph{bucket} riceva almeno una pallina. 
+Mandando $m$ palline in $n$ \emph{bucket} con la stessa probabilità per ognuno, qual è la probabilità che un \emph{bucket} riceva almeno una pallina. 
 
 \vspace{1em}
 In questo caso i \emph{bucket} sono $0,\dots,n-1$, mentre le palline sono i valori hash $h(k(x))$ degli elementi $S = \{1,2,\dots,m\}$, la probabilità che una pallina finisca in un \emph{bucket} è $\frac{1}{n}$ allora 
@@ -192,14 +192,14 @@ Si procede facendo un'analisi dell'algoritmo, si analizza quindi il numero di \e
 È necessario determinare un valore di $k$ ottimale, in cui la funzione è minima, con l'analisi matematica si ottiene il valore di $k = \frac{n}{m}\log(2)$.
 
 \subsection{Conteggio degli elementi distinti}
-Il problema del conteggio consiste nel, data una Stream sequenza di elementi scelti da un universo $U$, di dimensione $N$, mantenendo un contatore $d$ di elementi distrinti visti fino ad ora.
+Il problema del conteggio consiste nel, data una Stream sequenza di elementi scelti da un universo $U$, di dimensione $N$, mantenendo un contatore $d$ di elementi distinti visti fino ad ora.
 
 \vspace{1em}
 Un approccio banale consiste nel mantenere un insieme di elementi precedentemente visti, attraverso una tabella hash.
 
 Con la limitazione nello spazio se si è disposti ad accettare un margine di errore ma con una probabilità limitata è possibile fare uso dell'approccio di \textit{Flajolet-Martin}.
 
-In cui in una fase preliminare viene scelta una funzione hash $h$ che mappa ogniuno degli $N$ elementi di $U$ in almeno $\log_2(N)$ bit 
+In cui in una fase preliminare viene scelta una funzione hash $h$ che mappa ognuno degli $N$ elementi di $U$ in almeno $\log_2(N)$ bit 
 \[
     h:[N] \to \{0,1\}^s \ \ s\geq \log_2(N)
 \]
@@ -254,7 +254,7 @@ Il momento \emph{k-esimo} è definito
     \item[Momento 2]: Numero \emph{sorpresa} che misura quanto la distribuzione degli elementi sia sbilanciata 
 \end{itemize}
 \noindent
-Si mostra un esempio per il numero \emph{sopresa}
+Si mostra un esempio per il numero \emph{sorpresa}
 
 \begin{example}
     Sia una Stream di lunghezza 100 con 11 valori distinti di cui le frequenze sono riportate di seguito

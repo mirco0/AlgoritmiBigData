@@ -133,7 +133,7 @@ in pratica la funzione hash è definita come un polinomio scelto uniformemente i
                 \implies (x-y) \equiv_p 0
                 &\iff x = y
             \end{align}
-        Il passaggio (6) è giustificato poichè $ x,y < p-1$
+        Il passaggio (6) è giustificato poiché $ x,y < p-1$
         \end{proof}
         
         \item $X$ e $Y$ sono quasi indipendenti tra loro, $\Pr[X = i \land Y = j] = \frac{1}{(p-1)p}$
@@ -157,7 +157,7 @@ in pratica la funzione hash è definita come un polinomio scelto uniformemente i
             \end{align*}    
         \end{proof}    
     \end{enumerate}
-    Per una $i$ fissata in $\mathbb{Z}_p$ ci sono al massimo $\frac{p}{m}-1 \leq \frac{(p-1)}{m}$ valori per $Y$ tale che $Y = i \mod m$, ovvero tutti gli interi $\in \mathbb{Z}_p$ per cui la distanza da $i$ è un multiplo di $m$. Da 2 $\Pr[Y = j \mid X = i] = \frac{1}{p-1}$ per l'union buond si ottiene $\Pr[Y=i \mod m \mid X = i] \leq \frac{p-1}{m} \frac{1}{p-1} = \frac{1}{m}$. $\hat{\mathcal{H}}$ è universale.
+    Per una $i$ fissata in $\mathbb{Z}_p$ ci sono al massimo $\frac{p}{m}-1 \leq \frac{(p-1)}{m}$ valori per $Y$ tale che $Y = i \mod m$, ovvero tutti gli interi $\in \mathbb{Z}_p$ per cui la distanza da $i$ è un multiplo di $m$. Da 2 $\Pr[Y = j \mid X = i] = \frac{1}{p-1}$ per l'union bound si ottiene $\Pr[Y=i \mod m \mid X = i] \leq \frac{p-1}{m} \frac{1}{p-1} = \frac{1}{m}$. $\hat{\mathcal{H}}$ è universale.
 \end{proof}
 
 \subsection{Perfect hashing}
@@ -177,7 +177,7 @@ Il problema del dizionario è spesso presentato come l'esempio pratico per mostr
 Il dizionario è un tipo di dati, dato un universo $U$ di elementi possibili, mantiene un sottoinsieme arbitrario $S \subseteq U$ tale che operazioni come intersezione, unione, e ricerca in $S$ siano efficienti, queste operazioni sono rappresentate come:
 \begin{itemize}
     \item \texttt{create()} inizializza un dizionario vuoto
-    \item \texttt{insert(u)} agggiunge un elemento $u \in U$ a $S$
+    \item \texttt{insert(u)} aggiunge un elemento $u \in U$ a $S$
     \item \texttt{delete(u)} rimuove un elemento $u$ da $S$
     \item \texttt{lookup(u)} risponde alla domanda $s \in S?$
 \end{itemize}
@@ -207,9 +207,9 @@ funziona bene per applicazioni statiche in cui $S$ non varia.
 
 \vspace{1em}
 Per applicazioni in cui $S$ varia si fa uso delle funzioni hash universali, di cui sono state precedentemente descritte le proprietà ed esempi.
-Si ricorando le variabili $n$ rappresentate il numero di elementi di $S$, $N = |U|$, $m$ numero primo compreso $N \leq m \leq 2N$. Si fa uso della tecnica di \emph{doubling-halving}
+Si ricordando le variabili $n$ rappresentate il numero di elementi di $S$, $N = |U|$, $m$ numero primo compreso $N \leq m \leq 2N$. Si fa uso della tecnica di \emph{doubling-halving}
 
 \input{algorithms/doubling_halving.tex}
-Si ottiene tempo $O(1)$ ammortizzato per eliminazione e inserimento, poiché il re-hasing avviene solo quando la dimensione raddoppia.
+Si ottiene tempo $O(1)$ ammortizzato per eliminazione e inserimento, poiché il re-hashing avviene solo quando la dimensione raddoppia.
 
 %TODO: Fare perfect hashing

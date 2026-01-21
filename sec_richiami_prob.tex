@@ -129,7 +129,7 @@ Una distribuzione di probabilità è un modello matematico che associa una proba
     \E{Y} = p\cdot1 + (1-p)\cdot 0 = p = \Pr[Y=1]
 \]
 
-Una sequenza di $n$ esperimenti indipendenti, ogniuno con probabilità di successo $p$, è chiamata \emph{processo di Bernoulli}.
+Una sequenza di $n$ esperimenti indipendenti, ognuno con probabilità di successo $p$, è chiamata \emph{processo di Bernoulli}.
 
 Sia $X$ la variabile aleatoria che conta il numero di successo negli $n$ esperimenti con probabilità di successo $p$, $X$ ha distribuzione binomiale, denotata $X\sim Bin(n,p)$ ed è definita dalla seguente distribuzione di probabilità
 \[
@@ -149,7 +149,7 @@ Passando ora al calcolo del valore atteso di $X$ (variabile aleatoria con distri
 
 Si fa presente, come, sfruttando la linearità del valore atteso, quest'ultimo può essere calcolato così: 
 
-se $X\sim Bin(n,p)$ allora $X=\#Successi$ su $n$ prove ogniunga delle quali con probabilità di successo $p$ $Y_i$ è la variabile aleatoria che tiene conto del successo per ogni esperimento \emph{i-esimo} come da un risultato precedente $\E{Y_i} = \Pr{[Y_i = 1]} = p$
+se $X\sim Bin(n,p)$ allora $X=\#Successi$ su $n$ prove ognuna delle quali con probabilità di successo $p$ $Y_i$ è la variabile aleatoria che tiene conto del successo per ogni esperimento \emph{i-esimo} come da un risultato precedente $\E{Y_i} = \Pr{[Y_i = 1]} = p$
 \[
     X = \sum_{i = 1}^nY_i \implies \E{X} = \E{\sum_{i = 1}^n Y_i} = \sum_{i = 1}^n\E{Y_i} = np
 \] 
@@ -177,7 +177,7 @@ Si procede dando la definizione di distribuzione geometrica
     \]
     ovvero ci devono essere $n-1$ fallimenti consecutivi, e un successo
 \end{definition}
-Le variabili geometriche sono ``prive di memoria'', cioè la propbabilità di avere successo dopo $n$ tentativi è indipendente dal numero di fallimenti precedenti. In modo formale
+Le variabili geometriche sono ``prive di memoria'', cioè la probabilità di avere successo dopo $n$ tentativi è indipendente dal numero di fallimenti precedenti. In modo formale
 \[
     \Pr[X = n+k | X > k] = \Pr[X=n]
 \]
@@ -199,7 +199,7 @@ Mentre per la varianza si presenta solo il valore noto
     &= \boxed{\frac{1-p}{p^2}}.
 \end{align*}
 
-Si presentano tecniche per stimare il discostamento di una variabile aleatoria dal suo valore atteso, ossia la probabilità che una variabile aleatoria assuma valori lontani dal suo valore atteso. Questi \emph{bounds} forniscono una stima della probabilità di insuccesso di un algorimo e permettono anche di dare stime sul \emph{running time} di un algoritmo.
+Si presentano tecniche per stimare il discostamento di una variabile aleatoria dal suo valore atteso, ossia la probabilità che una variabile aleatoria assuma valori lontani dal suo valore atteso. Questi \emph{bounds} forniscono una stima della probabilità di insuccesso di un algoritmo e permettono anche di dare stime sul \emph{running time} di un algoritmo.
 \begin{theorem}
     Per una costante $a$
     \[

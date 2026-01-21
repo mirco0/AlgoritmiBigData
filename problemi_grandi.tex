@@ -81,7 +81,7 @@ Si presenta un esempio per mostrare perché il min-hashing è necessario
 \begin{example}
     Sia $N = 10^6$ il numero di documenti, per cui si hanno $10^6$ \emph{k-shingles}, e si ottengono $\frac{(10^6)^2}{2} = 5\cdot10^{11}$ confronti.
 \end{example}
-La tecnica precedente permette solo una rappresentazione robusta dei documenti, con il min-hashing si cerca un modo per trovare documenti simili tramtite delle piccole firme. 
+La tecnica precedente permette solo una rappresentazione robusta dei documenti, con il min-hashing si cerca un modo per trovare documenti simili tramite delle piccole firme. 
 
 La difficoltà consiste nel definire una buona firma che conservi la similarità tra due insiemi.
 Per cui si cerca una funzione hash, da applicare agli insiemi \emph{shingle} (colonne della matrice $M$ vista in precedenza). La funzione hash cercata deve avere le seguenti proprietà
@@ -146,7 +146,7 @@ Date queste premesse, si definisce la misura di similarità sulle firme descritt
     \[
         \text{Sign-Sim}(C_1,C_2) = \text{frazione delle firme MinHash in cui coincidono}.
     \]
-    In modo pù formale è possibile definire una variabile aleatoria $Z$ che assume i seguenti valori
+    In modo più formale è possibile definire una variabile aleatoria $Z$ che assume i seguenti valori
     \[
         Z = \begin{cases*}
             1 \text{ se} \min(\pi(C_1)) = \min(\pi(C_2))\\
@@ -185,7 +185,7 @@ Si scelgano $t = 100$ funzioni permutazioni casuali delle $m$ righe, $Sig(i,C)$ 
 collisione è bassa, le collisioni vengono ignorate.
 
 \vspace{1em}
-Di seguito l'algoritmo efficiente per il calcolo della matrice delle firme come in figura \ref*{fig:3}, l'algoritmo fa uso di funzioni hash casuali per risolvere il problema delal generazione di permutazioni
+Di seguito l'algoritmo efficiente per il calcolo della matrice delle firme come in figura \ref*{fig:3}, l'algoritmo fa uso di funzioni hash casuali per risolvere il problema della generazione di permutazioni
 
 \input{algorithms/sig-matrix.tex}
 \subsubsection*{Analisi della complessità}
@@ -214,7 +214,7 @@ L'idea generale consiste nell'eseguire, tante volte, le hash delle colonne in $S
 \subsubsection*{Problemi tecnici}
 Calcolare l'hash completa di un documenti in un \emph{bucket} può portare a falsi positivi e falsi negativi per le coppie candidate.
 
-Per risolvere il problema, ogni firma (colonna di $SIG(*,*)$) viene partizionata in un insieme di \emph{bande}. La matrice $SIG(*,*)$ viene divisa in $b$ bande ogniuna composta da $r$ righe. Per ogni banda, si esegue l'hash \emph{LSH} in $c$ diversi \emph{bucket} ($c$ deve essere abbastanza grande rispetto a $r$, per evitare collisioni di firme diverse). 
+Per risolvere il problema, ogni firma (colonna di $SIG(*,*)$) viene partizionata in un insieme di \emph{bande}. La matrice $SIG(*,*)$ viene divisa in $b$ bande ognuna composta da $r$ righe. Per ogni banda, si esegue l'hash \emph{LSH} in $c$ diversi \emph{bucket} ($c$ deve essere abbastanza grande rispetto a $r$, per evitare collisioni di firme diverse). 
 
 \vspace{1em}\noindent
 Il nuovo criterio per determinare le coppie di documenti simili consiste nel selezionare le firme che finiscono nello stesso \emph{bucket} per \emph{almeno} una banda.
@@ -227,7 +227,7 @@ Per valutare la correttezza dell'algoritmo si assuma di fare uso di \emph{perfec
 \begin{example}
     Si suppongano $10^5$ colonne ($N = 10^5$) in $SIG(*,*)$, le firme di 100 righe ($t=100$), date queste premesse, la tabella delle firme occupa \textit{40Mb}.
 
-    Si scelgano $b=20$ bande ogniuna di $r=5$ interi.
+    Si scelgano $b=20$ bande ognuna di $r=5$ interi.
     L'obiettivo consiste nel trovare le coppie di documenti la cui similarità $\geq s$ per $s=0.8$ dato in input. 
 
     \begin{enumerate}
@@ -236,7 +236,7 @@ Per valutare la correttezza dell'algoritmo si assuma di fare uso di \emph{perfec
         La probabilità che $C_1,C_2$ abbiano una \emph{banda} identica è $(0.8)^{5} = 0.328$ (tutti i 5 interi combaciano), mentre la probabilità che $C_1,C_2$ non abbiano \emph{nessuna} banda in comune è $(1-0.328)^{20} = 0.00035$ (nessuna delle 20 bande soddisfa la probabilità precedente).
         
         \noindent
-        Per cui il $99.965\%$ delle coppie $80\%$ simili vengno correttamente identificate.
+        Per cui il $99.965\%$ delle coppie $80\%$ simili vengono correttamente identificate.
 
         \item[Caso 2.] Siano $C_1,C_2$ due documenti $30\%$ simili, si ha $\jsim(C_1,C_2) = 0.3$. Poiché $\jsim(C_1,C_2) < s$ allora $(C_1,C_2)$ non deve essere una coppia candidata. 
         
@@ -256,7 +256,7 @@ Nella figura \ref{fig:4} viene rappresentata una funzione costante per il \emph{
 Impostando la variabile $r=1$, ovvero tutte bande di un solo elemento, la funzione è lineare come rappresentato nella figura \ref{fig:5}. Figura in cui non è presente un comportamento che separa chiaramente le coppie sopra il \emph{threshold}. La probabilità di selezionare una coppia $(C_1,C_2)$ è proporzionale alla $\jsim(C_1,C_2)$ (Per il teorema del MinHashing).
 \input{figure/grafico2.tex}
 
-Facendo uso della tecnica delle \emph{bande} permette di ottenere un comportamento che approssima l'ottimo rappresentato in \ref{fig:4}. Suppondendo una coppia di documenti $C_1,C_2$, per cui $\jsim(C_1,C_2) = x$ facendo uso della tecnica delle \emph{bande} si ottiene la probabilità che tutti gli elementi nella banda sono identici $= x^r$, e la probabilità che esista un elemento nella banda diverso $= 1 - x^r$.
+Facendo uso della tecnica delle \emph{bande} permette di ottenere un comportamento che approssima l'ottimo rappresentato in \ref{fig:4}. Supponendo una coppia di documenti $C_1,C_2$, per cui $\jsim(C_1,C_2) = x$ facendo uso della tecnica delle \emph{bande} si ottiene la probabilità che tutti gli elementi nella banda sono identici $= x^r$, e la probabilità che esista un elemento nella banda diverso $= 1 - x^r$.
 Per cui si ha 
 \begin{align*}
     &\Pr[\text{Non esistenza di una band identica}] = (1-x^r)^b\\
@@ -268,7 +268,7 @@ si è interessati all'ultima probabilità presentata, che ha la proprietà di au
 Aumentare troppo una delle due variabili può portare a troppi falsi positivi o falsi negativi. È importante trovare un punto ottimale.
 
 \vspace{1em}\noindent
-Per un parametro $s$ fissato si deve segliere $t$ ovvero il numero di MinHash (numero di righe di $SIG(*,*)$), il numero di \emph{bande} $b$ e di conseguenza il numero $r$ di elementi per banda.
+Per un parametro $s$ fissato si deve scegliere $t$ ovvero il numero di MinHash (numero di righe di $SIG(*,*)$), il numero di \emph{bande} $b$ e di conseguenza il numero $r$ di elementi per banda.
 
 \input{figure/grafico3.tex}
 Impostando i parametri $b$ e $r$, si ha un punto di flesso a $k = \left(\frac{1}{b}\right)^\frac{1}{r}$. Un idea efficace è quella di impostare $b,r$ tali che $b\cdot r \leq t$ e $s \approx \left(\frac{1}{b}\right)^\frac{1}{r}$. Come è possibile vedere in figura \ref{fig:6} cambiare i parametri $r$ e $b$ permette di approssimare molto bene un algoritmo ideale.
@@ -336,7 +336,7 @@ Inoltre un'altra proprietà dello \emph{sketch}: se $x \neq y$ allora $K_{qz}(x)
     \vspace{1em}
     È facile notare che $K_{qz}(x) - K_{qz}(y) \mod q = K_{qz}(x-y)$ per $x \neq y$, $K_{qz}(x-y)$ è un polinomio di grado $\leq n$ su $\mathbb{F}_q$, per cui le radici sono al massimo $n$, gli elementi di $\mathbb{F}_q$ sono $q$, quindi si ottiene la probabilità di prendere una radice è $\leq \frac{n}{q}$.
 \end{proof}
-Nel seguente codice si mostra la costruzione del poliomio per una data stringa $x=x_1,\dots,x_n$
+Nel seguente codice si mostra la costruzione del polinomio per una data stringa $x=x_1,\dots,x_n$
 \input{algorithms/karps-rabin.tex}
 
 \vspace{1em}\noindent
@@ -345,7 +345,7 @@ L'algoritmo con input $(q,z,x)$ richiede spazio $O(\log q)$, mentre il procedime
 \begin{corollary}[probabilità di errore]
     Sia $q$ un primo, tale che $n^{c+1} \leq q \leq 2n^{c+1}$ per qualche $c>0$ allora per ogni $x\neq y$,
     \[
-        Pr{K_{qz}(x) = K_{qz}(y) \mod q} \leq \frac{1}{n^c}
+        \Pr{K_{qz}(x) = K_{qz}(y) \mod q} \leq \frac{1}{n^c}
     \]
 \end{corollary}
 \noindent
@@ -367,7 +367,7 @@ Si procede ripetendo con $i$ aumentato di 1.
 \begin{lemma}[Complessità spaziale] Per una Stream lunga $m$, un pattern lungo $n$ lo spazio occupato dall'algoritmo è $\Theta(n)$, è facile da verificare vedendo che è necessario mantenere gli ultimi $n$ elementi della Stream per toglierli al momento giusto.
 \end{lemma}
 
-\begin{lemma}[Complessità temporale] Il numero di operazioni per elemento è $O(1)$, aggiornare lo \emph{sketch} richiede un numero costante di operazioni, è sufficiente precalcolare $z^{n-1} \mod q$.
+\begin{lemma}[Complessità temporale] Il numero di operazioni per elemento è $O(1)$, aggiornare lo \emph{sketch} richiede un numero costante di operazioni, è sufficiente pre-calcolare $z^{n-1} \mod q$.
 \end{lemma}
 
 Un migliore algoritmo è quello di \emph{Porat-Porat} che occupa $O(\log n)$ spazio.
@@ -379,7 +379,7 @@ Dal momento che non è possibile memorizzare l'intera Stream è necessario mante
     \item Mantenere un campione casuale di una grandezza fissata su una Stream arbitrariamente grande. 
     Ad ogni passo $k$ si vuole un campione di $s$ elementi da mantenere in memoria, c'è da definire la proprietà degli elementi da mantenere. 
     
-    \textbf{Dinamicità della Stream}: per ogni passo $k$ ogniuno dei $k$ elementi visto fino ad ora deve avere la stessa probabilità di essere nel campione.
+    \textbf{Dinamicità della Stream}: per ogni passo $k$ ognuno dei $k$ elementi visto fino ad ora deve avere la stessa probabilità di essere nel campione.
     \vspace{1em}\noindent
     
 \end{enumerate}
@@ -387,14 +387,14 @@ Dal momento che non è possibile memorizzare l'intera Stream è necessario mante
 \subsubsection{Problema 1: Campione a porzione fissa}
 Si assuma lo scenario in cui la Stream $U$ è composta da \emph{query} dei motori di ricerca, ovvero ogni elemento della Stream è una tupla \textit{(ID utente, query, tempo)}. Lo scopo principale è quello di trovare un campione $S \subseteq U$ che per, un utente medio $u$ e una query $q$, approssimi bene la frazione di occorrenze $q$ in $U$ fatte da $u$.
 \begin{definition}[Occorrenza $q$]
-    Una tupla in $U$ è chiamata \emph{occorrenza $q$} se ha il compomente $query = q$.
+    Una tupla in $U$ è chiamata \emph{occorrenza $q$} se ha il componente $query = q$.
 \end{definition}
 
 Un algoritmo banale consiste nel calcolare il valore Hash di ogni elemento (quindi fare uso di \emph{bucket}) nella Stream è prendere una porzione di \emph{bucket}. Segue un esempio 
 \input{algorithms/naive_sampling.tex}
 
 \subsubsection*{Analisi procedura}
-Supponiamo che la Stream $U$ sia tale che ogni utente $u$ faccia $m$ query differenti una volta, e $d$ query differenti due volte, per cui $U = m+2d$. L'algoritmo dovrebbe approssimare bene la frazione degli utenti medi che hanno due occorrenze in $U$. La frazione delle \emph{$d$-query} è $\frac{d}{m+d}$, il valore $\E{|S|} = \frac{1}{10}\cdot |U|$ (la probabilità di inserimento di una tupla $t$ è $\frac{1}{10}$). Infine $S$ conterrà $\frac{m}{10}$ delle \emph{query} $m$, poiché la probabilità di inserimento è $\frac{1}{10}$ ed è presente esattamente un'occorrenza per ogniuna delle $m$ query.
+Supponiamo che la Stream $U$ sia tale che ogni utente $u$ faccia $m$ query differenti una volta, e $d$ query differenti due volte, per cui $U = m+2d$. L'algoritmo dovrebbe approssimare bene la frazione degli utenti medi che hanno due occorrenze in $U$. La frazione delle \emph{$d$-query} è $\frac{d}{m+d}$, il valore $\E{|S|} = \frac{1}{10}\cdot |U|$ (la probabilità di inserimento di una tupla $t$ è $\frac{1}{10}$). Infine $S$ conterrà $\frac{m}{10}$ delle \emph{query} $m$, poiché la probabilità di inserimento è $\frac{1}{10}$ ed è presente esattamente un'occorrenza per ognuna delle $m$ query.
 
 \begin{align*}    
     \E{\text{Elementi distinti} \in S} &= \frac{m}{10} + \frac{d}{100} + \frac{18d}{100}\\ 
@@ -414,7 +414,7 @@ questo approccio non è quindi funzionante, si presenta un secondo approccio, in
 
 \input{algorithms/user_sample.tex}
 \subsubsection*{Analisi campionamento degli utenti}
-Sia $Q$ l'insieme delle query, $I$ l'insieme degli \emph{ID utente}. Fissando una data query $q$ si definisce la funzione $x(v,q)$ come il numero di \emph{occorrenze $q$} da $u$ nella Stream. INoltre si definisce la variabile aleatoria $X_S(V,q)$ come il numero di occorrenze dall'utente $V$ (variabile)in $S$. Nell'algoritmo \ref{alg:user_sample} gli ID degli utenti $V$ è una variabile aleatoria uniforme.
+Sia $Q$ l'insieme delle query, $I$ l'insieme degli \emph{ID utente}. Fissando una data query $q$ si definisce la funzione $x(v,q)$ come il numero di \emph{occorrenze $q$} da $u$ nella Stream. Inoltre si definisce la variabile aleatoria $X_S(V,q)$ come il numero di occorrenze dall'utente $V$ (variabile)in $S$. Nell'algoritmo \ref{alg:user_sample} gli ID degli utenti $V$ è una variabile aleatoria uniforme.
 
 Il valore cercato è $AVG_{V \in I}(x(v,q)) = \mathbb{E}_{V \in S}\left[X_S(V,q)\right]$ per ogni $q$ fissata. Per cui $AVG_{V \in S}(V_S(V,q))$ (il risultato dell'algoritmo).
 
@@ -424,34 +424,34 @@ Il valore cercato è $AVG_{V \in I}(x(v,q)) = \mathbb{E}_{V \in S}\left[X_S(V,q)
         0 \text{ altrimenti }
     \end{cases*}
 \]
-sia inoltre $x_j$ la variabile che conta il numero di elementi dell'utente $j$ in $U$. $\E{|S|} = \sum_j{x_j\cdot \Pr\left[C_j = 1\right]} = \frac{1}{10}\cdot \sum_{j}{x_j} = \frac{|U|}{10}$. È da notare che la varianza può esssere molto grande, si presenta quindi una soluzione generale. 
+sia inoltre $x_j$ la variabile che conta il numero di elementi dell'utente $j$ in $U$. $\E{|S|} = \sum_j{x_j\cdot \Pr\left[C_j = 1\right]} = \frac{1}{10}\cdot \sum_{j}{x_j} = \frac{|U|}{10}$. È da notare che la varianza può essere molto grande, si presenta quindi una soluzione generale. 
 
 \vspace{1em}\noindent
 Sia $U$ una Stream di tuple $(x_1,x_2,\dots,x_k)$ una chiave è un sottoinsieme $(x_{i_1},x_{i_2},\dots,x_{i_j})$, per ottenere un campione $S$ di porzione $a/b$ della Stream si procede nel seguente modo:
 \begin{enumerate}
-    \item si esegue l'hash della chiave in $b$ \emph{buckets}
+    \item si esegue l'hash della chiave in $b$ \emph{bucket}
     \item si inseriscono in $S$ solo le tuple le cui hash $\leq a$.
 \end{enumerate}
 Poiché non è sempre possibile mantenere un sottoinsieme di dimensione proporzionale allo Stream è possibile utilizzare un altro metodo:
 \begin{enumerate}
-    \item si esegue l'hash di ogni chiave in un grande numero $b$ di \emph{buckets}
+    \item si esegue l'hash di ogni chiave in un grande numero $b$ di \emph{bucket}
     \item si imposta una soglia iniziale $t \leq b$ per cui tutti gli elementi più piccoli della soglia finiscono in $S$
     \item se $S$ diventa troppo grande $t$ viene ridotto e tutti gli elementi sopra la nuova soglia vengono rimossi
     \item si ripete finché necessario
 \end{enumerate}
 
 \subsubsection{Problema 2: Campione di spazio fissato}
-Si suppone di voler mantere in memoria un campione di $S$ di esattamente $s$ elementi, supponendo di aver visto $n$ elementi al tempo $n$, allora ogni tuopla deve essere nel campione con probabilità $\frac{1}{n}$. Si presenta l'algoritmo di Reservoir-sampling
+Si suppone di voler mantenere in memoria un campione di $S$ di esattamente $s$ elementi, supponendo di aver visto $n$ elementi al tempo $n$, allora ogni tupla deve essere nel campione con probabilità $\frac{1}{n}$. Si presenta l'algoritmo di Reservoir-sampling
 \subsubsection{Reservoir Sampling}
 \label{reservoir}
 Il metodo di \emph{Reservoir Sampling} consiste nel salvare in $S$ i primi $s$ elementi, quando arriva un elemento \emph{$n$-esimo}, per $n\geq s$
 \begin{enumerate}
     \item scegli con probabilità $\frac{s}{n}$ se inserire il nuovo elemento in $S$
-    \item se l'elemtento è scelto per l'inserimento si sceglie un elemento $x \in_u S$ da rimuovere con probabilità $\frac{1}{s}$.
+    \item se l'elemento è scelto per l'inserimento si sceglie un elemento $x \in_u S$ da rimuovere con probabilità $\frac{1}{s}$.
 \end{enumerate}
 
 \begin{theorem}
-    Per ogni $s\geq 1$ e per ogni tempo $n\geq s$ l'algoritmo Reservoir Sampling ha la seguente proprietà: dopo $n$ passi $S$ contiene ogniuno degli $n$ elementi con la stessa probabilità
+    Per ogni $s\geq 1$ e per ogni tempo $n\geq s$ l'algoritmo Reservoir Sampling ha la seguente proprietà: dopo $n$ passi $S$ contiene ognuno degli $n$ elementi con la stessa probabilità
 \end{theorem}
 \begin{proof}
     Caso Base:
@@ -476,7 +476,7 @@ Un modello utile riguarda una finestra di lunghezza $N$ sulla Stream, in cui son
 $N$ è grande abbastanza da non poter mantenere gli elementi in memoria. 
 
 \subsubsection{Counting Bits}
-Sia $I$ una Stream di bit infiita, con una finestra di lunghezza $N$. Si vuole calcolare il valore della funzione $\#1(I,N,k)$ che rappresenta il numero di \emph{`1'} negli ultimi $k$ bit ($k\leq N$). Una soluzione banale consiste nel memorizzare gli ultimi $N$ bit
+Sia $I$ una Stream di bit infinita, con una finestra di lunghezza $N$. Si vuole calcolare il valore della funzione $\#1(I,N,k)$ che rappresenta il numero di \emph{`1'} negli ultimi $k$ bit ($k\leq N$). Una soluzione banale consiste nel memorizzare gli ultimi $N$ bit
 \begin{theorem}
     Per una Stream con distribuzione arbitraria la funzione $\#1(I,N,k)$ richiede spazio $\geq N$.
 \end{theorem}
@@ -490,9 +490,9 @@ Sia $I$ una Stream di bit infiita, con una finestra di lunghezza $N$. Si vuole c
 \end{proof}
 Nel caso in cui una finestra $N$ non possa essere salvata in memoria è necessario fornire un'approssimazione per il valore della funzione $\#1(I,N,k)$. Si fa uso del metodo \emph{DIGM}
 \subsubsection*{DIGM (Datar, Gioinis, Indikm, Motwani)}
-Il meotodo \emph{DIGM} funziona con qualsiasi distribuzione su Stream lo spazio utilizzato è $O(\log 2N)$ bit per Stream, e non fornisce mai l'approssimazione più del $50\%$ del valore effettivo.
+Il metodo \emph{DIGM} funziona con qualsiasi distribuzione su Stream lo spazio utilizzato è $O(\log 2N)$ bit per Stream, e non fornisce mai l'approssimazione più del $50\%$ del valore effettivo.
 
-Più precisamente (dalle note di Prezza) DIGM usa $O(\varepsilon^{-1} \log^{2}m)$ spazio fornendo una $(1+ \varepsilon)$ approssimazione. Ne seugue una descrizione del funzionamento, sia $B = \lceil 1 / \varepsilon \rceil$, i bit della Stream vengono raggruppati in gruppi $G_1,G_2,\dots,G_t$ che devono soddisfare le seguenti condizioni 
+Più precisamente (dalle note di Prezza) DIGM usa $O(\varepsilon^{-1} \log^{2}m)$ spazio fornendo una $(1+ \varepsilon)$ approssimazione. Ne segue una descrizione del funzionamento, sia $B = \lceil 1 / \varepsilon \rceil$, i bit della Stream vengono raggruppati in gruppi $G_1,G_2,\dots,G_t$ che devono soddisfare le seguenti condizioni 
 \begin{enumerate}
     \item ogni $G_i$ inizia e finisce con il bit \textit{1}
     \item tra due gruppi adiacenti $G_i,G_{i+1}$ ci sono solamente bit \textit{0},
@@ -523,12 +523,12 @@ in cui l'elemento $\ell_i$ contiene tutti i gruppi con $2^i$ bit \textit{1} ed �
 \[
     \ell_i = G_{j_1} \leftrightarrow \cdots \leftrightarrow G_{j_s} 
 \]
-in cui, appunto, $G_{j_1},\dots,G_{j_s}$ sono tutti i gruppi contenenti $2^i$ bit \textit{1}. Ogni gruppo è una coppia \textit{(sx,dx)} che rappresenta l'inizio e la fine del gruppo. Per ogni lista collegata $\ell_i$ viengno salvate la testa, la coda, numero di bit contenuti e numero di bit \textit{1} contenuti nei suoi gruppi. 
+in cui, appunto, $G_{j_1},\dots,G_{j_s}$ sono tutti i gruppi contenenti $2^i$ bit \textit{1}. Ogni gruppo è una coppia \textit{(sx,dx)} che rappresenta l'inizio e la fine del gruppo. Per ogni lista collegata $\ell_i$ vengono salvate la testa, la coda, numero di bit contenuti e numero di bit \textit{1} contenuti nei suoi gruppi. 
 
 \vspace{1em}\noindent
 Per cui trovare i gruppi più a sinistra dato un $\ell_i$, unirli e spostare un gruppo in $\ell_{i+1}$ richiede tempo $O(1)$. Un aggiornamento richiede tempo $O(q) = O(\log m)$, più precisamente un aggiornamento richiede tempo $O(1)^{*}$ \emph{ammortizzato}.
 \begin{proof}
-    Si supponga che un aggiornamento aumenti $Z_k$ di un unità ($Z_k$ è il numero di gruppi con $2^k$ elementi), questo significa che prima dell'aggiornamento $Z_{k'} = B+1$ per ogni $k' \leq k$. In turno questa configrazione richiede $2^k-1$ aggiornamenti precedenti, che aggiunti al nuovo aggiornamento fa $2^k$ aggiornamenti totali. Un solo aggiornamento ogni $2^k$ costa $O(k)$. Il costo ammortizzato è $\sum_{k=1}^{\infty}\frac{k}{2^k} = O(1)$.
+    Si supponga che un aggiornamento aumenti $Z_k$ di un unità ($Z_k$ è il numero di gruppi con $2^k$ elementi), questo significa che prima dell'aggiornamento $Z_{k'} = B+1$ per ogni $k' \leq k$. In turno questa configurazione richiede $2^k-1$ aggiornamenti precedenti, che aggiunti al nuovo aggiornamento fa $2^k$ aggiornamenti totali. Un solo aggiornamento ogni $2^k$ costa $O(k)$. Il costo ammortizzato è $\sum_{k=1}^{\infty}\frac{k}{2^k} = O(1)$.
 \end{proof}
 
 Si procede valutando il \emph{fattore di approssimazione} di \emph{DISM}.
