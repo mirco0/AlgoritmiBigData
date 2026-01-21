@@ -103,4 +103,25 @@ Inoltre poiché $h_j(y)$ è fa uso di hashing universale su una tabella di $s$ s
     &f_y + \sum_{\substack{x \in S \\ x \neq y}}f_x \E{\mathbb{I}(j,x,y)} \leq f_y + \sum_{x \neq y}f_x \frac{1}{s}\\
     &= f_y + \frac{1}{s}\sum_{x \neq y}f_x \leq f_y + \frac{m}{s}
 \end{align*}
-Poiché si fa uso $h_j$ universale
+Poiché si fa uso $h_j$ universale $\Pr[h_j(x) = h_j(y)] \leq \frac{1}{s}$, si conclude che $\E{M(j,h_j(y)) - f_y} \leq \frac{m}{s}$, facendo uso della disuguaglianza di Markov
+\[
+    \Pr[M(j,h_j(y)) -f_y \geq 2 m/s] \leq \frac{1}{2} \text{ e per } \varepsilon > 0 \ \ \frac{2m}{s} = \varepsilon m
+\]
+\begin{lemma}
+    Per ogni $\varepsilon > 0$ per ogni $j = 1,\dots,t$ e scegliendo $s = \frac{2}{\varepsilon}$ si ha 
+    \[
+        \Pr[M(j,h_j(y)) \geq f_y + \varepsilon m] \leq \frac{1}{2} 
+    \]
+\end{lemma}
+
+Qual è la probabilità che lo stimatore $\tilde{f_y} > f_y + \varepsilon m$, si ricorda che lo stimatore $\tilde{f_y}$ è definito come il minimo fra tutte le righe, se il minimo supera  $f_y + \varepsilon m$ allora tutte le righe lo superan, e poiché le funzioni hash $h_j$ sono scelte indipendentemente
+\[
+    \Pr[\tilde{f_y} \geq f_y + \varepsilon m]  \leq \left( \frac{1}{2}\right)^t
+\] 
+e definendo $\delta = \left( \frac{1}{2}\right)^t$, risolvendo per $t$ si ottiene che per $t = \lceil \log_2(\frac{1}{\delta}) \rceil$ la stima di $\tilde{f_y}$ soddisfa $f_y \leq \tilde{f_y} \leq f_y + \varepsilon m$ con probabilità $\geq 1 - \delta$.
+
+\begin{theorem}
+    Scegliendo $\varepsilon > 0$ (errore), e $\delta > 0$ (probabilità di fallimento) per una $s = 2/\varepsilon$ fissata e $t = \log(1\delta)$ il \emph{MinSketch} $M$ usa $O\left( \frac{\log 1/s}{\varepsilon}\right)$ parole di spazio e $f_y \leq \tilde{f_y} \leq f_y + \varepsilon m$ con probabilità $\geq 1 - \delta$. Il tempo di aggiornamento e query è $O(\log(1/\delta))$.
+
+\end{theorem}
+
