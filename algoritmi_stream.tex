@@ -128,7 +128,7 @@ e definendo $\delta = \left( \frac{1}{2}\right)^t$, risolvendo per $t$ si ottien
 Si parla ora di filtro su Stream: ogni elemento $x$ nella Stream è una tupla $x = <k_1,\dots,k_k>$, in input è data un insieme $S$ di valori ``buoni'' per le tuple aventi una particolare chiave $k$.
 
 \vspace{1em}\noindent
-Una soluzione banale consiste nel salvare $S$ in una tabella hash $T$, per ogni elemento $x$ viene calcolata l'hash di $k_(x)$, successivamente verificata con la tabella $T$.
+Una soluzione banale consiste nel salvare $S$ in una tabella hash $T$, per ogni elemento $x$ viene calcolata l'hash di $k(x)$, successivamente verificata con la tabella $T$.
 
 Un problema è evidente quando l'insieme $S$ è troppo grande da non poter essere mantenuto interamente in memoria
 
@@ -265,3 +265,72 @@ Si mostra un esempio per il numero \emph{sorpresa}
 Si presenta un metodo di calcolo di momenti su una Stream chiamato \emph{AMS} (\textit{Alon Matias Szegedy}).
 
 \subsubsection{Metodo AMS}
+Il metodo \emph{AMS} funziona con tutti i momenti e fornisce una stima \emph{unbiased}, prendendo ad esempio il secondo momento, si procede come segue
+
+\begin{enumerate}
+    \item prendi e aggiorna un campione di variabili aleatorie indipendenti $\{X_j \mid j=1,\dots,k\}$
+    \item per ogni variabile $X$ viene mantenuto $X.el$ corrispondente a $i \in I$ e $X.val$ corrispondente al conto delle frequenze
+\end{enumerate}
+
+Resta ora da definire come impostare $X.val$ e $X.el$
+\begin{enumerate}
+    \item Input: Stream $I$ di lunghezza $L$
+    \item viene scelto un timestamp $t \in_u [1,L]$
+    \item di imposta $X.el = i$ con $i = I[t]$
+    \item si calcola $X.val = c$ come il numero di $i$ occorrenze nella sotto-Stream $[1,\dots,L]$
+    \item Output: la stima per il secondo momento $\sum_{i}{m_i}^2$ 
+    \[
+        S = f(X) = L \cdot (2 c -1)
+    \]
+\end{enumerate}
+\textit{Nota}: L'algoritmo calcola più $X$ $(X_1,X_2,\dots,X_k)$ la stima sarà data da $S = \frac{1}{k}\sum_{j=1}^{k}f(X_j)$.
+
+Si procede con l'analisi dell'algoritmo
+\subsubsection*{Analisi}
+Sia $t$ una variabile aleatoria, un elemento $i$, conteggio $c$ e la lunghezza della Stream $L$ come definito dall'algoritmo \textit{AMS}
+\begin{align*}    
+    \E{L \cdot (2c -1)} &= \sum_{i=1}^{L} L\cdot (c[i] - 1) \frac{1}{L}\\
+    &= \boxed{\sum_{i=1}^{L} (2\cdot c[i] - 1)}
+\end{align*}
+È necessario calcolare l'ultimo risultato per ogni $a \in A$ fissata sia $j_1,\dots,j_{m_a}$ le occorrenze di $a$ nella Stream $I = I[1,\dots,L]$ allora
+\[
+    c(j_1) = m_a \quad c(j_2) = m_a -1 \quad \dots \quad c(j_{m_a}) = 1
+\]
+Quindi è possibile riscrivere il risultato ottenuto come $\sum_{a \in A} \sum_{z = 1}^{m_a}(2j -1)$ 
+\[
+    \sum_{z = 1}^{m_a}(2j -1) = m_{a}^{2}
+\] infine 
+\[
+    \E{L (2c -1)} = \E{S} = \sum_{i=1}m_{i}^{2}
+\]
+Il secondo momento è dato da $S = \sum_{i} {m_i}^2$. $c_t$ è il numero di occorrenze dell'elemento dal tempo $t$ in poi.
+\begin{align*}
+    \E{S} &= \frac{1}{n}\sum_{t=1}^{n}n(2c_t - 1) = \\
+    &= \frac{1}{n} \sum_{i} n (1 + 3 + \dots, 2m_i - 1)\\
+    &= 2\frac{m_i (m_i + 1)}{2} - m_i = m_{i}^2
+\end{align*}
+
+Si ottiene
+\[
+    \E{S= f(X)} = \frac{1}{n}\sum_{i} n(m_i)^2
+\]
+Ovvero il valore atteso è proprio il secondo momento.
+
+\subsubsection*{Momenti di ordine maggiore}
+Come anticipato l'algoritmo \textit{AMS} permette di stimare diversi momenti
+\begin{itemize}
+    \item per $k = 2$ si ha $n(2c - 1)$
+    \item per $k = 3$ si ha $n(3c^2 - 3c +1)$
+\end{itemize}
+con $c = X.val$.
+Per $k = 2$ $(1 + 3 + \dots + 2m_i -1)$ e la somma dei termini $2c - 1$ fa $m^2$.
+\noindent
+
+Per $k = 3$ $c^3 - (c-1)^3 = 3c^2 - 3c +1$, si presenta una generalizzazione per $k$, in cui la stima è $n(c^k - (c-1)^k)$
+
+\subsubsection*{Combinazione dei Sample}
+Nella pratica vengono mantenute tante variabili indipendenti $X$ per quante possono essere mantenute in memoria, si dividono in gruppi in cui si fa la media, e si prende la mediana.
+
+\vspace{1em}\noindent
+Per una Stream di lunghezza $L$ \emph{molto grande} o \emph{infinita}
+% pag 47 ch04 8 12
