@@ -109,7 +109,7 @@
     \subsubsection*{Analisi}
     Il seguente risultato fornisce una base utile per determinare la probabilità di successo dell'algoritmo
     \begin{theorem}
-        Se $AB \neq C$ e $r$ è scelto uniformemente da $\{0,1\}$ allora 
+        Se $AB \neq C$ e $\bar{r}$ è scelto uniformemente da $\{0,1\}$ allora 
         \[
             \Pr{[AB\cdot\bar{r} = C\cdot\bar{r}]} \leq \frac{1}{2}
         \]
@@ -143,14 +143,14 @@
     \vspace{1em}
     Si inizia con $\Pr(E_0) = \Pr(\bar{E_0}) = \frac{1}{2}$ e poiché l'algoritmo è a \emph{one-sided-error} $\Pr(B\mid E) = 1$, e $\Pr(B \mid \bar{E}) \leq \frac{1}{2}$. Ovvero è banale convincersi che la probabilità di successo dell'algoritmo, data un'identità falsa, è certo. Applicando Bayes si può ottenere una formula per determinare la confidenza della correttezza alla prova $i+1$ sapendo la confidenza e il risultato della prova \textit{i-esima}
     \[
-        \Pr{[E_{i+1}]} =  \frac{\Pr(B_i\mid E_i)\Pr{[E_i]}}{\Pr(B_i\mid E_i)\Pr{[E_i]} + \Pr(B_i\mid \bar{E_i})\Pr{[\bar{E_i}]}}
+        \Pr{[E_{i+1} \mid B_i]} =  \frac{\Pr(B_i\mid E_i)\Pr{[E_i]}}{\Pr(B_i\mid E_i)\Pr{[E_i]} + \Pr(B_i\mid \bar{E_i})\Pr{[\bar{E_i}]}}
     \]
     In generale se prima di eseguire l'algoritmo l'\textit{i-esima} volta $\Pr{[E_i]} \geq \frac{2^i}{(2^i+1)}$ e l'algoritmo restituisce $Vero$ ($\Pr{[B_i]}=1$) allora
     % TODO: Mostrare meglio i passaggi magari con un ref ad un'altra pagina
     \[
-        \Pr{[E_{i+1} \mid B_i]} \geq \frac{\frac{2^i}{(2^i+1)}}{\frac{2^i}{(2^i+1)} + \frac{1}{2}\frac{1}{(2^i+1)}} = \frac{2^{i+1}}{2^{i+1}+1} = 1 - \frac{1}{2^i+1}
+        \Pr{[E_{i+1} \mid B_i]} \geq \frac{\frac{2^i}{(2^i+1)}}{\frac{2^i}{(2^i+1)} + \frac{1}{2}\frac{1}{(2^i+1)}} = \frac{2^{i+1}}{2^{i+1}+1} = 1 - \frac{1}{2^{i+1}+1}
     \]
-    La confidenza alla \textit{i-esima} prova è $\geq 1 - \frac{1}{2^i+1}$. Con questo risultato si può affermare che la confidenza nella corretta del risultato dell'algoritmo cresce esponenzialmente nel numero di prove effettuate.
+    La confidenza alla \textit{i-esima} prova è $\geq 1 - \frac{1}{2^{i+1}+1}$. Con questo risultato si può affermare che la confidenza nella corretta del risultato dell'algoritmo cresce esponenzialmente nel numero di prove effettuate.
     
     \subsection{Problema Min-Cut}
     Spostiamo l'attenzione ora su un problema noto, il problema del \emph{Min-Cut}. Sia $G = \langle V,E \rangle$ un grafo. Un taglio (cut) è una partizione dei vertici $V$ in due sottoinsiemi non vuoti $A,B \subset V$ tali che $B = V-A$. L'insieme degli archi del taglio è definito come
