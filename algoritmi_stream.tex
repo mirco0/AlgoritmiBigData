@@ -35,7 +35,7 @@ Ora è possibile affermare che
     \label{eq:1}
     \E{\sum_{k=1}^{q}{\mathbb{I}_{{x}_{jk} = y}}} = q \cdot \frac{f_y}{m} = \frac{q}{m}\cdot f_y
 \end{equation}
-È possibile calcolare lo stimatore $\tilde{f_y} = \frac{m}{q} \cdot \sum_{k=1}^{q}{\mathbb{I}_{{x}_{jk} = y}}$ facendo uso dello \emph{sketch} inoltre, per (\ref{eq:1}), si ha uno stimatore \emph{senza bias}.
+È possibile calcolare lo stimatore $\tilde{f_y} = \frac{m}{q} \cdot \sum_{k=1}^{q}{\mathbb{I}_{{x}_{jk} = y}}$ facendo uso dello \emph{sketch}, inoltre, per (\ref{eq:1}), si ha uno stimatore \emph{senza bias}.
 
 In altre parole $\tilde{f_y}$ è il numero di occorrenze di $y$ nel \emph{sample} scalato per un fattore $\frac{m}{q}$, banalmente si ottiene:
 \begin{lemma}
@@ -59,11 +59,11 @@ applicando il Chernoff bound
 Si vuole $(1) < \delta$ per cui si deve ottenere $q$ tale che $q > \varepsilon^{-2}\log\left(\frac{2}{\delta}\right)$
 
 \begin{theorem}
-    Dato un fattore di approssimazione $\varepsilon$ e un parametro di confidenza $\delta$, in una qualsiasi Stream di $m$ elementi e per ogni elemento $y$ l'algoritmo restituisce uno stimatore \emph{unbiased} $\tilde{f_y}$ tale che $|\tilde{f_y}- f_y| < 3 \varepsilon$ con probabilità almeno $1- \delta$. La complessità spaziale è $O(\varepsilon^{-2} \log\left(\frac{2}{\delta}\right))$
+    Dato un fattore di approssimazione $\varepsilon$ e un parametro di confidenza $\delta$, in una qualsiasi Stream di $m$ elementi e per ogni elemento $y$ l'algoritmo restituisce uno stimatore \emph{unbiased} $\tilde{f_y}$ tale che $|\tilde{f_y}- f_y| < \varepsilon m$ con probabilità almeno $1- \delta$. La complessità spaziale è $O(\varepsilon^{-2} \log\left(\frac{2}{\delta}\right))$
 \end{theorem}
 
 \subsubsection{Algoritmo Min-Sketch}
-Il count Min-Sketch è un metodo che meno spazio (asintoticamente) rispetto al metodo visto in precedenza basato sul \emph{sampling}, inoltre ha un errore del tipo \emph{one-sided}.
+Il count Min-Sketch è un metodo che utilizza (asintoticamente) meno spazio rispetto al metodo visto in precedenza basato sul \emph{sampling}, inoltre ha un errore del tipo \emph{one-sided}.
 
 \begin{definition}[Count MinSketch]
     Il count MinSketch è una matrice $M \in \mathbb{N}^{t\times s}$ inizializzata a 0. $s \times t$ determina il fattore di errore e la probabilità di successo. A ogni riga $j$ è associata una funzione hash universale $h_j: [1,n] \to [1,s]$ per $j = 1,\dots,t$
@@ -82,7 +82,7 @@ Si nota che si hanno a disposizione $t$ funzioni hash indipendenti, di cui ognun
     \item per ogni $z \in [n]$, con $z \neq y$ tali che $h_j(z) = h_j(y)$ (ovvero due elementi per cui si ha una collisione) si ha che $M(j,h_{j}(x)) = f_y +f_z$
 \end{enumerate}
 
-Come studiato l' hashing universale minimizza il numero di collisioni, per cui lo stimatore $\tilde{f_y} = \min\{M(j,h_{j}(x)): j = 1,\dots,y\}$ sbaglia solo se avviene una collisione in tutte le funzioni hash $j = 1,\dots,t$. 
+Come studiato, l' hashing universale minimizza il numero di collisioni, per cui lo stimatore $\tilde{f_y} = \min\{M(j,h_{j}(x)): j = 1,\dots,y\}$ sbaglia solo se avviene una collisione in tutte le funzioni hash $j = 1,\dots,t$. 
 
 Si cerca di stimare la probabilità $\Pr[M(j,h_{j}(x)) > f_y + \varepsilon m]$ per $\varepsilon > 0$, a tale scopo si definisce la variabile aleatoria $\mathbb{I}(j,x,y)$ come segue 
 \[
@@ -98,7 +98,7 @@ Sia $S = \{x_1,\dots,x_m\}$ l'insieme degli elementi distinti nella Stream, si c
 \begin{align*}
     \E{M(j,h_{j}(y))} = f_y + \E{\sum_{x \neq y} f_x \mathbb{I}(j,x,y)} = f_y + \sum_{x \neq y} f_x \E{\mathbb{I}(j;x,y)}
 \end{align*}
-Inoltre poiché $h_j(y)$ è fa uso di hashing universale su una tabella di $s$ slot e $\sum_{x \in S}f_x = m$
+Inoltre poiché $h_j(y)$ fa uso di hashing universale su una tabella di $s$ slot e $\sum_{x \in S}f_x = m$
 \begin{align*}
     &f_y + \sum_{\substack{x \in S \\ x \neq y}}f_x \E{\mathbb{I}(j,x,y)} \leq f_y + \sum_{x \neq y}f_x \frac{1}{s}\\
     &= f_y + \frac{1}{s}\sum_{x \neq y}f_x \leq f_y + \frac{m}{s}
@@ -154,7 +154,7 @@ Sia $U = \{ \text{tutti i valori possibili per la chiave $k$} \}$, e $S$ l'insie
     Se $B[h(x_k)] = 1$ l'elemento $x$ è accettato
 \end{enumerate}
 
-Questo metodo permette dei falsi positivi, ma mai dei falsi negativi \textit(one-sided-error). Analisi dell'algoritmo 
+Questo metodo permette dei falsi positivi, ma mai dei falsi negativi (\textit{one-sided-error}). Analisi dell'algoritmo 
 \begin{theorem}
     Se un elemento è in $S$, allora sicuramente il nel vettore $B$ esiste la posizione corrispondente uguale a 1. Si ha un falso positivo solo nel caso di collisione
 \end{theorem}
@@ -186,7 +186,7 @@ e il processo di esecuzione
 
 Si procede facendo un'analisi dell'algoritmo, si analizza quindi il numero di \emph{bucket} nel vettore $B$ contenenti \textit{1}, la vengono fatti $k\cdot m$ tentativi per $n$ \emph{bucket}, quindi la frazione di \textit{1} è \[
     1-e^{-\frac{k\cdot m}{n}} \approx \frac{k\cdot m}{n}
-\] e poiché le $k$ funzioni hash sono mutualmente indipendenti e $x$ viene accettato se tutti i \emph{bucket} contengono 1. La probabilità dei falsi positivi è $\left( 1 - e^{-\frac{k\cdot m}{n}}\right)^k$.
+\] e poiché le $k$ funzioni hash sono mutualmente indipendenti e $x$ viene accettato se tutti i \emph{bucket} contengono \textit{1}. La probabilità dei falsi positivi è $\left( 1 - e^{-\frac{k\cdot m}{n}}\right)^k$.
 
 \vspace{1em}\noindent
 È necessario determinare un valore di $k$ ottimale, in cui la funzione è minima, con l'analisi matematica si ottiene il valore di $k = \frac{n}{m}\log(2)$.
@@ -203,7 +203,7 @@ In cui in una fase preliminare viene scelta una funzione hash $h$ che mappa ognu
 \[
     h:[N] \to \{0,1\}^s \ \ s\geq \log_2(N)
 \]
-Per ogni elemento della Stream $a$ sia $r(a) =$ posizione del primo \textit{1} contando dalla destra in $h(a)$,  $R = \max{r(a)}$ visto $\forall a$. Il valore stimato $m = 2^R$. 
+Per ogni elemento della Stream $a$ sia $r(a) =$ posizione del primo \textit{1} contando dalla destra in $h(a)$,  $R = \max\{r(a)\}$ visto $\forall a$. Il valore stimato $m = 2^R$. 
 
 Si annunciano le proprietà utili dell'algoritmo \textit{FM}: per le occorrenze ripetute dello stesso elemento, il valore stimato $R$ non viene \text{mai} modificato.
 
@@ -219,7 +219,7 @@ Lo \emph{Sketch} $R$ può essere facilmente combinato con altri, avendo gli \emp
             0 \text{ altrimenti}
         \end{cases*}$ è facile notare che 
         
-        \item $\Pr[X_r = 1] = 1 - (1-1-\frac{1}{2^r})$ e $\Pr[X_r = 0] = \left(1-\frac{1}{2^r}\right)^d$ (dove $d$ è il vero numero di elementi distinti visti)
+        \item $\Pr[X_r = 1] = 1 - \left(1-\frac{1}{2^r}\right)^d$ e $\Pr[X_r = 0] = \left(1-\frac{1}{2^r}\right)^d$ (dove $d$ è il vero numero di elementi distinti visti)
     \end{itemize}
 
     Si calcola ora l'output restituito ovvero $m = 2^R$ e si calcola la probabilità di errore per $c > 0$
