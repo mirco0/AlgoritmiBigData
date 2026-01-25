@@ -38,7 +38,7 @@ Si definisce $S_{i,t}$ l'evento in cui il processo \emph{i-esimo} riesce ad acce
                 \Pr[F_{i,t}] \leq \left(\frac{1}{e}\right)^{c \log n} = \frac{1}{n^c}
             \]
 \end{proof}
-Dati questi teoremi come basi, è possibile definire la probabilità per cui tutti i processi abbiano successo in $2e\, n \log n$ tentativi
+Dati questi teoremi come base, è possibile definire la probabilità per cui tutti i processi abbiano successo in $2e\, n \log n$ tentativi
 $\Pr[\text{Successo}] \geq 1 - \frac{1}{n}$
 
 \begin{proof}
@@ -71,7 +71,7 @@ A tale scopo si definiscono le variabili aleatorie $X_i$ il numero di \emph{jobs
     \end{cases*}
 \]
 
-Per cui si hanno i dati $\E{Y_{ij}} = \frac{1}{n}, \Pr[Y_{ij} = 1] = \frac{1}{n}$. Inoltre $X_i = \sum{j=1}^{n}Y_{ij}$ e si definisca $\mu = \E{X_i} = 1$, rappresenta il carico \emph{atteso} del processore $i$.
+Per cui si hanno i dati $\E{Y_{ij}} = \frac{1}{n}, \Pr[Y_{ij} = 1] = \frac{1}{n}$. Inoltre $X_i = \sum_{j=1}^{n}Y_{ij}$ e si definisca $\mu = \E{X_i} = 1$, rappresenta il carico \emph{atteso} del processore $i$.
 
 Applicando i Chernoff Bounds da \ref{chernoff}, con $\delta = c - 1$ si ha
 \[

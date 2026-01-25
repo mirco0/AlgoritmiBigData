@@ -32,7 +32,7 @@ Una funzione hash è una funzione $h: U \to [0,n)$, informalmente $h$ è utilizz
 \begin{center}
     \emph{Nota Bene: In questi appunti, $n$ è definito come il numero di slot di arrivo della funzione hash.}
 \end{center}
-Una famiglia di funzioni hash $\mathcal{H}$ è detta universale se Scegliendo $h \in_u \mathcal{H} \ \ h: U \to [0,n)$ dati $\forall x_1 \neq x_2 \in U$
+Una famiglia di funzioni hash $\mathcal{H}$ è detta universale se scegliendo $h \in_u \mathcal{H} \ \ h: U \to [0,n)$ dati $\forall x_1 \neq x_2 \in U$
 \[
     \Pr[h(x_1) = h(x_2)] \leq \frac{1}{n}
 \]in pratica la probabilità di collisione di due elementi di $U$.
@@ -94,9 +94,9 @@ Per $|U| = n$, $r$ deve essere $\log_m(n)$ poiché $m^r \geq n$. Ne risulta che 
     Poiché $x\neq y$ esiste $y$ t.c. $x_j \neq y_j$.
     $h_a(x) = h_a(y)$ se e solo se
     \[
-        a_j\underbrace{(y_j-x_j)}_z = \underbrace{\sum_{i\neq j}a_i(y_j - x_j)}_\alpha \mod m
+        a_j\underbrace{(y_j-x_j)}_z = \underbrace{\sum_{i\neq j}a_i(y_i - x_i)}_\alpha \mod m
     \]
-    Si assume $a \in_u U$, quindi si assume $a_i$ fissato $\forall i \neq j$. Per $m$ primo $\mathbb{Z}_m$ è un campo, per cui $per z \neq 0$ esiste un'unica inversa moltiplicativa $z^{-1}$ tale che $z \cdot z^{-1} = 1 \mod m$
+    Si assume $a \in_u U$, quindi si assume $a_i$ fissato $\forall i \neq j$. Per $m$ primo $\mathbb{Z}_m$ è un campo, per cui, per $z \neq 0$ esiste un'unica inversa moltiplicativa $z^{-1}$ tale che $z \cdot z^{-1} = 1 \mod m$
 
     \begin{align*}
         a_j \cdot z \cdot z^{-1} &= \alpha \cdot z^{-1} \mod m\\
@@ -120,7 +120,7 @@ in pratica la funzione hash è definita come un polinomio scelto uniformemente i
 \begin{proof}
     Sia $X = (ax + b) \mod p$ e $Y = (ay +b) \mod p$ per $x \neq y$. Poiché $a \neq 0$ e $p > n$ allora $X \neq Y$.
     \[
-        h_{a,b}(x) = \left[h_{a,b}(y) \iff X = Y \mod p\right] \mod m
+        h_{a,b}(x) = h_{a,b}(y) \iff X = Y \mod m
     \]
     \begin{enumerate}
         \item $X$ e $Y$ sono distribuite in modo uniforme su $\mathbb{Z}_p$, poiché $a,b$ sono, a loro volta, distribuite in modo uniforme e $h$ è lineare iniettiva.

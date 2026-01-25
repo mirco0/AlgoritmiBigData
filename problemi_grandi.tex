@@ -345,7 +345,7 @@ L'algoritmo con input $(q,z,x)$ richiede spazio $O(\log q)$, mentre il procedime
 \begin{corollary}[probabilità di errore]
     Sia $q$ un primo, tale che $n^{c+1} \leq q \leq 2n^{c+1}$ per qualche $c>0$ allora per ogni $x\neq y$,
     \[
-        \Pr{K_{qz}(x) = K_{qz}(y) \mod q} \leq \frac{1}{n^c}
+        \Pr\left[K_{qz}(x) = K_{qz}(y) \mod q\right] \leq \frac{1}{n^c}
     \]
 \end{corollary}
 \noindent
@@ -355,7 +355,7 @@ La dimensione dello \emph{sketch} è $O(\log n)$ contro $O(n)$ iniziale.
 Ritornando al problema del pattern matching, si ricorda il problema: data una stringa $y$ contare quante volte appare nel Data Stream con alfabeto $\Sigma = [s]$, la Stream è una stringa $x<x_1,x_2,\dots,x_m> \in \Sigma^m$ e $y = <y_1,y_2,\dots,x_m> \in \Sigma^n$.
 
 \vspace{1em}
-Si suppone di aver letto i caratteri dalla Stream $<x_1,x_2,\dots,x_i>$ con $i\geq n$, quindi sono stati già calcoli gli \emph{sketch} $K_{qz}(<x_{n-i+1},\dots,x_i>)$ e $K_{qz}(y)$, quando un nuovo elemento della Stream viene ricevuto $x_{i+1}$ si calcola il nuovo \emph{sketch}
+Si suppone di aver letto i caratteri dalla Stream $<x_1,x_2,\dots,x_i>$ con $i\geq n$, quindi sono stati già calcolati gli \emph{sketch} $K_{qz}(<x_{n-i+1},\dots,x_i>)$ e $K_{qz}(y)$, se i due valori sono identici si aggiorna la variabile che conta il numero di occorrenze. Quando un nuovo elemento della Stream viene ricevuto $x_{i+1}$ si calcola il nuovo \emph{sketch}
 \[
     K_{qz}(<x_{i-n+2},\dots, x_{i+2}>)= ( K_{zq}(<x_{i-n+1},\dots, x_{i}>) - x_{i-n+1}\cdot z^{n-1}) z + x_{i+1}) \mod q
 \]
