@@ -385,12 +385,12 @@ Dal momento che non è possibile memorizzare l'intera Stream è necessario mante
 \end{enumerate}
 \subsection{Problemi di campionamento}
 \subsubsection{Problema 1: Campione a porzione fissa}
-Si assuma lo scenario in cui la Stream $U$ è composta da \emph{query} dei motori di ricerca, ovvero ogni elemento della Stream è una tupla \textit{(ID utente, query, tempo)}. Lo scopo principale è quello di trovare un campione $S \subseteq U$ che per, un utente medio $u$ e una query $q$, approssimi bene la frazione di occorrenze $q$ in $U$ fatte da $u$.
+Si assuma lo scenario in cui la Stream $U$ è composta da \emph{query} dei motori di ricerca, ovvero ogni elemento della Stream è una tupla \textit{(ID utente, query, tempo)}. Lo scopo principale è quello di trovare un campione $S \subseteq U$ che per un utente medio $u$ e una query $q$, approssimi bene la frazione di occorrenze $q$ in $U$ fatte da $u$.
 \begin{definition}[Occorrenza $q$]
     Una tupla in $U$ è chiamata \emph{occorrenza $q$} se ha il componente $query = q$.
 \end{definition}
 
-Un algoritmo banale consiste nel calcolare il valore Hash di ogni elemento (quindi fare uso di \emph{bucket}) nella Stream è prendere una porzione di \emph{bucket}. Segue un esempio 
+Un algoritmo banale consiste nel calcolare il valore Hash di ogni elemento (quindi fare uso di \emph{bucket}) nella Stream e successivamente prendere una porzione di \emph{bucket}. Segue un esempio 
 \input{algorithms/naive_sampling.tex}
 
 \subsubsection*{Analisi procedura}
@@ -400,7 +400,7 @@ Supponiamo che la Stream $U$ sia tale che ogni utente $u$ faccia $m$ query diffe
     \E{\text{Elementi distinti} \in S} &= \frac{m}{10} + \frac{d}{100} + \frac{18d}{100}\\ 
     \E{|S|} &= \frac{m}{10} + \frac{2d}{100} + \frac{18d}{100}\\ 
 \end{align*}
-Si giustificano i calcoli. Le query $d$ vengono campionate con probabilità $\frac{1}{10}$, ce ne sono due, la probabilità di campionarle entrambe è $\frac{1}{100}$ per $d$ query allora $\frac{d}{100}$, $\frac{18d}{100}$ vengono campionati una sola volta ($\left(\frac{1}{10} \cdot \frac{9}{10}\right) d$ volte). 
+Si giustificano i calcoli. Le query $d$ vengono campionate con probabilità $\frac{1}{10}$, ce ne sono due, la probabilità di campionarle entrambe è $\frac{1}{100}$ per $d$ query allora $\frac{d}{100}$, $\frac{18d}{100}$ vengono campionati una sola volta ($\left(\frac{1}{10} \cdot \frac{9}{10}\right) + \left(\frac{9}{10} \cdot \frac{1}{10}\right) d$ volte). 
 
 In $S$ ci saranno $\frac{19}{100}d$ delle \emph{query $d$}
 \begin{proof}
@@ -414,13 +414,13 @@ questo approccio non è quindi funzionante, si presenta un secondo approccio, in
 
 \input{algorithms/user_sample.tex}
 \subsubsection*{Analisi campionamento degli utenti}
-Sia $Q$ l'insieme delle query, $I$ l'insieme degli \emph{ID utente}. Fissando una data query $q$ si definisce la funzione $x(v,q)$ come il numero di \emph{occorrenze $q$} da $u$ nella Stream. Inoltre si definisce la variabile aleatoria $X_S(V,q)$ come il numero di occorrenze dall'utente $V$ (variabile)in $S$. Nell'algoritmo \ref{alg:user_sample} gli ID degli utenti $V$ è una variabile aleatoria uniforme.
+Sia $Q$ l'insieme delle query, $I$ l'insieme degli \emph{ID utente}. Fissando una data query $q$ si definisce la funzione $x(v,q)$ come il numero di \emph{occorrenze $q$} dell'utente $v$ nella Stream. Inoltre si definisce la variabile aleatoria $X_S(V,q)$ come il numero di occorrenze dall'utente $V$ (variabile) in $S$. Nell'algoritmo \ref{alg:user_sample} gli ID degli utenti $V$ è una variabile aleatoria uniforme.
 
 Il valore cercato è $AVG_{V \in I}(x(v,q)) = \mathbb{E}_{V \in S}\left[X_S(V,q)\right]$ per ogni $q$ fissata. Per cui $AVG_{V \in S}(V_S(V,q))$ (il risultato dell'algoritmo).
 
 \vspace{1em} Sia $C_j$ una variabile aleatoria definita come segue \[
     C_j = \begin{cases*}
-        1 \text{ se l'hash di $j$ è 0 }\\
+        1 \text{ se l'hash dell'utente $j$ è 0 }\\
         0 \text{ altrimenti }
     \end{cases*}
 \]
@@ -488,11 +488,11 @@ Sia $I$ una Stream di bit infinita, con una finestra di lunghezza $N$. Si vuole 
     \end{align*}
     in pratica $x$ e $z$ sono entrambi esprimibili con qualche $R(N,k)$ di cui la dimensione è $\leq N-1$ (in qualche modo qualche informazione viene persa). Qualsiasi algoritmo per $\#1(I,N,k)$ non riesce a distinguere una finestra $x$ da una finestra $z$, quindi fallisce.
 \end{proof}
-Nel caso in cui una finestra $N$ non possa essere salvata in memoria è necessario fornire un'approssimazione per il valore della funzione $\#1(I,N,k)$. Si fa uso del metodo \emph{DIGM}
-\subsubsection*{DIGM (Datar, Gioinis, Indikm, Motwani)}
-Il metodo \emph{DIGM} funziona con qualsiasi distribuzione su Stream lo spazio utilizzato è $O(\log 2N)$ bit per Stream, e non fornisce mai l'approssimazione più del $50\%$ del valore effettivo.
+Nel caso in cui una finestra $N$ non possa essere salvata in memoria è necessario fornire un'approssimazione per il valore della funzione $\#1(I,N,k)$. Si fa uso del metodo \emph{DGIM}
+\subsubsection*{DGIM (Datar, Gioinis, Indikm, Motwani)}
+Il metodo \emph{DGIM} funziona con qualsiasi distribuzione su Stream lo spazio utilizzato è $O(\log 2N)$ bit per Stream, e non fornisce mai l'approssimazione più del $50\%$ del valore effettivo.
 
-Più precisamente (dalle note di Prezza) DIGM usa $O(\varepsilon^{-1} \log^{2}m)$ spazio fornendo una $(1+ \varepsilon)$ approssimazione. Ne segue una descrizione del funzionamento, sia $B = \lceil 1 / \varepsilon \rceil$, i bit della Stream vengono raggruppati in gruppi $G_1,G_2,\dots,G_t$ che devono soddisfare le seguenti condizioni 
+Più precisamente (dalle note di Prezza) DGIM usa $O(\varepsilon^{-1} \log^{2}m)$ spazio fornendo una $(1+ \varepsilon)$ approssimazione. Ne segue una descrizione del funzionamento, sia $B = \lceil 1 / \varepsilon \rceil$, i bit della Stream vengono raggruppati in gruppi $G_1,G_2,\dots,G_t$ che devono soddisfare le seguenti condizioni 
 \begin{enumerate}
     \item ogni $G_i$ inizia e finisce con il bit \textit{1}
     \item tra due gruppi adiacenti $G_i,G_{i+1}$ ci sono solamente bit \textit{0},
@@ -504,7 +504,7 @@ Più precisamente (dalle note di Prezza) DIGM usa $O(\varepsilon^{-1} \log^{2}m)
 \end{enumerate}
 
 La ``testa'' della Stream è l'elemento più recente. Per ogni $k$ ci sono almeno $B=1$ gruppi che contengono $2^k$ bit \textit{1} e al massimo $B+1$ gruppi con $2^k$ bit \textit{1}.
-\input{figure/DIGM_gruppi.tex}
+\input{figure/DGIM_gruppi.tex}
 
 \vspace{1em}\noindent
 È necessario definire come aggiornare i gruppi quando nuovi elementi vengono ricevuti, se il bit è \textit{0} non si fa nulla, al contrario per nuovi bit \textit{1} si procede come segue
@@ -531,7 +531,7 @@ Per cui trovare i gruppi più a sinistra dato un $\ell_i$, unirli e spostare un 
     Si supponga che un aggiornamento aumenti $Z_k$ di un unità ($Z_k$ è il numero di gruppi con $2^k$ elementi), questo significa che prima dell'aggiornamento $Z_{k'} = B+1$ per ogni $k' \leq k$. In turno questa configurazione richiede $2^k-1$ aggiornamenti precedenti, che aggiunti al nuovo aggiornamento fa $2^k$ aggiornamenti totali. Un solo aggiornamento ogni $2^k$ costa $O(k)$. Il costo ammortizzato è $\sum_{k=1}^{\infty}\frac{k}{2^k} = O(1)$.
 \end{proof}
 
-Si procede valutando il \emph{fattore di approssimazione} di \emph{DISM}.
+Si procede valutando il \emph{fattore di approssimazione} di \emph{DGIM}.
 %TODO: creare figura
 \input{figure/DGIM_window.tex}
 
@@ -555,6 +555,6 @@ Inoltre $d \leq \tilde{d} \leq d(1 + \varepsilon)$.
 \begin{enumerate}
     \item sapendo che ogni intero fa uso $\leq m$ bit allora gli $m$ bit dell'intero vengono trattati come una Stream stessa
     
-    si fa uso di DIGM per la stima del numero di bit \textit{1} nella rappresentazione binaria di ogni intero. Sia $c_i$ il conto stimato per l'\textit{i-esimo} bit, la somma è $\sum_{i=0}^{m-1}c_{i}2^{i}$
+    si fa uso di DGIM per la stima del numero di bit \textit{1} nella rappresentazione binaria di ogni intero. Sia $c_i$ il conto stimato per l'\textit{i-esimo} bit, la somma è $\sum_{i=0}^{m-1}c_{i}2^{i}$
     \item si fa uso dei \emph{bucket} per mantenere le somme parziali (la somma degli elementi in un \emph{bucket} di dimensione $b$ è al massimo $2^b$)
 \end{enumerate}
