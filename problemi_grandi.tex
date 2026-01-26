@@ -357,7 +357,7 @@ Ritornando al problema del pattern matching, si ricorda il problema: data una st
 \vspace{1em}
 Si suppone di aver letto i caratteri dalla Stream $<x_1,x_2,\dots,x_i>$ con $i\geq n$, quindi sono stati già calcolati gli \emph{sketch} $K_{qz}(<x_{n-i+1},\dots,x_i>)$ e $K_{qz}(y)$, se i due valori sono identici si aggiorna la variabile che conta il numero di occorrenze. Quando un nuovo elemento della Stream viene ricevuto $x_{i+1}$ si calcola il nuovo \emph{sketch}
 \[
-    K_{qz}(<x_{i-n+2},\dots, x_{i+2}>)= ( K_{zq}(<x_{i-n+1},\dots, x_{i}>) - x_{i-n+1}\cdot z^{n-1}) z + x_{i+1}) \mod q
+    K_{qz}(<x_{i-n+2},\dots, x_{i+1}>)= ( K_{zq}(<x_{i-n+1},\dots, x_{i}>) - x_{i-n+1}\cdot z^{n-1}) z + x_{i+1}) \mod q
 \]
 in modo più pratico, viene tolto l'elemento meno recente $x_{i-n+1}$ e viene inserito il nuovo elemento $x_{i+1}$.
 
