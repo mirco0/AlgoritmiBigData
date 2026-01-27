@@ -96,7 +96,7 @@ Si cerca di stimare la probabilità $\Pr[M(j,h_{j}(x)) > f_y + \varepsilon m]$ p
 Sia $S = \{x_1,\dots,x_m\}$ l'insieme degli elementi distinti nella Stream, si calcola il valore atteso di $M(j,h_{j}(y))$
 
 \begin{align*}
-    \E{M(j,h_{j}(y))} = f_y + \E{\sum_{x \neq y} f_x \mathbb{I}(j,x,y)} = f_y + \sum_{x \neq y} f_x \E{\mathbb{I}(j;x,y)}
+    \E{M(j,h_{j}(y))} = f_y + \E{\sum_{x \neq y} f_x \mathbb{I}(j,x,y)} = f_y + \sum_{x \neq y} f_x \E{\mathbb{I}(j,x,y)}
 \end{align*}
 Inoltre poiché $h_j(y)$ fa uso di hashing universale su una tabella di $s$ slot e $\sum_{x \in S}f_x = m$
 \begin{align*}
