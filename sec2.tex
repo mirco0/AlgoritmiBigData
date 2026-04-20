@@ -25,7 +25,7 @@ Si definisce $S_{i,t}$ l'evento in cui il processo \emph{i-esimo} riesce ad acce
     La probabilità che l'evento \emph{i-esimo} fallisca ad accedere al database in $en$ tentativi $\leq \frac{1}{e}$. Dopo $en(c \log n)$ tentativi, la probabilità $\leq \frac{1}{n^c}$
 \end{theorem}
 \begin{proof}
-    Sia $F_{i,t}$ l'evento in cui il processo $i$ fallisce fallisce nell'accesso al database nei round $1,\dots,t$. Poiché i tentativi sono indipendenti tra di loro, si ha che 
+    Sia $F_{i,t}$ l'evento in cui il processo $i$ fallisce nell'accesso al database nei round $1,\dots,t$. Poiché i tentativi sono indipendenti tra di loro, si ha che 
     \[
         \Pr[F_{i,t}] \leq \left(1- \frac{1}{en}\right)^t
         \]
